@@ -1,14 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import BloodLoader from '@/components/gsap/BloodLoader';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
+import Table from '@/components/ui/Table';
 import { donorAPI } from '@/lib/api';
-import { formatDate, getStatusColor } from '@/lib/utils';
-import { Download, Search } from 'lucide-react';
+import { formatDate, getStatusVariant } from '@/lib/utils';
+import { Download, Droplets, Calendar, MapPin, Award, Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function DonationsPage() {
@@ -28,7 +30,7 @@ export default function DonationsPage() {
       setDonations(res.data.data?.donations || []);
       setTotalPages(res.data.data?.pagination?.totalPages || 1);
     } catch (error) {
-      toast.error('Failed to load donations');
+      toast.error('Failed to load donation log');
     } finally {
       setLoading(false);
     }
@@ -50,103 +52,133 @@ export default function DonationsPage() {
     }
   };
 
+  const columns = [
+    {
+      header: 'Donation Date',
+      accessor: (d: any) => (
+        <div className="flex items-center gap-2 text-xs font-semibold text-slate-800">
+          <Calendar className="w-3.5 h-3.5 text-slate-400" />
+          <span>{formatDate(d.donationDate)}</span>
+        </div>
+      ),
+    },
+    {
+      header: 'Blood Group',
+      accessor: (d: any) => (
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 font-bold text-xs">
+          <Droplets className="w-3.5 h-3.5 fill-rose-600" />
+          <span>{d.bloodGroup}</span>
+        </div>
+      ),
+    },
+    {
+      header: 'Volume',
+      accessor: (d: any) => (
+        <span className="font-bold text-slate-900 text-xs">
+          {d.units} {d.units === 1 ? 'Unit (350ml)' : 'Units'}
+        </span>
+      ),
+    },
+    {
+      header: 'Center / Medical Facility',
+      accessor: (d: any) => (
+        <div className="flex items-center gap-1 text-xs text-slate-600">
+          <MapPin className="w-3.5 h-3.5 text-slate-400" />
+          <span>{d.location || 'Central Regional Vault'}</span>
+        </div>
+      ),
+    },
+    {
+      header: 'Status',
+      accessor: (d: any) => (
+        <Badge
+          variant={getStatusVariant(d.status)}
+          dot
+          className="capitalize font-semibold"
+        >
+          {d.status}
+        </Badge>
+      ),
+    },
+    {
+      header: 'Official Certificate',
+      accessor: (d: any) => (
+        <div>
+          {d.status === 'completed' ? (
+            <button
+              type="button"
+              onClick={() => handleDownloadCertificate(d._id)}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 text-xs font-semibold transition-colors"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Certificate</span>
+            </button>
+          ) : (
+            <span className="text-xs text-slate-400">Processing</span>
+          )}
+        </div>
+      ),
+    },
+  ];
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">My Donations</h1>
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm">
+          <div>
+            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-xs font-semibold mb-1">
+              <Award className="w-3.5 h-3.5" />
+              <span>Personal Transfusion Impact Log</span>
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+              Donation History & Contributions
+            </h1>
+            <p className="text-xs text-slate-600">
+              Every unit donated contributes to saving up to 3 patients in regional emergency care
+            </p>
+          </div>
+
+          <Link href="/dashboard/appointments">
+            <Button size="sm">
+              <Plus className="w-4 h-4 mr-2" />
+              Book Next Donation
+            </Button>
+          </Link>
         </div>
 
-        <Card>
-          <CardContent>
-            {loading ? (
-              <BloodLoader fullScreen={false} size="sm" text="Loading donations" />
-            ) : donations.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-gray-500 text-lg">No donation records yet.</p>
-                <p className="text-gray-400 mt-1">
-                  Your donation history will appear here.
-                </p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b text-left">
-                      <th className="pb-3 font-medium text-gray-500">Date</th>
-                      <th className="pb-3 font-medium text-gray-500">Blood Group</th>
-                      <th className="pb-3 font-medium text-gray-500">Units</th>
-                      <th className="pb-3 font-medium text-gray-500">Location</th>
-                      <th className="pb-3 font-medium text-gray-500">Status</th>
-                      <th className="pb-3 font-medium text-gray-500">Certificate</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y">
-                    {donations.map((donation: any) => (
-                      <tr key={donation._id} className="hover:bg-gray-50">
-                        <td className="py-3">
-                          {formatDate(donation.donationDate)}
-                        </td>
-                        <td className="py-3">
-                          <span className="font-semibold text-red-600">
-                            {donation.bloodGroup}
-                          </span>
-                        </td>
-                        <td className="py-3">{donation.units}</td>
-                        <td className="py-3">{donation.location || 'N/A'}</td>
-                        <td className="py-3">
-                          <Badge
-                            variant={getStatusColor(donation.status) as any}
-                          >
-                            {donation.status}
-                          </Badge>
-                        </td>
-                        <td className="py-3">
-                          {donation.status === 'completed' && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() =>
-                                handleDownloadCertificate(donation._id)
-                              }
-                            >
-                              <Download className="h-4 w-4" />
-                            </Button>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+        {/* Table */}
+        <Table
+          columns={columns}
+          data={donations}
+          loading={loading}
+          emptyMessage="No donation records found. Schedule your first appointment today!"
+        />
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-between mt-4 pt-4 border-t">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={page === 1}
-                  onClick={() => setPage((p) => p - 1)}
-                >
-                  Previous
-                </Button>
-                <span className="text-sm text-gray-500">
-                  Page {page} of {totalPages}
-                </span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={page === totalPages}
-                  onClick={() => setPage((p) => p + 1)}
-                >
-                  Next
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-200/80 shadow-sm">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page === 1}
+              onClick={() => setPage((p) => p - 1)}
+            >
+              Previous
+            </Button>
+            <span className="text-xs font-semibold text-slate-600">
+              Page {page} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page === totalPages}
+              onClick={() => setPage((p) => p + 1)}
+            >
+              Next
+            </Button>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );

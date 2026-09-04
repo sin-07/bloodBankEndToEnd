@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { Droplets } from 'lucide-react';
+import { Droplets, User, Building2, ShieldCheck, ArrowRight } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
@@ -94,233 +94,270 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-white">
-      {/* Navbar */}
-      <nav className="bg-white border-b border-gray-200 px-6 py-4 sticky top-0 z-40">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-rose-500 selection:text-white relative">
+      {/* Background subtle ambiance */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gradient-to-b from-rose-100/40 via-transparent to-transparent pointer-events-none blur-3xl -z-10" />
+
+      {/* Modern Clean Navbar */}
+      <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200/80 px-6 py-4 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <Droplets className="w-7 h-7 text-red-600" />
-            <span className="text-xl font-bold text-gray-900">
-              Srishti <span className="text-red-600">Blood Bank</span>
-            </span>
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-rose-700 flex items-center justify-center text-white shadow-md shadow-rose-500/20 group-hover:scale-105 transition-transform duration-200">
+              <Droplets className="w-5 h-5 fill-white" />
+            </div>
+            <div>
+              <span className="text-lg font-bold tracking-tight text-slate-900">
+                Srishti <span className="text-rose-600">Blood Bank</span>
+              </span>
+              <span className="hidden sm:block text-[10px] uppercase font-semibold text-slate-500 tracking-wider">
+                Clinical Logistics Hub
+              </span>
+            </div>
           </Link>
-          <div className="flex items-center gap-4">
-            <Link href="/auth/login" className="text-sm font-medium text-gray-700 hover:text-gray-900">
-              Login
-            </Link>
+          <div className="flex items-center gap-3">
             <Link
-              href="/auth/register"
-              className="text-sm font-medium bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+              href="/auth/login"
+              className="text-xs sm:text-sm font-semibold text-slate-700 hover:text-slate-900 px-3.5 py-2 rounded-lg hover:bg-slate-100/80 transition-colors"
             >
-              Register
+              Sign In
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* Form Card */}
-      <div className="flex items-center justify-center p-4 pt-12">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-8">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <Droplets className="w-10 h-10 text-red-600" />
-            <span className="text-2xl font-bold text-gray-900">
-              A2R <span className="text-red-600">Demo</span>
-            </span>
-          </Link>
-          <p className="mt-2 text-gray-500">Create your account to get started</p>
-        </div>
+      {/* Registration Container */}
+      <div className="flex-1 flex items-center justify-center p-4 py-12">
+        <div className="w-full max-w-2xl">
+          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-card p-8 sm:p-10 relative">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-rose-50 border border-rose-100 text-rose-600 mb-3">
+                <ShieldCheck className="w-6 h-6" />
+              </div>
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+                Create Your Account
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Join our regional network as a life-saving donor or verified medical center
+              </p>
+            </div>
 
-        {/* Role Selection */}
-        <div className="flex gap-2 mb-6 p-1 bg-gray-100 rounded-lg">
-          {[
-            { value: 'donor', label: 'Donor' },
-            { value: 'hospital', label: 'Hospital' },
-          ].map((role) => (
-            <button
-              key={role.value}
-              type="button"
-              onClick={() => setFormData({ ...formData, role: role.value })}
-              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
-                formData.role === role.value
-                  ? 'bg-red-600 text-white'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              {role.label}
-            </button>
-          ))}
-        </div>
+            {/* Role Switcher Pill */}
+            <div className="flex gap-2 mb-8 p-1.5 bg-slate-100/80 rounded-2xl border border-slate-200/60">
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, role: 'donor' })}
+                className={`flex-1 py-3 px-4 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all ${
+                  formData.role === 'donor'
+                    ? 'bg-white text-rose-700 shadow-sm border border-slate-200/60'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <User className={`w-4 h-4 ${formData.role === 'donor' ? 'text-rose-600' : 'text-slate-500'}`} />
+                <span>Blood Donor</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, role: 'hospital' })}
+                className={`flex-1 py-3 px-4 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all ${
+                  formData.role === 'hospital'
+                    ? 'bg-white text-rose-700 shadow-sm border border-slate-200/60'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <Building2 className={`w-4 h-4 ${formData.role === 'hospital' ? 'text-rose-600' : 'text-slate-500'}`} />
+                <span>Hospital / Clinic</span>
+              </button>
+            </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="grid md:grid-cols-2 gap-4">
-            <Input
-              label="Full Name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="John Doe"
-              required
-            />
-            <Input
-              label="Email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="you@example.com"
-              required
-            />
-            <Input
-              label="Password"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Min 6 characters"
-              required
-            />
-            <Input
-              label="Confirm Password"
-              name="confirmPassword"
-              type="password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              placeholder="Re-enter password"
-              required
-            />
-            <Input
-              label="Phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder="+91 98765 43210"
-            />
-            <Input
-              label="City"
-              name="city"
-              value={formData.city}
-              onChange={handleChange}
-              placeholder="Your city"
-            />
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">
+                  Account Credentials
+                </h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <Input
+                    label="Full Name / Primary Contact"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="Dr. Rajesh Sharma"
+                    required
+                  />
+                  <Input
+                    label="Email Address"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="rajesh@example.com"
+                    required
+                  />
+                  <Input
+                    label="Password"
+                    name="password"
+                    type="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Min. 6 characters"
+                    required
+                  />
+                  <Input
+                    label="Confirm Password"
+                    name="confirmPassword"
+                    type="password"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    placeholder="Re-enter password"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">
+                  Contact & Location
+                </h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <Input
+                    label="Phone Number"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder="+91 98765 43210"
+                    required
+                  />
+                  <Input
+                    label="City"
+                    name="city"
+                    value={formData.city}
+                    onChange={handleChange}
+                    placeholder="Mumbai / Delhi"
+                    required
+                  />
+                </div>
+                <div className="mt-4">
+                  <Input
+                    label="Street Address"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    placeholder="Street, Landmark, Ward Number"
+                  />
+                </div>
+              </div>
+
+              {/* Donor Specific Information */}
+              {formData.role === 'donor' && (
+                <div className="pt-2 border-t border-slate-100">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-rose-700 mb-3">
+                    Donor Health & Blood Profile
+                  </h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <Select
+                      label="Blood Group"
+                      name="bloodGroup"
+                      value={formData.bloodGroup}
+                      onChange={handleChange}
+                      placeholder="Select blood group"
+                      options={BLOOD_GROUPS.map((bg) => ({ value: bg, label: bg }))}
+                      required
+                    />
+                    <Input
+                      label="Date of Birth"
+                      name="dateOfBirth"
+                      type="date"
+                      value={formData.dateOfBirth}
+                      onChange={handleChange}
+                      required
+                    />
+                    <Select
+                      label="Gender"
+                      name="gender"
+                      value={formData.gender}
+                      onChange={handleChange}
+                      placeholder="Select gender"
+                      options={[
+                        { value: 'male', label: 'Male' },
+                        { value: 'female', label: 'Female' },
+                        { value: 'other', label: 'Other' },
+                      ]}
+                      required
+                    />
+                    <Input
+                      label="Weight (kg)"
+                      name="weight"
+                      type="number"
+                      value={formData.weight}
+                      onChange={handleChange}
+                      placeholder="Min. 45 kg"
+                      min={45}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Hospital Specific Information */}
+              {formData.role === 'hospital' && (
+                <div className="pt-2 border-t border-slate-100">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-rose-700 mb-3">
+                    Hospital Registration Details
+                  </h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <Input
+                      label="Hospital / Center Name"
+                      name="hospitalName"
+                      value={formData.hospitalName}
+                      onChange={handleChange}
+                      placeholder="City General Hospital"
+                      required
+                    />
+                    <Input
+                      label="License / Reg. Number"
+                      name="registrationNumber"
+                      value={formData.registrationNumber}
+                      onChange={handleChange}
+                      placeholder="HOSP-REG-2024-998"
+                      required
+                    />
+                    <Select
+                      label="Hospital Classification"
+                      name="hospitalType"
+                      value={formData.hospitalType}
+                      onChange={handleChange}
+                      options={[
+                        { value: 'government', label: 'Government Hospital' },
+                        { value: 'private', label: 'Private Multi-Specialty' },
+                        { value: 'charitable', label: 'Charitable Trust' },
+                      ]}
+                    />
+                    <Input
+                      label="State"
+                      name="state"
+                      value={formData.state}
+                      onChange={handleChange}
+                      placeholder="Maharashtra"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <Button type="submit" className="w-full mt-4" size="lg" loading={loading}>
+                Complete Registration
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </form>
+
+            {/* Footer */}
+            <div className="mt-6 text-center text-sm text-slate-600">
+              Already have an account?{' '}
+              <Link href="/auth/login" className="font-semibold text-rose-600 hover:text-rose-700">
+                Sign in here
+              </Link>
+            </div>
           </div>
-
-          <Input
-            label="Address"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-            placeholder="Full address"
-          />
-
-          {/* Donor-specific fields */}
-          {formData.role === 'donor' && (
-            <div className="border-t pt-5">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Donor Information</h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                <Select
-                  label="Blood Group"
-                  name="bloodGroup"
-                  value={formData.bloodGroup}
-                  onChange={handleChange}
-                  placeholder="Select blood group"
-                  options={BLOOD_GROUPS.map((bg) => ({ value: bg, label: bg }))}
-                  required
-                />
-                <Input
-                  label="Date of Birth"
-                  name="dateOfBirth"
-                  type="date"
-                  value={formData.dateOfBirth}
-                  onChange={handleChange}
-                  required
-                />
-                <Select
-                  label="Gender"
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleChange}
-                  placeholder="Select gender"
-                  options={[
-                    { value: 'male', label: 'Male' },
-                    { value: 'female', label: 'Female' },
-                    { value: 'other', label: 'Other' },
-                  ]}
-                  required
-                />
-                <Input
-                  label="Weight (kg)"
-                  name="weight"
-                  type="number"
-                  value={formData.weight}
-                  onChange={handleChange}
-                  placeholder="Min 45 kg"
-                  min={45}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Hospital-specific fields */}
-          {formData.role === 'hospital' && (
-            <div className="border-t pt-5">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Hospital Information</h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                <Input
-                  label="Hospital Name"
-                  name="hospitalName"
-                  value={formData.hospitalName}
-                  onChange={handleChange}
-                  placeholder="Hospital name"
-                  required
-                />
-                <Input
-                  label="Registration Number"
-                  name="registrationNumber"
-                  value={formData.registrationNumber}
-                  onChange={handleChange}
-                  placeholder="Hospital reg. number"
-                  required
-                />
-                <Select
-                  label="Hospital Type"
-                  name="hospitalType"
-                  value={formData.hospitalType}
-                  onChange={handleChange}
-                  options={[
-                    { value: 'government', label: 'Government' },
-                    { value: 'private', label: 'Private' },
-                    { value: 'charitable', label: 'Charitable' },
-                  ]}
-                />
-                <Input
-                  label="State"
-                  name="state"
-                  value={formData.state}
-                  onChange={handleChange}
-                  placeholder="State"
-                />
-              </div>
-            </div>
-          )}
-
-          <Button type="submit" className="w-full" size="lg" loading={loading}>
-            Create Account
-          </Button>
-        </form>
-
-        {/* Footer */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-500">
-            Already have an account?{' '}
-            <Link href="/auth/login" className="font-medium text-red-600 hover:text-red-700">
-              Sign in
-            </Link>
-          </p>
         </div>
-      </div>
       </div>
     </div>
   );

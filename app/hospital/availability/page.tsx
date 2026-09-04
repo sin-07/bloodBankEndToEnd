@@ -1,13 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import BloodLoader from '@/components/gsap/BloodLoader';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
+import Button from '@/components/ui/Button';
 import { inventoryAPI } from '@/lib/api';
-import { BLOOD_GROUPS } from '@/lib/utils';
-import { Droplets, AlertTriangle, CheckCircle } from 'lucide-react';
+import { BLOOD_GROUPS, COMPONENT_NAMES } from '@/lib/utils';
+import { Droplets, AlertTriangle, CheckCircle2, Clock, Plus, RefreshCw, ShieldAlert } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function AvailabilityPage() {
@@ -20,10 +22,11 @@ export default function AvailabilityPage() {
 
   const fetchAvailability = async () => {
     try {
+      setLoading(true);
       const res = await inventoryAPI.getSummary();
       setSummary(res.data.data);
     } catch (error) {
-      toast.error('Failed to load availability');
+      toast.error('Failed to load blood inventory status');
     } finally {
       setLoading(false);
     }
@@ -32,136 +35,215 @@ export default function AvailabilityPage() {
   if (loading) {
     return (
       <DashboardLayout>
-        <BloodLoader fullScreen={false} size="lg" text="Loading availability" />
+        <BloodLoader fullScreen={false} size="lg" text="Syncing Central Inventory" />
       </DashboardLayout>
     );
   }
 
+  const totalAvailable = summary?.bloodStock?.reduce(
+    (acc: number, curr: any) => acc + (curr.totalUnits || 0),
+    0
+  ) || 0;
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-gray-900">Blood Availability</h1>
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm">
+          <div>
+            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-xs font-semibold mb-1">
+              <Droplets className="w-3.5 h-3.5 fill-rose-600" />
+              <span>Real-Time Logistics Telemetry</span>
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+              Central Blood Availability
+            </h1>
+            <p className="text-xs text-slate-600">
+              Live inventory tracking across all 8 ABO/Rh blood groups and separated components
+            </p>
+          </div>
 
-        {/* Blood Group Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={fetchAvailability}
+              className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Refresh Telemetry
+            </Button>
+            <Link href="/hospital/new-request">
+              <Button size="sm">
+                <Plus className="w-4 h-4 mr-2" />
+                Request Blood
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Global Inventory Health Banner */}
+        <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 font-bold text-xl shadow-sm">
+              <Droplets className="w-7 h-7 fill-rose-600" />
+            </div>
+            <div>
+              <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                Total Blood Reserves Available
+              </div>
+              <div className="text-3xl font-extrabold text-slate-900 tracking-tight">
+                {totalAvailable} <span className="text-sm font-semibold text-slate-500">Units Ready</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4 text-xs font-semibold">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <span>Normal Reserve: &gt; 10 Units</span>
+            </div>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 text-amber-800 border border-amber-200">
+              <AlertTriangle className="w-4 h-4 text-amber-600" />
+              <span>Low: &lt; 5 Units</span>
+            </div>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 text-rose-700 border border-rose-200">
+              <ShieldAlert className="w-4 h-4 text-rose-600" />
+              <span>Critical: 0 Units</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Blood Group Grid Cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
           {BLOOD_GROUPS.map((bg) => {
             const stock = summary?.bloodStock?.find((s: any) => s._id === bg);
             const units = stock?.totalUnits || 0;
-            const isLow = units < 5;
+            const isLow = units > 0 && units < 5;
             const isEmpty = units === 0;
 
+            const cardBorder = isEmpty
+              ? 'border-rose-300 bg-rose-50/20'
+              : isLow
+              ? 'border-amber-300 bg-amber-50/20'
+              : 'border-slate-200/80 bg-white';
+
             return (
-              <Card key={bg}>
-                <CardContent className="p-6 text-center">
-                  <div
-                    className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-3 ${
-                      isEmpty
-                        ? 'bg-red-100'
-                        : isLow
-                        ? 'bg-amber-100'
-                        : 'bg-green-100'
-                    }`}
-                  >
-                    <Droplets
-                      className={`h-8 w-8 ${
-                        isEmpty
-                          ? 'text-red-600'
-                          : isLow
-                          ? 'text-amber-600'
-                          : 'text-green-600'
-                      }`}
-                    />
-                  </div>
-                  <p className="text-2xl font-bold text-red-600">{bg}</p>
-                  <p
-                    className={`text-3xl font-bold mt-2 ${
-                      isEmpty
-                        ? 'text-red-600'
-                        : isLow
-                        ? 'text-amber-600'
-                        : 'text-gray-900'
-                    }`}
-                  >
-                    {units}
-                  </p>
-                  <p className="text-sm text-gray-500">units available</p>
-                  <div className="mt-3">
-                    {isEmpty ? (
-                      <Badge variant="danger">Unavailable</Badge>
-                    ) : isLow ? (
-                      <Badge variant="warning">Low Stock</Badge>
-                    ) : (
-                      <Badge variant="success">Available</Badge>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+              <div
+                key={bg}
+                className={`rounded-2xl border ${cardBorder} p-4 text-center transition-all hover:shadow-card group relative`}
+              >
+                <div className="text-xl font-black tracking-tight text-rose-600 mb-1">
+                  {bg}
+                </div>
+
+                <div className="text-3xl font-extrabold text-slate-900 tracking-tight my-1">
+                  {units}
+                </div>
+                <div className="text-[11px] font-medium text-slate-500 mb-3">units</div>
+
+                <div>
+                  {isEmpty ? (
+                    <Badge variant="danger" dot pulse className="text-[10px] px-2 py-0.5">
+                      Depleted
+                    </Badge>
+                  ) : isLow ? (
+                    <Badge variant="warning" dot className="text-[10px] px-2 py-0.5">
+                      Low Stock
+                    </Badge>
+                  ) : (
+                    <Badge variant="success" dot className="text-[10px] px-2 py-0.5">
+                      Optimal
+                    </Badge>
+                  )}
+                </div>
+              </div>
             );
           })}
         </div>
 
-        {/* Alerts */}
-        {summary?.lowStockAlerts?.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-amber-500" />
-                Low Stock Alerts
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
+        {/* Alerts & Critical Notices */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Low Stock Alerts */}
+          <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-sm">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
+                <AlertTriangle className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-slate-900">Low Stock Warnings</h3>
+                <p className="text-xs text-slate-500">Groups requiring replenishment drives</p>
+              </div>
+            </div>
+
+            {summary?.lowStockAlerts && summary.lowStockAlerts.length > 0 ? (
+              <div className="space-y-2.5">
                 {summary.lowStockAlerts.map((alert: any) => (
                   <div
                     key={alert.bloodGroup}
-                    className="flex items-center justify-between p-3 bg-amber-50 border border-amber-200 rounded-lg"
+                    className="flex items-center justify-between p-3.5 bg-amber-50/60 border border-amber-200/80 rounded-2xl"
                   >
-                    <div className="flex items-center gap-2">
-                      <AlertTriangle className="h-4 w-4 text-amber-500" />
-                      <span className="font-semibold text-red-600">
+                    <div className="flex items-center gap-2.5">
+                      <span className="px-2 py-0.5 rounded-lg bg-amber-100 font-bold text-amber-900 text-xs">
                         {alert.bloodGroup}
                       </span>
+                      <span className="text-xs font-semibold text-slate-800">
+                        Immediate shortage risk
+                      </span>
                     </div>
-                    <span className="text-sm text-amber-700">
-                      Only {alert.units} units remaining
-                    </span>
+                    <Badge variant="warning">
+                      Only {alert.units} {alert.units === 1 ? 'unit' : 'units'} left
+                    </Badge>
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
-        )}
+            ) : (
+              <div className="p-6 rounded-2xl bg-slate-50 border border-dashed border-slate-200 text-center text-xs text-slate-600">
+                All blood groups currently exceed the regional minimum threshold.
+              </div>
+            )}
+          </div>
 
-        {/* Expiring Soon */}
-        {summary?.expiringSoon?.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Expiring Soon</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
+          {/* Expiring Soon */}
+          <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-sm">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600">
+                <Clock className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-slate-900">Expiring Units Watch</h3>
+                <p className="text-xs text-slate-500">Component expiration in the next 7 days</p>
+              </div>
+            </div>
+
+            {summary?.expiringSoon && summary.expiringSoon.length > 0 ? (
+              <div className="space-y-2.5">
                 {summary.expiringSoon.map((item: any, idx: number) => (
                   <div
                     key={idx}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    className="flex items-center justify-between p-3.5 bg-rose-50/40 border border-rose-200/60 rounded-2xl"
                   >
-                    <div>
-                      <span className="font-semibold text-red-600">
+                    <div className="flex items-center gap-2.5">
+                      <span className="px-2 py-0.5 rounded-lg bg-rose-100 font-bold text-rose-900 text-xs">
                         {item.bloodGroup}
                       </span>
-                      <span className="text-gray-500 ml-2">
-                        {item.component}
+                      <span className="text-xs font-semibold text-slate-800">
+                        {COMPONENT_NAMES[item.component] || item.component}
                       </span>
                     </div>
-                    <span className="text-sm text-amber-600">
-                      Expires in {item.daysUntilExpiry} days
-                    </span>
+                    <Badge variant="danger" dot>
+                      Expires in {item.daysUntilExpiry}d
+                    </Badge>
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
-        )}
+            ) : (
+              <div className="p-6 rounded-2xl bg-slate-50 border border-dashed border-slate-200 text-center text-xs text-slate-600">
+                No inventory units expiring within the upcoming 7-day window.
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </DashboardLayout>
   );

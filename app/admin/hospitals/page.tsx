@@ -7,9 +7,10 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import Table from '@/components/ui/Table';
 import { hospitalAPI } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
-import { Building2, Check, X, Search } from 'lucide-react';
+import { Building2, Check, X, Search, RefreshCw, CheckCircle2, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function AdminHospitalsPage() {
@@ -27,7 +28,7 @@ export default function AdminHospitalsPage() {
       const res = await hospitalAPI.getAll({ search });
       setHospitals(res.data.data?.hospitals || []);
     } catch (error) {
-      toast.error('Failed to load hospitals');
+      toast.error('Failed to load registered hospitals');
     } finally {
       setLoading(false);
     }
@@ -37,11 +38,11 @@ export default function AdminHospitalsPage() {
     try {
       await hospitalAPI.verify(id, { isVerified });
       toast.success(
-        isVerified ? 'Hospital verified' : 'Hospital verification revoked'
+        isVerified ? 'Hospital accreditation verified' : 'Hospital verification suspended'
       );
       fetchHospitals();
     } catch (error) {
-      toast.error('Failed to update hospital');
+      toast.error('Failed to update hospital status');
     }
   };
 
@@ -50,108 +51,152 @@ export default function AdminHospitalsPage() {
     fetchHospitals();
   };
 
+  const columns = [
+    {
+      header: 'Hospital / Institution',
+      accessor: (h: any) => (
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-sky-50 border border-sky-200 flex items-center justify-center text-sky-700">
+            <Building2 className="w-4 h-4" />
+          </div>
+          <div>
+            <p className="font-bold text-slate-900 text-sm">{h.hospitalName}</p>
+            <p className="text-[11px] text-slate-500">Reg: {h.registrationNumber || 'Pending Filing'}</p>
+          </div>
+        </div>
+      ),
+    },
+    {
+      header: 'Classification',
+      accessor: (h: any) => (
+        <span className="capitalize text-xs font-semibold text-slate-700">
+          {h.type || 'General'}
+        </span>
+      ),
+    },
+    {
+      header: 'City / Region',
+      accessor: (h: any) => (
+        <span className="text-xs text-slate-600 font-medium">{h.city || 'Regional Center'}</span>
+      ),
+    },
+    {
+      header: 'Key Contact Person',
+      accessor: (h: any) => (
+        <div className="text-xs">
+          <span className="font-semibold text-slate-800 block">{h.contactPerson?.name || 'Medical Director'}</span>
+          <span className="text-slate-500 text-[11px]">{h.contactPerson?.phone || h.contactPerson?.email || 'N/A'}</span>
+        </div>
+      ),
+    },
+    {
+      header: 'Requisition Volume',
+      accessor: (h: any) => (
+        <span className="font-bold text-slate-900 text-xs">
+          {h.totalRequests || 0} <span className="text-slate-500 font-normal">orders</span>
+        </span>
+      ),
+    },
+    {
+      header: 'Accreditation Status',
+      accessor: (h: any) => (
+        <Badge
+          variant={h.isVerified ? 'success' : 'warning'}
+          dot
+          className="font-semibold"
+        >
+          {h.isVerified ? 'Verified Center' : 'Awaiting Review'}
+        </Badge>
+      ),
+    },
+    {
+      header: 'Action',
+      accessor: (h: any) => (
+        <div>
+          {h.isVerified ? (
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-rose-700 border-rose-200 hover:bg-rose-50 text-xs py-1 h-8"
+              onClick={() => handleVerify(h._id, false)}
+            >
+              <X className="h-3.5 w-3.5 mr-1 text-rose-600" />
+              Revoke
+            </Button>
+          ) : (
+            <Button
+              size="sm"
+              className="bg-emerald-600 hover:bg-emerald-700 text-xs py-1 h-8"
+              onClick={() => handleVerify(h._id, true)}
+            >
+              <Check className="h-3.5 w-3.5 mr-1" />
+              Verify
+            </Button>
+          )}
+        </div>
+      ),
+    },
+  ];
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-gray-900">Manage Hospitals</h1>
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm">
+          <div>
+            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-xs font-semibold mb-1">
+              <Building2 className="w-3.5 h-3.5" />
+              <span>Institutional Directory</span>
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+              Manage Partner Hospitals
+            </h1>
+            <p className="text-xs text-slate-600">
+              Verify credentials, track requisition volumes, and authorize medical centers for emergency dispatch
+            </p>
+          </div>
 
-        {/* Search */}
-        <Card>
-          <CardContent className="p-4">
-            <form onSubmit={handleSearch} className="flex gap-4">
-              <div className="flex-1">
-                <Input
-                  placeholder="Search hospitals..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-              </div>
-              <Button type="submit">
-                <Search className="h-4 w-4 mr-2" />
-                Search
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={fetchHospitals}
+              className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Refresh
+            </Button>
+          </div>
+        </div>
 
-        {/* Hospitals Table */}
-        <Card>
-          <CardContent>
-            {loading ? (
-              <BloodLoader fullScreen={false} size="sm" text="Loading hospitals" />
-            ) : hospitals.length === 0 ? (
-              <div className="text-center py-12">
-                <Building2 className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500">No hospitals found.</p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b text-left">
-                      <th className="pb-3 font-medium text-gray-500">Hospital Name</th>
-                      <th className="pb-3 font-medium text-gray-500">Registration No.</th>
-                      <th className="pb-3 font-medium text-gray-500">Type</th>
-                      <th className="pb-3 font-medium text-gray-500">City</th>
-                      <th className="pb-3 font-medium text-gray-500">Contact Person</th>
-                      <th className="pb-3 font-medium text-gray-500">Total Requests</th>
-                      <th className="pb-3 font-medium text-gray-500">Verified</th>
-                      <th className="pb-3 font-medium text-gray-500">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y">
-                    {hospitals.map((hospital: any) => (
-                      <tr key={hospital._id} className="hover:bg-gray-50">
-                        <td className="py-3 font-medium">
-                          {hospital.hospitalName}
-                        </td>
-                        <td className="py-3">
-                          {hospital.registrationNumber || 'N/A'}
-                        </td>
-                        <td className="py-3 capitalize">{hospital.type}</td>
-                        <td className="py-3">{hospital.city}</td>
-                        <td className="py-3">
-                          {hospital.contactPerson?.name || 'N/A'}
-                        </td>
-                        <td className="py-3 text-center">
-                          {hospital.totalRequests}
-                        </td>
-                        <td className="py-3">
-                          <Badge
-                            variant={hospital.isVerified ? 'success' : 'warning'}
-                          >
-                            {hospital.isVerified ? 'Verified' : 'Pending'}
-                          </Badge>
-                        </td>
-                        <td className="py-3">
-                          {hospital.isVerified ? (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-red-600"
-                              onClick={() => handleVerify(hospital._id, false)}
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          ) : (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-green-600"
-                              onClick={() => handleVerify(hospital._id, true)}
-                            >
-                              <Check className="h-4 w-4" />
-                            </Button>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        {/* Search Toolbar */}
+        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+          <form onSubmit={handleSearch} className="flex items-center gap-3 w-full sm:max-w-md">
+            <div className="flex-1">
+              <Input
+                placeholder="Search hospital by name, registration or city..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+            <Button type="submit" size="sm">
+              <Search className="h-4 w-4 mr-1.5" />
+              Search
+            </Button>
+          </form>
+
+          <div className="text-xs font-medium text-slate-500 w-full sm:w-auto text-right">
+            Total Partners: <strong className="text-slate-800">{hospitals.length}</strong>
+          </div>
+        </div>
+
+        {/* Table */}
+        <Table
+          columns={columns}
+          data={hospitals}
+          loading={loading}
+          emptyMessage="No partner hospital facilities match your current query."
+        />
       </div>
     </DashboardLayout>
   );

@@ -28,39 +28,70 @@ export function formatDateTime(date: string | Date): string {
 }
 
 /**
- * Get urgency badge styling classes (modern luminous styling)
+ * Get urgency badge styling classes (high contrast clinical styling)
  */
 export function getUrgencyColor(urgency: string): string {
   switch (urgency) {
     case 'critical':
-      return 'bg-rose-500/15 text-rose-400 border border-rose-500/30';
+      return 'bg-rose-50 text-rose-700 border border-rose-200 font-medium';
     case 'urgent':
-      return 'bg-amber-500/15 text-amber-400 border border-amber-500/30';
+      return 'bg-amber-50 text-amber-800 border border-amber-200 font-medium';
     default:
-      return 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30';
+      return 'bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium';
   }
 }
 
 /**
- * Get status badge styling classes
+ * Get status badge styling classes (high contrast clinical styling)
  */
 export function getStatusColor(status: string): string {
   switch (status) {
     case 'fulfilled':
     case 'completed':
     case 'available':
-      return 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30';
+      return 'bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium';
     case 'pending':
-      return 'bg-amber-500/15 text-amber-400 border border-amber-500/30';
+      return 'bg-amber-50 text-amber-800 border border-amber-200 font-medium';
     case 'approved':
-      return 'bg-sky-500/15 text-sky-400 border border-sky-500/30';
+      return 'bg-sky-50 text-sky-700 border border-sky-200 font-medium';
     case 'rejected':
     case 'cancelled':
     case 'expired':
     case 'discarded':
-      return 'bg-rose-500/15 text-rose-400 border border-rose-500/30';
+      return 'bg-rose-50 text-rose-700 border border-rose-200 font-medium';
     default:
-      return 'bg-slate-500/15 text-slate-400 border border-slate-500/30';
+      return 'bg-slate-100 text-slate-700 border border-slate-200 font-medium';
+  }
+}
+
+export function getUrgencyVariant(urgency: string): 'danger' | 'warning' | 'success' | 'default' {
+  switch (urgency) {
+    case 'critical':
+      return 'danger';
+    case 'urgent':
+      return 'warning';
+    default:
+      return 'success';
+  }
+}
+
+export function getStatusVariant(status: string): 'success' | 'warning' | 'info' | 'danger' | 'default' {
+  switch (status) {
+    case 'fulfilled':
+    case 'completed':
+    case 'available':
+      return 'success';
+    case 'pending':
+      return 'warning';
+    case 'approved':
+      return 'info';
+    case 'rejected':
+    case 'cancelled':
+    case 'expired':
+    case 'discarded':
+      return 'danger';
+    default:
+      return 'default';
   }
 }
 

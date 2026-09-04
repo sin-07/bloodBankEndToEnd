@@ -9,9 +9,10 @@ import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
 import Modal from '@/components/ui/Modal';
+import Table from '@/components/ui/Table';
 import { bloodRequestAPI } from '@/lib/api';
-import { formatDate, getStatusColor, getUrgencyColor, BLOOD_GROUPS } from '@/lib/utils';
-import { Plus, Search } from 'lucide-react';
+import { formatDate, getStatusVariant, getUrgencyVariant, BLOOD_GROUPS } from '@/lib/utils';
+import { Plus, Search, Droplets, Filter, RefreshCw, Activity, Calendar } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function RequestsPage() {
@@ -22,7 +23,7 @@ export default function RequestsPage() {
   const [filters, setFilters] = useState({ status: '', bloodGroup: '' });
   const [formData, setFormData] = useState({
     patientName: '',
-    bloodGroup: '',
+    bloodGroup: 'O+',
     units: '1',
     urgency: 'normal',
     reason: '',
@@ -41,7 +42,7 @@ export default function RequestsPage() {
       const res = await bloodRequestAPI.getAll(filters);
       setRequests(res.data.data?.requests || []);
     } catch (error) {
-      toast.error('Failed to load requests');
+      toast.error('Failed to load blood requests');
     } finally {
       setLoading(false);
     }
@@ -55,11 +56,11 @@ export default function RequestsPage() {
         ...formData,
         units: Number(formData.units),
       });
-      toast.success('Blood request submitted successfully');
+      toast.success('Emergency blood request dispatched successfully');
       setShowModal(false);
       setFormData({
         patientName: '',
-        bloodGroup: '',
+        bloodGroup: 'O+',
         units: '1',
         urgency: 'normal',
         reason: '',
@@ -76,7 +77,7 @@ export default function RequestsPage() {
   };
 
   const handleCancel = async (id: string) => {
-    if (!confirm('Are you sure you want to cancel this request?')) return;
+    if (!confirm('Are you sure you want to cancel this emergency request?')) return;
     try {
       await bloodRequestAPI.cancel(id);
       toast.success('Request cancelled');
@@ -86,129 +87,167 @@ export default function RequestsPage() {
     }
   };
 
+  const columns = [
+    {
+      header: 'Patient Name',
+      accessor: (req: any) => (
+        <div>
+          <span className="font-bold text-slate-900 text-sm block">{req.patientName}</span>
+          <span className="text-[11px] text-slate-500">{req.contactNumber || 'No phone'}</span>
+        </div>
+      ),
+    },
+    {
+      header: 'Blood Group',
+      accessor: (req: any) => (
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 font-bold text-xs">
+          <Droplets className="w-3.5 h-3.5 fill-rose-600" />
+          <span>{req.bloodGroup}</span>
+        </div>
+      ),
+    },
+    {
+      header: 'Units',
+      accessor: (req: any) => (
+        <span className="font-bold text-slate-900 text-xs">{req.units} units</span>
+      ),
+    },
+    {
+      header: 'Urgency',
+      accessor: (req: any) => (
+        <Badge
+          variant={getUrgencyVariant(req.urgency)}
+          dot
+          pulse={req.urgency === 'critical'}
+          className="capitalize font-semibold"
+        >
+          {req.urgency}
+        </Badge>
+      ),
+    },
+    {
+      header: 'Target Hospital',
+      accessor: (req: any) => (
+        <span className="text-xs text-slate-700 truncate max-w-[160px] block" title={req.hospitalName}>
+          {req.hospitalName || 'Regional Center'}
+        </span>
+      ),
+    },
+    {
+      header: 'Status',
+      accessor: (req: any) => (
+        <Badge variant={getStatusVariant(req.status)} dot className="capitalize font-semibold">
+          {req.status}
+        </Badge>
+      ),
+    },
+    {
+      header: 'Requested Date',
+      accessor: (req: any) => (
+        <span className="text-xs text-slate-500">{formatDate(req.createdAt)}</span>
+      ),
+    },
+    {
+      header: 'Actions',
+      accessor: (req: any) => (
+        <div>
+          {req.status === 'pending' && (
+            <button
+              type="button"
+              onClick={() => handleCancel(req._id)}
+              className="text-xs font-semibold text-rose-600 hover:text-rose-700 px-2 py-1 rounded-lg hover:bg-rose-50 transition-colors"
+            >
+              Cancel
+            </button>
+          )}
+        </div>
+      ),
+    },
+  ];
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Blood Requests</h1>
-          <Button onClick={() => setShowModal(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            New Request
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm">
+          <div>
+            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-xs font-semibold mb-1">
+              <Activity className="w-3.5 h-3.5" />
+              <span>Personal Requisitions Log</span>
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+              Emergency Blood Requests
+            </h1>
+            <p className="text-xs text-slate-600">
+              Submit and monitor individual requests for yourself or family members across regional banks
+            </p>
+          </div>
+
+          <Button size="sm" onClick={() => setShowModal(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Create Request
           </Button>
         </div>
 
         {/* Filters */}
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex gap-4 flex-wrap">
-              <Select
-                placeholder="All Statuses"
-                value={filters.status}
-                onChange={(e) =>
-                  setFilters({ ...filters, status: e.target.value })
-                }
-                options={[
-                  { label: 'All Statuses', value: '' },
-                  { label: 'Pending', value: 'pending' },
-                  { label: 'Approved', value: 'approved' },
-                  { label: 'Fulfilled', value: 'fulfilled' },
-                  { label: 'Rejected', value: 'rejected' },
-                  { label: 'Cancelled', value: 'cancelled' },
-                ]}
-              />
-              <Select
-                placeholder="All Blood Groups"
-                value={filters.bloodGroup}
-                onChange={(e) =>
-                  setFilters({ ...filters, bloodGroup: e.target.value })
-                }
-                options={[
-                  { label: 'All Blood Groups', value: '' },
-                  ...BLOOD_GROUPS.map((bg) => ({ label: bg, value: bg })),
-                ]}
-              />
-            </div>
-          </CardContent>
-        </Card>
+        <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <Filter className="w-4 h-4 text-slate-500" />
+            <Select
+              placeholder="All Statuses"
+              value={filters.status}
+              onChange={(e) =>
+                setFilters({ ...filters, status: e.target.value })
+              }
+              options={[
+                { label: 'All Statuses', value: '' },
+                { label: 'Pending', value: 'pending' },
+                { label: 'Approved', value: 'approved' },
+                { label: 'Fulfilled', value: 'fulfilled' },
+                { label: 'Rejected', value: 'rejected' },
+                { label: 'Cancelled', value: 'cancelled' },
+              ]}
+              className="text-xs py-1.5"
+            />
+            <Select
+              placeholder="All Blood Groups"
+              value={filters.bloodGroup}
+              onChange={(e) =>
+                setFilters({ ...filters, bloodGroup: e.target.value })
+              }
+              options={[
+                { label: 'All Blood Groups', value: '' },
+                ...BLOOD_GROUPS.map((bg) => ({ label: bg, value: bg })),
+              ]}
+              className="text-xs py-1.5"
+            />
+          </div>
 
-        {/* Requests List */}
-        <Card>
-          <CardContent>
-            {loading ? (
-              <BloodLoader fullScreen={false} size="sm" text="Loading requests" />
-            ) : requests.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-gray-500">No blood requests found.</p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b text-left">
-                      <th className="pb-3 font-medium text-gray-500">Patient</th>
-                      <th className="pb-3 font-medium text-gray-500">Blood Group</th>
-                      <th className="pb-3 font-medium text-gray-500">Units</th>
-                      <th className="pb-3 font-medium text-gray-500">Urgency</th>
-                      <th className="pb-3 font-medium text-gray-500">Hospital</th>
-                      <th className="pb-3 font-medium text-gray-500">Status</th>
-                      <th className="pb-3 font-medium text-gray-500">Date</th>
-                      <th className="pb-3 font-medium text-gray-500">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y">
-                    {requests.map((req: any) => (
-                      <tr key={req._id} className="hover:bg-gray-50">
-                        <td className="py-3">{req.patientName}</td>
-                        <td className="py-3">
-                          <span className="font-semibold text-red-600">
-                            {req.bloodGroup}
-                          </span>
-                        </td>
-                        <td className="py-3">{req.units}</td>
-                        <td className="py-3">
-                          <Badge variant={getUrgencyColor(req.urgency) as any}>
-                            {req.urgency}
-                          </Badge>
-                        </td>
-                        <td className="py-3">{req.hospitalName}</td>
-                        <td className="py-3">
-                          <Badge variant={getStatusColor(req.status) as any}>
-                            {req.status}
-                          </Badge>
-                        </td>
-                        <td className="py-3">{formatDate(req.createdAt)}</td>
-                        <td className="py-3">
-                          {req.status === 'pending' && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleCancel(req._id)}
-                              className="text-red-600"
-                            >
-                              Cancel
-                            </Button>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+          <div className="text-xs font-medium text-slate-500 w-full sm:w-auto text-right">
+            Total Requests: <strong className="text-slate-800">{requests.length}</strong>
+          </div>
+        </div>
+
+        {/* Requests Table */}
+        <Table
+          columns={columns}
+          data={requests}
+          loading={loading}
+          emptyMessage="No blood requests found matching your query."
+        />
 
         {/* New Request Modal */}
         <Modal
           isOpen={showModal}
           onClose={() => setShowModal(false)}
-          title="New Blood Request"
+          title="Dispatch Emergency Blood Request"
           size="lg"
         >
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
-                label="Patient Name"
+                label="Patient Name *"
+                placeholder="Full name of recipient"
                 value={formData.patientName}
                 onChange={(e) =>
                   setFormData({ ...formData, patientName: e.target.value })
@@ -216,7 +255,7 @@ export default function RequestsPage() {
                 required
               />
               <Select
-                label="Blood Group"
+                label="Blood Group *"
                 value={formData.bloodGroup}
                 onChange={(e) =>
                   setFormData({ ...formData, bloodGroup: e.target.value })
@@ -225,9 +264,10 @@ export default function RequestsPage() {
                 required
               />
               <Input
-                label="Units Required"
+                label="Units Required *"
                 type="number"
                 min="1"
+                max="10"
                 value={formData.units}
                 onChange={(e) =>
                   setFormData({ ...formData, units: e.target.value })
@@ -235,19 +275,20 @@ export default function RequestsPage() {
                 required
               />
               <Select
-                label="Urgency"
+                label="Triage Urgency *"
                 value={formData.urgency}
                 onChange={(e) =>
                   setFormData({ ...formData, urgency: e.target.value })
                 }
                 options={[
-                  { label: 'Normal', value: 'normal' },
-                  { label: 'Urgent', value: 'urgent' },
-                  { label: 'Critical', value: 'critical' },
+                  { label: 'Normal (Routine)', value: 'normal' },
+                  { label: 'Urgent (Required < 6 hrs)', value: 'urgent' },
+                  { label: 'Critical (Life-Threatening)', value: 'critical' },
                 ]}
               />
               <Input
-                label="Hospital Name"
+                label="Hospital / Ward Location *"
+                placeholder="e.g. Lilavati Hospital, Ward 3"
                 value={formData.hospitalName}
                 onChange={(e) =>
                   setFormData({ ...formData, hospitalName: e.target.value })
@@ -255,7 +296,8 @@ export default function RequestsPage() {
                 required
               />
               <Input
-                label="City"
+                label="City *"
+                placeholder="City"
                 value={formData.city}
                 onChange={(e) =>
                   setFormData({ ...formData, city: e.target.value })
@@ -263,23 +305,26 @@ export default function RequestsPage() {
                 required
               />
               <Input
-                label="Contact Number"
+                label="Attending Contact Number *"
+                placeholder="+91 98765 43210"
                 value={formData.contactNumber}
                 onChange={(e) =>
                   setFormData({ ...formData, contactNumber: e.target.value })
                 }
                 required
               />
+              <Input
+                label="Clinical Reason / Diagnosis *"
+                placeholder="e.g. Scheduled knee replacement surgery"
+                value={formData.reason}
+                onChange={(e) =>
+                  setFormData({ ...formData, reason: e.target.value })
+                }
+                required
+              />
             </div>
-            <Input
-              label="Reason"
-              value={formData.reason}
-              onChange={(e) =>
-                setFormData({ ...formData, reason: e.target.value })
-              }
-              required
-            />
-            <div className="flex justify-end gap-3 pt-4">
+
+            <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
               <Button
                 variant="outline"
                 type="button"
