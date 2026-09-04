@@ -3,622 +3,934 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import {
-  Droplets, Heart, Users, Building2, Shield, ArrowRight,
-  Activity, Clock, Award, Phone, Mail, MapPin, ChevronDown,
-  CheckCircle2, Globe,
+  Droplets,
+  Heart,
+  Users,
+  Building2,
+  Shield,
+  ArrowRight,
+  Activity,
+  Clock,
+  Award,
+  Phone,
+  Mail,
+  MapPin,
+  CheckCircle2,
+  AlertCircle,
+  Sparkles,
+  ChevronRight,
+  Calendar,
+  Share2,
+  Sliders,
+  Zap,
 } from 'lucide-react';
 import {
-  gsap, ScrollTrigger,
-  splitText, createTextReveal, createRipple,
+  gsap,
+  ScrollTrigger,
+  splitText,
+  createTextReveal,
+  createRipple,
 } from '@/lib/gsap';
 import { useGSAP } from '@gsap/react';
 import MagneticButton from '@/components/gsap/MagneticButton';
+import { BLOOD_GROUPS, BLOOD_COMPATIBILITY, BloodGroup } from '@/lib/utils';
 
 gsap.registerPlugin(ScrollTrigger);
 
 /* ════════════════════════════════════════════════════════════
-   DATA
+   STATIC SHOWCASE DATA
    ════════════════════════════════════════════════════════════ */
 
-const features = [
+const portalRoles = [
   {
-    icon: <Users className="w-7 h-7" />, title: 'For Donors',
-    desc: 'Register, track donations, check eligibility, and download certificates. Every drop saves a life.',
-    gradient: 'from-red-500 to-rose-600', iconBg: 'bg-red-500/10 text-red-600',
+    icon: <Users className="w-6 h-6" />,
+    role: 'Voluntary Donors',
+    title: 'Be Someone’s Hero Today',
+    desc: 'Track your donations, monitor real-time eligibility countdowns, and download verified digital certificates in seconds.',
+    features: ['Instant health screening check', 'Digital donor pass & history', 'Emergency proximity alerts'],
+    badge: 'Save Up to 3 Lives',
+    badgeColor: 'bg-rose-500/15 text-rose-400 border-rose-500/30',
+    link: '/auth/register',
+    btnText: 'Join as a Donor',
   },
   {
-    icon: <Building2 className="w-7 h-7" />, title: 'For Hospitals',
-    desc: 'Request blood in bulk, track status in real-time, and get matched with donors in your city.',
-    gradient: 'from-blue-500 to-indigo-600', iconBg: 'bg-blue-500/10 text-blue-600',
+    icon: <Building2 className="w-6 h-6" />,
+    role: 'Hospitals & Trauma Centers',
+    title: 'Rapid Emergency Blood Supply',
+    desc: 'Issue bulk requests with surgical urgency tagging, track live delivery status, and access verified regional blood reserves.',
+    features: ['Priority dispatch under 15 mins', 'Direct inventory reservation', 'Multi-center logistics tracking'],
+    badge: '15-Min Response Guarantee',
+    badgeColor: 'bg-sky-500/15 text-sky-400 border-sky-500/30',
+    link: '/auth/register?role=hospital',
+    btnText: 'Register Hospital',
   },
   {
-    icon: <Shield className="w-7 h-7" />, title: 'For Admins',
-    desc: 'Manage inventory, approve requests, monitor analytics, and ensure supply across the network.',
-    gradient: 'from-emerald-500 to-teal-600', iconBg: 'bg-emerald-500/10 text-emerald-600',
+    icon: <Shield className="w-6 h-6" />,
+    role: 'Bank Administrators',
+    title: 'Mission-Critical Telemetry',
+    desc: 'Full cold-chain custody management, inventory expiry tracking, donor matching engine, and automated compliance auditing.',
+    features: ['Automated expiry discard alerts', 'City-wide supply balancing', 'Instant one-click XLSX/PDF reports'],
+    badge: 'Zero-Waste Protocol',
+    badgeColor: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+    link: '/auth/login',
+    btnText: 'Admin Terminal',
   },
 ];
 
-const steps = [
-  { icon: <CheckCircle2 className="w-8 h-8" />, title: 'Register', desc: 'Create your account in seconds', num: '01' },
-  { icon: <Activity className="w-8 h-8" />, title: 'Health Check', desc: 'Quick eligibility screening', num: '02' },
-  { icon: <Droplets className="w-8 h-8" />, title: 'Donate', desc: 'Visit a center and donate', num: '03' },
-  { icon: <Award className="w-8 h-8" />, title: 'Save Lives', desc: 'Get your certificate & track impact', num: '04' },
+const telemetryStats = [
+  { target: 418, suffix: '+', label: 'Units Stocked', desc: 'Tested & ready for immediate dispatch' },
+  { target: 99, suffix: '.4%', label: 'Match Accuracy', desc: 'Precise cross-match verification' },
+  { target: 14, suffix: ' Min', label: 'Avg Dispatch', desc: 'Rapid trauma response delivery' },
+  { target: 12000, suffix: '+', label: 'Lives Impacted', desc: 'Across partner hospitals nationwide' },
 ];
 
-const bloodGroups = [
-  { name: 'A+', stock: 78 }, { name: 'A-', stock: 62 },
-  { name: 'B+', stock: 85 }, { name: 'B-', stock: 57 },
-  { name: 'AB+', stock: 71 }, { name: 'AB-', stock: 64 },
-  { name: 'O+', stock: 90 }, { name: 'O-', stock: 68 },
+const workflowSteps = [
+  {
+    num: '01',
+    title: 'One-Click Registration',
+    desc: 'Register as a donor or hospital in under 60 seconds with verified mobile authorization.',
+    icon: <Users className="w-5 h-5 text-rose-400" />,
+  },
+  {
+    num: '02',
+    title: 'Automated Screening',
+    desc: 'Smart algorithmic eligibility screening checks donation intervals, vitals, and health indicators.',
+    icon: <Activity className="w-5 h-5 text-sky-400" />,
+  },
+  {
+    num: '03',
+    title: 'Cold-Chain Donation',
+    desc: 'Donate at certified collection hubs with temperature-controlled real-time custody logging.',
+    icon: <Droplets className="w-5 h-5 text-rose-500" />,
+  },
+  {
+    num: '04',
+    title: 'Emergency Life Delivery',
+    desc: 'Units are matched to critical trauma cases, saving lives while you receive impact updates.',
+    icon: <Award className="w-5 h-5 text-emerald-400" />,
+  },
 ];
 
 /* ════════════════════════════════════════════════════════════
-   SVG PATHS
-   ════════════════════════════════════════════════════════════ */
-
-const DROP_PATH = 'M60 8 C60 8, 10 80, 10 108 C10 136, 32 156, 60 156 C88 156, 110 136, 110 108 C110 80, 60 8, 60 8Z';
-
-/* ════════════════════════════════════════════════════════════
-   COMPONENT
+   MAIN COMPONENT
    ════════════════════════════════════════════════════════════ */
 
 export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
-  const featuresRef = useRef<HTMLElement>(null);
-  const processRef = useRef<HTMLElement>(null);
-  const processTrackRef = useRef<HTMLDivElement>(null);
-  const bloodRef = useRef<HTMLElement>(null);
-  const ctaRef = useRef<HTMLElement>(null);
-
+  const statsRef = useRef<HTMLElement>(null);
   const [scrolled, setScrolled] = useState(false);
 
-  /* ─── Scroll listener for navbar ─── */
+  // Compatibility Explorer State
+  const [selectedGroup, setSelectedGroup] = useState<BloodGroup>('O-');
+
+  // Impact Calculator State
+  const [annualDonations, setAnnualDonations] = useState<number>(2);
+
+  // Navbar scroll blur effect
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 10);
-    window.addEventListener('scroll', fn, { passive: true });
-    return () => window.removeEventListener('scroll', fn);
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   /* ═══════════════════════════════════════════════════════════
-     GSAP CONTEXT — all animations, single context for cleanup
+     GSAP ANIMATION SEQUENCES
      ═══════════════════════════════════════════════════════════ */
-  useGSAP(() => {
+  useGSAP(
+    () => {
+      // 1. Hero text reveal
+      const heroTl = gsap.timeline();
+      heroTl.from('.hero-badge', { y: -20, opacity: 0, duration: 0.6, ease: 'power3.out' });
 
-    /* ─── 1. HERO ENTRANCE ─── */
-    const heroTl = gsap.timeline();
+      const heroLine1 = document.querySelector('.hero-title-1') as HTMLElement;
+      const heroLine2 = document.querySelector('.hero-title-2') as HTMLElement;
 
-    // Navbar is always visible — no opacity animation on it
-    heroTl.from('.hero-badge', { x: -30, opacity: 0, duration: 0.5 });
+      if (heroLine1 && heroLine2) {
+        const c1 = splitText(heroLine1);
+        const c2 = splitText(heroLine2);
+        heroTl.add(createTextReveal(c1, { stagger: 0.02, y: 40, duration: 0.6 }), '-=0.3');
+        heroTl.add(createTextReveal(c2, { stagger: 0.02, y: 40, duration: 0.6 }), '-=0.4');
+      }
 
-    // Title split reveal
-    const titleLine1 = document.querySelector('.hero-title-1') as HTMLElement;
-    const titleLine2 = document.querySelector('.hero-title-2') as HTMLElement;
-    if (titleLine1 && titleLine2) {
-      const c1 = splitText(titleLine1);
-      const c2 = splitText(titleLine2);
-      heroTl.add(createTextReveal(c1, { stagger: 0.03, y: 60, duration: 0.6 }), '-=0.1');
-      heroTl.add(createTextReveal(c2, { stagger: 0.03, y: 60, duration: 0.6 }), '-=0.3');
-    }
+      heroTl.from(
+        '.hero-subtext',
+        { y: 20, opacity: 0, duration: 0.7, ease: 'power3.out' },
+        '-=0.2'
+      );
+      heroTl.from(
+        '.hero-cta-group > *',
+        { y: 25, opacity: 0, stagger: 0.12, duration: 0.6, ease: 'back.out(1.5)' },
+        '-=0.4'
+      );
+      heroTl.from(
+        '.hero-floating-card',
+        { scale: 0.92, opacity: 0, duration: 0.8, ease: 'power3.out' },
+        '-=0.4'
+      );
 
-    heroTl.from('.hero-subtitle', { y: 20, opacity: 0, duration: 0.5 }, '-=0.2');
-    heroTl.from('.hero-cta-1', { y: 20, opacity: 0, scale: 0.9, duration: 0.5, ease: 'back.out(1.7)' }, '-=0.1');
-    heroTl.from('.hero-cta-2', { y: 20, opacity: 0, scale: 0.9, duration: 0.5, ease: 'back.out(1.7)' }, '-=0.3');
-    heroTl.from('.hero-illustration', { scale: 0.8, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.5');
-    heroTl.from('.hero-float-icon', {
-      scale: 0, opacity: 0, stagger: 0.1, duration: 0.5, ease: 'back.out(2)',
-    }, '-=0.4');
-    heroTl.from('.scroll-indicator', { y: -10, opacity: 0, duration: 0.4 }, '-=0.2');
+      // 2. Animated Stats Counters
+      const statElements = document.querySelectorAll('.stat-number');
+      statElements.forEach((el) => {
+        const target = parseFloat(el.getAttribute('data-target') || '0');
+        const suffix = el.getAttribute('data-suffix') || '';
+        const isDecimal = suffix.includes('.');
 
-    // SVG blood drop breathing
-    gsap.to('.hero-drop', {
-      scale: 1.05, duration: 2, ease: 'sine.inOut', yoyo: true, repeat: -1,
-      transformOrigin: '50% 50%',
-    });
-
-    // Orbital ring rotation
-    gsap.to('.orbital-ring-1', { rotation: 360, duration: 30, ease: 'none', repeat: -1 });
-    gsap.to('.orbital-ring-2', { rotation: -360, duration: 22, ease: 'none', repeat: -1 });
-
-    /* ─── 3. HERO MOUSE PARALLAX ─── */
-    const hero = heroRef.current;
-    if (hero) {
-      const layers = hero.querySelectorAll<HTMLElement>('[data-speed]');
-      const onMove = (e: MouseEvent) => {
-        const r = hero.getBoundingClientRect();
-        const nx = (e.clientX - r.left - r.width / 2) / r.width;
-        const ny = (e.clientY - r.top - r.height / 2) / r.height;
-        layers.forEach(l => {
-          const s = parseFloat(l.dataset.speed || '0');
-          gsap.to(l, { x: nx * s, y: ny * s, duration: 1, ease: 'power2.out' });
+        ScrollTrigger.create({
+          trigger: el,
+          start: 'top 85%',
+          once: true,
+          onEnter: () => {
+            const obj = { val: 0 };
+            gsap.to(obj, {
+              val: target,
+              duration: 2,
+              ease: 'power2.out',
+              onUpdate: () => {
+                el.textContent = isDecimal
+                  ? obj.val.toFixed(1) + suffix
+                  : Math.floor(obj.val).toLocaleString() + suffix;
+              },
+            });
+          },
         });
-      };
-      hero.addEventListener('mousemove', onMove);
-    }
-
-    /* ─── 4. FEATURES — masked reveal + stagger ─── */
-    const featTitle = document.querySelector('.feat-title') as HTMLElement;
-    if (featTitle) {
-      ScrollTrigger.create({
-        trigger: featTitle,
-        start: 'top 82%',
-        once: true,
-        onEnter: () => {
-          const chars = splitText(featTitle);
-          createTextReveal(chars, { y: 40, duration: 0.5, stagger: 0.02 });
-        },
       });
-    }
 
-    gsap.from('.feature-card', {
-      y: 60, opacity: 0, scale: 0.92,
-      stagger: 0.12, duration: 0.7, ease: 'power3.out',
-      scrollTrigger: { trigger: featuresRef.current, start: 'top 75%', once: true },
-    });
-
-    /* ─── 6. HORIZONTAL SCROLL — How It Works ─── */
-    if (processTrackRef.current && processRef.current) {
-      const track = processTrackRef.current;
-      const section = processRef.current;
-
-      const getScrollAmount = () => track.scrollWidth - window.innerWidth;
-
-      gsap.to(track, {
-        x: () => -getScrollAmount(),
-        ease: 'none',
+      // 3. Workflow Steps Stagger
+      gsap.from('.workflow-card', {
+        y: 40,
+        opacity: 0,
+        stagger: 0.15,
+        duration: 0.7,
+        ease: 'power3.out',
         scrollTrigger: {
-          trigger: section,
-          start: 'top top',
-          end: () => `+=${getScrollAmount()}`,
-          pin: true,
-          scrub: 0.8,
-          invalidateOnRefresh: true,
+          trigger: '.workflow-container',
+          start: 'top 75%',
+          once: true,
         },
       });
-    }
 
-    const processTitle = document.querySelector('.process-title') as HTMLElement;
-    if (processTitle) {
-      ScrollTrigger.create({
-        trigger: processTitle,
-        start: 'top 82%',
-        once: true,
-        onEnter: () => {
-          const chars = splitText(processTitle);
-          createTextReveal(chars, { y: 40, stagger: 0.02 });
+      // 4. Role cards parallax reveal
+      gsap.from('.portal-card', {
+        y: 45,
+        opacity: 0,
+        stagger: 0.18,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.portal-container',
+          start: 'top 75%',
+          once: true,
         },
       });
-    }
+    },
+    { scope: containerRef }
+  );
 
-    /* ─── 7. BLOOD GROUPS ─── */
-    gsap.from('.blood-card', {
-      y: 40, opacity: 0, scale: 0.9,
-      stagger: { each: 0.06, from: 'random' },
-      duration: 0.6, ease: 'back.out(1.4)',
-      scrollTrigger: { trigger: bloodRef.current, start: 'top 78%', once: true },
-    });
-
-    gsap.from('.blood-progress', {
-      scaleX: 0, transformOrigin: 'left',
-      stagger: 0.08, duration: 0.8, ease: 'power2.out',
-      scrollTrigger: { trigger: bloodRef.current, start: 'top 70%', once: true },
-    });
-
-    const bloodTitle = document.querySelector('.blood-title') as HTMLElement;
-    if (bloodTitle) {
-      ScrollTrigger.create({
-        trigger: bloodTitle,
-        start: 'top 82%',
-        once: true,
-        onEnter: () => {
-          const chars = splitText(bloodTitle);
-          createTextReveal(chars, { y: 40, stagger: 0.02 });
-        },
-      });
-    }
-
-    /* ─── 8. CTA ─── */
-    gsap.to('.cta-dots', {
-      y: -60,
-      scrollTrigger: {
-        trigger: ctaRef.current,
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: 1,
-      },
-    });
-
-    const ctaTitle = document.querySelector('.cta-title') as HTMLElement;
-    if (ctaTitle) {
-      ScrollTrigger.create({
-        trigger: ctaTitle,
-        start: 'top 82%',
-        once: true,
-        onEnter: () => {
-          const chars = splitText(ctaTitle);
-          createTextReveal(chars, { y: 40, stagger: 0.02, duration: 0.5 });
-        },
-      });
-    }
-
-    gsap.from('.cta-content > *', {
-      y: 30, opacity: 0, stagger: 0.12, duration: 0.6, ease: 'power3.out',
-      scrollTrigger: { trigger: ctaRef.current, start: 'top 75%', once: true },
-    });
-
-    /* ─── 9. FOOTER ─── */
-    gsap.from('.footer-col', {
-      y: 30, opacity: 0, stagger: 0.1, duration: 0.6, ease: 'power3.out',
-      scrollTrigger: { trigger: '.site-footer', start: 'top 85%', once: true },
-    });
-
-  }, { scope: containerRef });
-
-  /* ─── 3D tilt handler ─── */
-  const tiltMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+  // Interactive 3D tilt handler
+  const handleTiltMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const el = e.currentTarget;
     const r = el.getBoundingClientRect();
-    const rotY = ((e.clientX - r.left) / r.width - 0.5) * 10;
-    const rotX = ((e.clientY - r.top) / r.height - 0.5) * -10;
-    gsap.to(el, { rotateY: rotY, rotateX: rotX, scale: 1.03, duration: 0.3, ease: 'power2.out', transformPerspective: 800 });
+    const rotY = ((e.clientX - r.left) / r.width - 0.5) * 12;
+    const rotX = ((e.clientY - r.top) / r.height - 0.5) * -12;
+    gsap.to(el, {
+      rotateY: rotY,
+      rotateX: rotX,
+      scale: 1.02,
+      duration: 0.3,
+      ease: 'power2.out',
+      transformPerspective: 900,
+    });
   }, []);
 
-  const tiltLeave = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    gsap.to(e.currentTarget, { rotateY: 0, rotateX: 0, scale: 1, duration: 0.5, ease: 'elastic.out(1,0.5)', transformPerspective: 800 });
+  const handleTiltLeave = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    gsap.to(e.currentTarget, {
+      rotateY: 0,
+      rotateX: 0,
+      scale: 1,
+      duration: 0.6,
+      ease: 'elastic.out(1, 0.4)',
+      transformPerspective: 900,
+    });
   }, []);
 
-  /* ═══════════════════════════════════════════════════════════
-     JSX
-     ═══════════════════════════════════════════════════════════ */
+  const selectedCompat =
+    BLOOD_COMPATIBILITY[selectedGroup as keyof typeof BLOOD_COMPATIBILITY] ||
+    BLOOD_COMPATIBILITY['O-'];
 
   return (
-    <div ref={containerRef}>
+    <div ref={containerRef} className="min-h-screen bg-slate-950 text-slate-100 selection:bg-rose-500/20 selection:text-rose-200 overflow-x-hidden">
+      
+      {/* ░░░░░░ TOP EMERGENCY TICKER RIBBON ░░░░░░ */}
+      <div className="bg-gradient-to-r from-rose-950 via-red-900 to-rose-950 border-b border-rose-500/20 py-1.5 px-4 overflow-hidden relative z-50 text-xs text-rose-200">
+        <div className="flex items-center gap-6 whitespace-nowrap animate-marquee">
+          <span className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-rose-400">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500" />
+            </span>
+            Live Network Dispatch
+          </span>
+          <span>🚨 Urgent: O- (Universal Donor) stock required at Apollo Hospital Mumbai</span>
+          <span>•</span>
+          <span>🩸 418 units currently tested and ready across regional cold storage units</span>
+          <span>•</span>
+          <span>🏥 Lilavati & Fortis Memorial online — 100% cold-chain tracking active</span>
+          <span>•</span>
+          <span>❤️ Voluntary donation drive scheduled this weekend — Book your slot</span>
+        </div>
+      </div>
 
-      {/* ░░░░░░ MAIN CONTENT ░░░░░░ */}
-      <div className="min-h-screen bg-white">
-
-        {/* ═══ NAVBAR ═══ */}
-        <nav className={`hero-nav sticky top-0 z-50 px-6 py-3.5 transition-all duration-300 ${
+      {/* ░░░░░░ FLOATING GLASS NAVBAR ░░░░░░ */}
+      <header
+        className={`sticky top-0 z-40 px-6 py-4 transition-all duration-300 ${
           scrolled
-            ? 'bg-white/80 backdrop-blur-xl shadow-[0_2px_24px_rgba(0,0,0,0.06)] border-b border-gray-200/60'
+            ? 'bg-slate-950/80 backdrop-blur-2xl border-b border-white/[0.08] shadow-2xl'
             : 'bg-transparent'
-        }`}>
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2 group">
-              <Droplets className="w-8 h-8 text-red-600 group-hover:rotate-12 transition-transform duration-300" />
-              <span className="text-xl font-bold tracking-tight">
-                Srishti <span className="text-red-600">Blood Bank</span>
-              </span>
-            </Link>
-            <div className="flex items-center gap-2">
-              <Link href="/auth/login" className="nav-link relative px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
-                Login
-                <span className="nav-underline" />
-              </Link>
-              <MagneticButton strength={0.25}>
-                <Link href="/auth/register"
-                  className="px-5 py-2.5 text-sm font-semibold text-white bg-red-600 rounded-full
-                             shadow-lg shadow-red-200/50 hover:shadow-red-300/60 hover:bg-red-700
-                             hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 inline-block">
-                  Get Started
-                </Link>
-              </MagneticButton>
+        }`}
+      >
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-rose-500 via-rose-600 to-red-700 flex items-center justify-center shadow-glow-sm group-hover:scale-105 transition-all">
+              <Droplets className="w-5 h-5 text-white" />
             </div>
+            <div>
+              <span className="text-lg font-extrabold tracking-tight text-white group-hover:text-rose-400 transition-colors">
+                Srishti <span className="text-rose-500">Blood Bank</span>
+              </span>
+              <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
+                End-to-End Life Network
+              </p>
+            </div>
+          </Link>
+
+          <nav className="hidden md:flex items-center gap-7 text-xs font-semibold tracking-wide text-slate-300">
+            <a href="#compatibility" className="hover:text-rose-400 transition-colors">Compatibility Matrix</a>
+            <a href="#telemetry" className="hover:text-rose-400 transition-colors">Live Telemetry</a>
+            <a href="#workflow" className="hover:text-rose-400 transition-colors">How It Works</a>
+            <a href="#calculator" className="hover:text-rose-400 transition-colors">Impact Calculator</a>
+            <a href="#portals" className="hover:text-rose-400 transition-colors">Portals</a>
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <Link
+              href="/auth/login"
+              className="px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/60 rounded-xl transition-colors"
+            >
+              Sign In
+            </Link>
+            <MagneticButton strength={0.25}>
+              <Link
+                href="/auth/register"
+                onClick={(e) => createRipple(e)}
+                className="relative inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-white bg-gradient-to-r from-rose-600 to-red-600 rounded-xl shadow-glow-sm hover:shadow-glow-md hover:scale-[1.02] active:scale-[0.98] transition-all"
+              >
+                <span>Donate Blood</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </MagneticButton>
           </div>
-        </nav>
+        </div>
+      </header>
 
-        {/* ═══ HERO ═══ */}
-        <section ref={heroRef} className="relative min-h-[92vh] flex items-center overflow-hidden">
-          {/* Animated gradient bg */}
-          <div className="absolute inset-0 animate-gradient-shift bg-[length:400%_400%]" data-speed="-5"
-            style={{ backgroundImage: 'linear-gradient(135deg, #fff5f5 0%, #ffffff 25%, #fff1f2 50%, #ffffff 75%, #ffe4e6 100%)' }} />
-          <div className="absolute top-[-200px] right-[-100px] w-[600px] h-[600px] rounded-full bg-red-100/30 blur-[100px]" data-speed="-15" />
-          <div className="absolute bottom-[-150px] left-[-80px] w-[450px] h-[450px] rounded-full bg-rose-100/20 blur-[100px]" data-speed="-10" />
+      {/* ░░░░░░ HERO SECTION ░░░░░░ */}
+      <section ref={heroRef} className="relative min-h-[88vh] flex items-center pt-8 pb-20 overflow-hidden">
+        {/* Ambient Glows */}
+        <div className="absolute top-[-100px] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-rose-600/[0.12] rounded-full blur-[140px] pointer-events-none -z-10" />
+        <div className="absolute top-1/3 -left-48 w-96 h-96 bg-red-800/[0.08] rounded-full blur-[100px] pointer-events-none -z-10" />
 
-          {/* Floating particles */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
-            {[...Array(8)].map((_, i) => (
-              <span key={i} className={`particle particle-${i}`} />
-            ))}
-          </div>
-
-          {/* Wave at bottom */}
-          <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none pointer-events-none select-none">
-            <svg className="relative block w-full h-[120px]" viewBox="0 0 1440 120" preserveAspectRatio="none">
-              <path className="animate-wave-1 fill-red-600/[0.07]"
-                d="M0,64 C360,120 720,0 1080,64 C1260,96 1380,80 1440,64 L1440,120 L0,120Z" />
-              <path className="animate-wave-2 fill-red-500/[0.05]"
-                d="M0,80 C320,30 640,110 960,60 C1120,35 1320,90 1440,70 L1440,120 L0,120Z" />
-            </svg>
-          </div>
-
-          <div className="relative max-w-7xl mx-auto px-6 w-full" data-speed="8">
-            <div className="grid lg:grid-cols-2 gap-14 items-center">
-
-              {/* Left — text */}
-              <div>
-                <span className="hero-badge glass-badge inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium text-red-700 mb-6">
-                  <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                  Save Lives Today
-                </span>
-
-                <h1 className="text-5xl lg:text-7xl font-extrabold text-gray-900 leading-[1.08] tracking-tight">
-                  <span className="hero-title-1 block overflow-hidden">Every Drop</span>
-                  <span className="hero-title-2 block overflow-hidden bg-gradient-to-r from-red-600 via-rose-500 to-red-600 bg-clip-text text-transparent bg-[length:200%_auto] animate-text-shimmer">
-                    Counts.
-                  </span>
-                </h1>
-
-                <p className="hero-subtitle mt-6 text-lg lg:text-xl text-gray-500 leading-relaxed max-w-lg">
-                  The modern platform for blood donation, hospital requests &amp; inventory management — all in one place.
-                </p>
-
-                <div className="mt-8 flex flex-wrap gap-4">
-                  <MagneticButton strength={0.3} className="hero-cta-1">
-                    <Link href="/auth/register"
-                      className="group inline-flex items-center gap-2 px-8 py-3.5 bg-red-600 text-white font-semibold rounded-full
-                                 hover:bg-red-700 transition-all shadow-xl shadow-red-300/30 hover:shadow-red-400/40
-                                 hover:-translate-y-0.5 active:translate-y-0"
-                      onClick={(e) => createRipple(e)}>
-                      Become a Donor
-                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                  </MagneticButton>
-                  <MagneticButton strength={0.3} className="hero-cta-2">
-                    <Link href="/auth/register?role=hospital"
-                      className="glass-card inline-flex items-center gap-2 px-8 py-3.5 font-semibold rounded-full text-gray-700
-                                 border border-white/60 hover:border-gray-200 hover:-translate-y-0.5 active:translate-y-0 transition-all">
-                      Hospital Registration
-                    </Link>
-                  </MagneticButton>
-                </div>
+        <div className="max-w-7xl mx-auto px-6 w-full">
+          <div className="grid lg:grid-cols-12 gap-12 items-center">
+            
+            {/* Left Hero Content */}
+            <div className="lg:col-span-7 space-y-7">
+              <div className="hero-badge inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-bold tracking-wide backdrop-blur-md">
+                <Sparkles className="w-3.5 h-3.5 text-rose-400 animate-spin-slow" />
+                <span>India’s Next-Gen Autonomous Blood Dispatch Lifeline</span>
               </div>
 
-              {/* Right — SVG illustration */}
-              <div className="hero-illustration hidden lg:flex justify-center items-center" data-speed="20">
-                <div className="relative w-[400px] h-[400px]">
-                  <div className="orbital-ring-1 absolute inset-0 rounded-full border-2 border-dashed border-red-200/60" style={{ willChange: 'transform' }} />
-                  <div className="orbital-ring-2 absolute inset-10 rounded-full border border-dashed border-red-100/50" style={{ willChange: 'transform' }} />
+              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.08] tracking-tight text-white">
+                <span className="hero-title-1 block overflow-hidden">Every Drop Counts.</span>
+                <span className="hero-title-2 block overflow-hidden bg-gradient-to-r from-rose-400 via-red-500 to-rose-300 bg-clip-text text-transparent animate-text-shimmer">
+                  Every Second Saves.
+                </span>
+              </h1>
 
-                  <div className="absolute inset-[60px] flex items-center justify-center">
-                    <svg viewBox="0 0 120 160" className="hero-drop w-48 h-48 drop-shadow-2xl" style={{ willChange: 'transform' }}>
-                      <defs>
-                        <linearGradient id="dropGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="#ef4444" />
-                          <stop offset="100%" stopColor="#e11d48" />
-                        </linearGradient>
-                        <filter id="glow"><feGaussianBlur stdDeviation="6" result="blur" />
-                          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-                        </filter>
-                      </defs>
-                      <path d={DROP_PATH} fill="url(#dropGrad)" filter="url(#glow)" />
-                      <ellipse cx="42" cy="90" rx="12" ry="18" fill="white" opacity="0.18" transform="rotate(-20 42 90)" />
-                    </svg>
+              <p className="hero-subtext text-base sm:text-lg text-slate-300 max-w-xl font-normal leading-relaxed">
+                Connect voluntary donors, partner hospitals, and emergency trauma centers through instant compatibility matching, real-time cold-chain tracking, and zero-delay automated dispatch.
+              </p>
+
+              {/* Action Buttons */}
+              <div className="hero-cta-group flex flex-wrap items-center gap-4 pt-2">
+                <MagneticButton strength={0.3}>
+                  <Link
+                    href="/auth/register"
+                    onClick={(e) => createRipple(e)}
+                    className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold text-sm rounded-2xl shadow-glow-md hover:shadow-glow-lg hover:scale-105 active:scale-95 transition-all"
+                  >
+                    <span>Register as Donor</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </MagneticButton>
+
+                <MagneticButton strength={0.2}>
+                  <Link
+                    href="#compatibility"
+                    className="inline-flex items-center gap-2.5 px-7 py-4 rounded-2xl glass-panel text-slate-200 hover:text-white hover:border-slate-600 transition-all font-semibold text-sm"
+                  >
+                    <span>Test Blood Compatibility</span>
+                    <ChevronRight className="w-4 h-4 text-slate-400" />
+                  </Link>
+                </MagneticButton>
+              </div>
+
+              {/* Trust Indicators */}
+              <div className="pt-4 flex items-center gap-6 text-xs text-slate-400 border-t border-white/[0.08]">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <span>NABH & CDSCO Standard</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-sky-400" />
+                  <span>100% Verified Centers</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-rose-400" />
+                  <span>Cold-Chain Custody</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Interactive Hero Card */}
+            <div className="lg:col-span-5">
+              <div
+                onMouseMove={handleTiltMove}
+                onMouseLeave={handleTiltLeave}
+                className="hero-floating-card relative rounded-3xl glass-card-elevated border border-rose-500/30 p-7 shadow-2xl overflow-hidden shine-effect"
+              >
+                {/* Background Accent Pill */}
+                <div className="absolute -top-12 -right-12 w-48 h-48 bg-rose-600/20 rounded-full blur-3xl pointer-events-none" />
+
+                {/* Card Header */}
+                <div className="flex items-center justify-between pb-6 border-b border-white/[0.08]">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-rose-600/20 border border-rose-500/30 flex items-center justify-center text-rose-400">
+                      <Activity className="w-5 h-5 animate-pulse" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-white">Live Central Reserve</h4>
+                      <p className="text-[11px] text-slate-400">Cold-chain units ready</p>
+                    </div>
                   </div>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                    Operational
+                  </span>
+                </div>
 
-                  {[
-                    { Icon: Heart, pos: 'top-2 left-1/2 -translate-x-1/2', color: 'bg-rose-100 text-rose-600' },
-                    { Icon: Activity, pos: 'bottom-2 left-1/2 -translate-x-1/2', color: 'bg-blue-100 text-blue-600' },
-                    { Icon: Globe, pos: 'top-1/2 -translate-y-1/2 left-0', color: 'bg-amber-100 text-amber-600' },
-                    { Icon: Award, pos: 'top-1/2 -translate-y-1/2 right-0', color: 'bg-emerald-100 text-emerald-600' },
-                  ].map(({ Icon, pos, color }, i) => (
-                    <div key={i}
-                      className={`hero-float-icon absolute ${pos} w-14 h-14 ${color} rounded-2xl flex items-center justify-center shadow-lg backdrop-blur-sm animate-float-${i + 1}`}>
-                      <Icon className="w-6 h-6" />
+                {/* Quick Stock Mini-Grid */}
+                <div className="grid grid-cols-4 gap-3 py-6">
+                  {BLOOD_GROUPS.map((bg) => (
+                    <div
+                      key={bg}
+                      onClick={() => setSelectedGroup(bg)}
+                      className={`cursor-pointer rounded-xl p-3 text-center transition-all duration-200 border ${
+                        selectedGroup === bg
+                          ? 'bg-rose-600 text-white border-rose-400 shadow-glow-sm scale-105'
+                          : 'bg-slate-900/60 border-white/[0.06] text-slate-300 hover:border-rose-500/40 hover:bg-slate-800/80'
+                      }`}
+                    >
+                      <p className="text-xs font-extrabold font-heading">{bg}</p>
+                      <span className="text-[10px] opacity-75">Reserve</span>
                     </div>
                   ))}
                 </div>
+
+                {/* Selected Group Quick Insight */}
+                <div className="p-4 rounded-2xl bg-slate-900/70 border border-white/[0.07] space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-rose-300">Selected Type: {selectedGroup}</span>
+                    <span className="text-[10px] text-slate-400 uppercase tracking-wider">
+                      {selectedCompat.title}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 leading-relaxed">
+                    {selectedCompat.description}
+                  </p>
+                </div>
+
+                {/* Card Footer Call */}
+                <div className="mt-6 pt-4 border-t border-white/[0.08] flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs text-slate-300">
+                    <Phone className="w-3.5 h-3.5 text-rose-400" />
+                    <span>Emergency Hotline: <strong>1800-BLOOD-LIFE</strong></span>
+                  </div>
+                  <Link
+                    href="/auth/register?role=hospital"
+                    className="text-xs font-bold text-rose-400 hover:text-rose-300 flex items-center gap-1"
+                  >
+                    Hospital Login <ChevronRight className="w-3 h-3" />
+                  </Link>
+                </div>
               </div>
             </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ░░░░░░ LIVE TELEMETRY STATS SECTION ░░░░░░ */}
+      <section id="telemetry" ref={statsRef} className="py-16 border-y border-white/[0.08] bg-slate-900/50 backdrop-blur-xl relative">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {telemetryStats.map((stat, i) => (
+              <div key={i} className="text-center md:text-left space-y-1">
+                <p
+                  className="stat-number text-3xl sm:text-5xl font-extrabold text-white font-heading tracking-tight"
+                  data-target={stat.target}
+                  data-suffix={stat.suffix}
+                >
+                  0{stat.suffix}
+                </p>
+                <p className="text-xs sm:text-sm font-bold text-rose-400 tracking-wide uppercase">
+                  {stat.label}
+                </p>
+                <p className="text-xs text-slate-400 hidden sm:block">
+                  {stat.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ░░░░░░ INTERACTIVE BLOOD COMPATIBILITY EXPLORER ░░░░░░ */}
+      <section id="compatibility" className="py-24 relative overflow-hidden">
+        {/* Ambient background glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-rose-600/[0.06] rounded-full blur-[140px] pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <div className="text-center max-w-2xl mx-auto space-y-3 mb-16">
+            <span className="px-3.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-bold uppercase tracking-wider">
+              Clinical Transfusion Intelligence
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
+              Interactive Compatibility Matrix
+            </h2>
+            <p className="text-sm text-slate-400">
+              Click on any blood type to explore real-time compatibility for donation and reception.
+            </p>
           </div>
 
-          {/* Scroll indicator */}
-          <div className="scroll-indicator absolute bottom-6 left-1/2 -translate-x-1/2">
-            <div className="flex flex-col items-center gap-1">
-              <span className="text-[10px] text-gray-400 uppercase tracking-[0.2em] font-medium">Scroll</span>
-              <div className="w-5 h-8 rounded-full border-2 border-gray-300 flex justify-center pt-1.5">
-                <div className="w-1 h-2 bg-gray-400 rounded-full animate-scroll-dot" />
+          {/* Blood Group Selectors */}
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
+            {BLOOD_GROUPS.map((group) => (
+              <button
+                key={group}
+                onClick={() => setSelectedGroup(group)}
+                className={`px-5 py-3 rounded-2xl font-heading font-extrabold text-base transition-all duration-300 border ${
+                  selectedGroup === group
+                    ? 'bg-gradient-to-r from-rose-600 to-red-600 text-white border-rose-400 shadow-glow-md scale-110'
+                    : 'bg-slate-900/70 border-white/[0.08] text-slate-300 hover:border-slate-600 hover:text-white'
+                }`}
+              >
+                {group}
+              </button>
+            ))}
+          </div>
+
+          {/* Compatibility Display Panel */}
+          <div className="max-w-4xl mx-auto rounded-3xl glass-card-elevated border border-rose-500/20 p-8 shadow-2xl space-y-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
+              <div>
+                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Selected Blood Type</span>
+                <h3 className="text-2xl sm:text-3xl font-black text-white font-heading mt-0.5 flex items-center gap-3">
+                  <span>Group {selectedGroup}</span>
+                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                    {selectedCompat.title}
+                  </span>
+                </h3>
               </div>
+              <Link
+                href="/auth/register"
+                className="inline-flex items-center gap-2 text-xs font-bold text-rose-400 hover:text-rose-300"
+              >
+                Register as {selectedGroup} Donor <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
+            {/* Two Column Grid: Can Donate To / Can Receive From */}
+            <div className="grid md:grid-cols-2 gap-8">
+              
+              {/* Can Give Blood To */}
+              <div className="p-6 rounded-2xl bg-slate-900/60 border border-white/[0.06] space-y-4">
+                <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm">
+                  <CheckCircle2 className="w-5 h-5" />
+                  <h4>Can Give Blood To ({selectedCompat.give.length} groups)</h4>
+                </div>
+                <div className="grid grid-cols-4 gap-2.5">
+                  {BLOOD_GROUPS.map((bg) => {
+                    const isCompatible = selectedCompat.give.includes(bg);
+                    return (
+                      <div
+                        key={bg}
+                        className={`p-3 rounded-xl text-center border font-heading font-extrabold text-xs transition-all ${
+                          isCompatible
+                            ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300 shadow-[0_0_12px_rgba(52,211,153,0.2)]'
+                            : 'bg-slate-950/40 border-white/[0.03] text-slate-600 opacity-40'
+                        }`}
+                      >
+                        {bg}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Can Receive Blood From */}
+              <div className="p-6 rounded-2xl bg-slate-900/60 border border-white/[0.06] space-y-4">
+                <div className="flex items-center gap-2 text-sky-400 font-bold text-sm">
+                  <CheckCircle2 className="w-5 h-5" />
+                  <h4>Can Receive Blood From ({selectedCompat.receive.length} groups)</h4>
+                </div>
+                <div className="grid grid-cols-4 gap-2.5">
+                  {BLOOD_GROUPS.map((bg) => {
+                    const isCompatible = selectedCompat.receive.includes(bg);
+                    return (
+                      <div
+                        key={bg}
+                        className={`p-3 rounded-xl text-center border font-heading font-extrabold text-xs transition-all ${
+                          isCompatible
+                            ? 'bg-sky-500/15 border-sky-500/40 text-sky-300 shadow-[0_0_12px_rgba(56,189,248,0.2)]'
+                            : 'bg-slate-950/40 border-white/[0.03] text-slate-600 opacity-40'
+                        }`}
+                      >
+                        {bg}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+            </div>
+
+            {/* Medical Context Banner */}
+            <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-200 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+              <p className="leading-relaxed">
+                {selectedCompat.description} Whole blood can be safely separated into Packed Red Blood Cells (RBCs), Platelets, and Plasma, multiplying the number of patient lives saved from a single donation.
+              </p>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ═══ FEATURES ═══ */}
-        <section ref={featuresRef} className="py-28">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <span className="text-sm font-semibold text-red-600 uppercase tracking-wider">Features</span>
-              <h2 className="feat-title mt-3 text-4xl lg:text-5xl font-extrabold text-gray-900">
-                Built for Everyone
+      {/* ░░░░░░ DONATION IMPACT CALCULATOR ░░░░░░ */}
+      <section id="calculator" className="py-24 border-t border-white/[0.08] bg-slate-900/40 relative">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid lg:grid-cols-12 gap-12 items-center">
+            
+            <div className="lg:col-span-5 space-y-6">
+              <span className="px-3.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-bold uppercase tracking-wider">
+                Live Impact Engine
+              </span>
+              <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
+                Calculate Your Life Impact
               </h2>
-              <p className="mt-4 text-gray-500 text-lg max-w-2xl mx-auto">
-                Whether you&apos;re a donor, hospital, or admin — we&apos;ve got the tools you need.
+              <p className="text-sm text-slate-300 leading-relaxed">
+                Voluntary blood donors can safely donate every 90 days. Slide to discover how many patients, surgeries, and cancer treatments your contribution directly supports over a single year.
+              </p>
+
+              <div className="p-5 rounded-2xl glass-panel space-y-3">
+                <div className="flex items-center justify-between text-xs font-bold">
+                  <span className="text-slate-300">Annual Donation Frequency</span>
+                  <span className="text-rose-400 text-sm font-extrabold">{annualDonations} times / year</span>
+                </div>
+                <input
+                  type="range"
+                  min="1"
+                  max="4"
+                  step="1"
+                  value={annualDonations}
+                  onChange={(e) => setAnnualDonations(parseInt(e.target.value))}
+                  className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-rose-500"
+                />
+                <div className="flex justify-between text-[11px] text-slate-500 font-semibold px-1">
+                  <span>1x (Starter)</span>
+                  <span>2x (Regular)</span>
+                  <span>3x (Hero)</span>
+                  <span>4x (Max Champion)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Impact Calculation Results Pod */}
+            <div className="lg:col-span-7">
+              <div className="grid sm:grid-cols-3 gap-6">
+                
+                <div className="p-6 rounded-3xl glass-card-elevated border border-rose-500/30 text-center space-y-2">
+                  <div className="w-12 h-12 mx-auto rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400 shadow-glow-sm">
+                    <Heart className="w-6 h-6 animate-pulse" />
+                  </div>
+                  <p className="text-4xl font-extrabold text-white font-heading">
+                    {annualDonations * 3}
+                  </p>
+                  <p className="text-xs font-bold uppercase text-rose-400">Potential Lives Saved</p>
+                  <p className="text-[11px] text-slate-400">3 patient components per unit donated</p>
+                </div>
+
+                <div className="p-6 rounded-3xl glass-card-elevated border border-sky-500/30 text-center space-y-2">
+                  <div className="w-12 h-12 mx-auto rounded-2xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400 shadow-[0_0_15px_rgba(56,189,248,0.25)]">
+                    <Droplets className="w-6 h-6" />
+                  </div>
+                  <p className="text-4xl font-extrabold text-white font-heading">
+                    {annualDonations * 450} <span className="text-lg">ml</span>
+                  </p>
+                  <p className="text-xs font-bold uppercase text-sky-400">Blood Volume Contributed</p>
+                  <p className="text-[11px] text-slate-400">Restored by body within 24–48 hours</p>
+                </div>
+
+                <div className="p-6 rounded-3xl glass-card-elevated border border-emerald-500/30 text-center space-y-2">
+                  <div className="w-12 h-12 mx-auto rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.25)]">
+                    <Award className="w-6 h-6" />
+                  </div>
+                  <p className="text-2xl font-extrabold text-white font-heading pt-2">
+                    {annualDonations === 1 && 'Silver Badge'}
+                    {annualDonations === 2 && 'Gold Guardian'}
+                    {annualDonations === 3 && 'Platinum Hero'}
+                    {annualDonations >= 4 && 'Diamond Champion'}
+                  </p>
+                  <p className="text-xs font-bold uppercase text-emerald-400">Donor Honor Tier</p>
+                  <p className="text-[11px] text-slate-400">Digital NFT-ready certificates issued</p>
+                </div>
+
+              </div>
+
+              <div className="mt-8 text-center sm:text-right">
+                <Link
+                  href="/auth/register"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shadow-glow-sm transition-all"
+                >
+                  <span>Start Your Lifesaving Journey</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ░░░░░░ HOW IT WORKS SECTION ░░░░░░ */}
+      <section id="workflow" className="py-24 relative">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center max-w-2xl mx-auto space-y-3 mb-16">
+            <span className="px-3.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-bold uppercase tracking-wider">
+              Seamless 4-Step Architecture
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
+              How Srishti Saves Lives
+            </h2>
+            <p className="text-sm text-slate-400">
+              A transparent, zero-delay loop connecting donors, testing laboratories, and acute care wards.
+            </p>
+          </div>
+
+          <div className="workflow-container grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {workflowSteps.map((step, i) => (
+              <div
+                key={i}
+                className="workflow-card relative p-7 rounded-3xl glass-card-elevated border border-white/[0.07] hover:border-rose-500/40 transition-all group"
+              >
+                <span className="text-4xl font-black text-slate-800 font-heading group-hover:text-rose-500/30 transition-colors">
+                  {step.num}
+                </span>
+                <div className="mt-4 mb-3">{step.icon}</div>
+                <h4 className="text-base font-bold text-white mb-2">{step.title}</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">{step.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ░░░░░░ PORTAL CARDS (Donors, Hospitals, Admins) ░░░░░░ */}
+      <section id="portals" className="py-24 border-t border-white/[0.08] bg-slate-900/30 relative">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center max-w-2xl mx-auto space-y-3 mb-16">
+            <span className="px-3.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-bold uppercase tracking-wider">
+              Integrated Ecosystem
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
+              Tailored Portals for Every Role
+            </h2>
+            <p className="text-sm text-slate-400">
+              Purpose-built experiences engineered for speed, reliability, and precision healthcare.
+            </p>
+          </div>
+
+          <div className="portal-container grid lg:grid-cols-3 gap-8">
+            {portalRoles.map((p, i) => (
+              <div
+                key={i}
+                onMouseMove={handleTiltMove}
+                onMouseLeave={handleTiltLeave}
+                className="portal-card relative rounded-3xl glass-card-elevated border border-white/[0.08] p-8 flex flex-col justify-between hover:border-rose-500/30 shadow-xl transition-all"
+              >
+                <div className="space-y-5">
+                  <div className="flex items-center justify-between">
+                    <div className="w-12 h-12 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400">
+                      {p.icon}
+                    </div>
+                    <span className={`text-[11px] font-bold px-3 py-1 rounded-full border ${p.badgeColor}`}>
+                      {p.badge}
+                    </span>
+                  </div>
+
+                  <div>
+                    <span className="text-xs font-bold uppercase text-slate-400 tracking-wider">
+                      {p.role}
+                    </span>
+                    <h3 className="text-xl font-bold text-white mt-1 mb-2">
+                      {p.title}
+                    </h3>
+                    <p className="text-xs text-slate-400 leading-relaxed">
+                      {p.desc}
+                    </p>
+                  </div>
+
+                  <ul className="space-y-2 pt-2 border-t border-white/[0.06]">
+                    {p.features.map((feat, fi) => (
+                      <li key={fi} className="flex items-center gap-2 text-xs text-slate-300">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                        <span>{feat}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="pt-8">
+                  <Link
+                    href={p.link}
+                    className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-850 hover:bg-rose-600 border border-slate-700 hover:border-rose-500 text-white text-xs font-bold transition-all shadow-sm group"
+                  >
+                    <span>{p.btnText}</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ░░░░░░ FINAL CALL TO ACTION ░░░░░░ */}
+      <section className="py-24 relative overflow-hidden">
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
+          <div className="rounded-3xl p-10 sm:p-16 bg-gradient-to-br from-rose-900 via-red-900 to-slate-950 border border-rose-500/40 shadow-glow-lg text-center space-y-6 relative overflow-hidden">
+            {/* Background Glow */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(244,63,94,0.3),transparent_70%)] pointer-events-none" />
+
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-rose-200 text-xs font-bold border border-white/20">
+              <Heart className="w-3.5 h-3.5 text-rose-300 animate-pulse" />
+              <span>Join 5,000+ Voluntary Donors Saving Lives Today</span>
+            </span>
+
+            <h2 className="text-3xl sm:text-5xl font-black text-white font-heading tracking-tight max-w-2xl mx-auto">
+              Ready to Give the Gift of Life?
+            </h2>
+
+            <p className="text-sm sm:text-base text-rose-100/90 max-w-xl mx-auto leading-relaxed">
+              Every voluntary donation can save up to 3 lives. Sign up in seconds, locate certified donation centers near you, and track your ongoing clinical impact.
+            </p>
+
+            <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
+              <MagneticButton strength={0.3}>
+                <Link
+                  href="/auth/register"
+                  onClick={(e) => createRipple(e)}
+                  className="inline-flex items-center gap-3 px-8 py-4 bg-white text-rose-700 font-extrabold text-sm rounded-2xl shadow-2xl hover:bg-rose-50 hover:scale-105 active:scale-95 transition-all"
+                >
+                  <span>Register as Donor Now</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </MagneticButton>
+
+              <MagneticButton strength={0.2}>
+                <Link
+                  href="/auth/login"
+                  className="inline-flex items-center gap-2 px-7 py-4 rounded-2xl bg-black/30 border border-white/20 text-white hover:bg-black/50 transition-all font-bold text-sm"
+                >
+                  <span>Sign In to Portal</span>
+                </Link>
+              </MagneticButton>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ░░░░░░ ELEVATED FOOTER ░░░░░░ */}
+      <footer className="bg-slate-950 border-t border-white/[0.08] text-slate-400 pt-16 pb-12">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid md:grid-cols-4 gap-10 pb-12 border-b border-white/[0.06]">
+            
+            <div className="space-y-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-rose-500 to-red-700 flex items-center justify-center shadow-glow-sm">
+                  <Droplets className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-base font-bold text-white tracking-tight">
+                  Srishti <span className="text-rose-500">Blood Bank</span>
+                </span>
+              </div>
+              <p className="text-xs leading-relaxed text-slate-400">
+                A state-of-the-art transfusion management platform dedicated to zero-waste blood distribution, emergency logistics, and donor care.
+              </p>
+              <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Central Telemetry Active (65ms latency)</span>
+              </div>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <h4 className="font-bold text-white uppercase tracking-wider text-[11px]">Quick Access</h4>
+              <ul className="space-y-2">
+                <li><Link href="/auth/login" className="hover:text-rose-400 transition-colors">Sign In to Dashboard</Link></li>
+                <li><Link href="/auth/register" className="hover:text-rose-400 transition-colors">Donor Onboarding</Link></li>
+                <li><Link href="/auth/register?role=hospital" className="hover:text-rose-400 transition-colors">Hospital Partner Access</Link></li>
+                <li><a href="#compatibility" className="hover:text-rose-400 transition-colors">Blood Group Matrix</a></li>
+              </ul>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <h4 className="font-bold text-white uppercase tracking-wider text-[11px]">Emergency Contacts</h4>
+              <ul className="space-y-2">
+                <li className="flex items-center gap-2"><Phone className="w-3.5 h-3.5 text-rose-400" /> 24/7 Hotline: 1800-BLOOD-LIFE</li>
+                <li className="flex items-center gap-2"><Mail className="w-3.5 h-3.5 text-rose-400" /> contact@srishtibloodbank.org</li>
+                <li className="flex items-center gap-2"><MapPin className="w-3.5 h-3.5 text-rose-400" /> Central Bank HQ, Mumbai, India</li>
+              </ul>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <h4 className="font-bold text-white uppercase tracking-wider text-[11px]">Compliance & Standards</h4>
+              <p className="text-[11px] text-slate-500 leading-relaxed">
+                Operating in strict compliance with the National Blood Transfusion Council (NBTC) guidelines, ensuring 100% nucleic acid testing (NAT) tested blood units.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8">
-              {features.map((f, i) => (
-                <div key={i}
-                  className="feature-card"
-                  onMouseMove={tiltMove}
-                  onMouseLeave={tiltLeave}
-                  style={{ willChange: 'transform', transformStyle: 'preserve-3d' }}
-                >
-                  <div className={`glass-card rounded-2xl p-8 border border-white/60 group h-full cursor-default
-                                  hover:shadow-xl transition-shadow duration-300`}>
-                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-5 ${f.iconBg}
-                                    group-hover:scale-110 transition-transform duration-300`}>
-                      {f.icon}
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-3">{f.title}</h3>
-                    <p className="text-gray-500 leading-relaxed">{f.desc}</p>
-                    <div className={`mt-5 h-1 w-12 rounded-full bg-gradient-to-r ${f.gradient} group-hover:w-24 transition-all duration-500`} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ═══ HOW IT WORKS — HORIZONTAL SCROLL ═══ */}
-        <section ref={processRef} className="process-section relative overflow-hidden">
-          <div className="min-h-screen flex flex-col justify-center">
-            <div className="px-6 mb-12 max-w-7xl mx-auto w-full">
-              <span className="text-sm font-semibold text-red-600 uppercase tracking-wider">How it Works</span>
-              <h2 className="process-title mt-3 text-4xl lg:text-5xl font-extrabold text-gray-900">
-                4 Simple Steps
-              </h2>
-            </div>
-
-            <div ref={processTrackRef} className="process-track flex gap-8 pl-6 pr-[40vw]" style={{ willChange: 'transform' }}>
-              {steps.map((s, i) => (
-                <div key={i} className="process-card flex-shrink-0 w-[340px] lg:w-[400px]">
-                  <div className="glass-card rounded-3xl p-10 border border-white/60 h-full relative overflow-hidden group
-                                  hover:shadow-xl transition-shadow duration-300"
-                    onMouseMove={tiltMove}
-                    onMouseLeave={tiltLeave}
-                    style={{ willChange: 'transform', transformStyle: 'preserve-3d' }}
-                  >
-                    <span className="absolute top-6 right-8 text-7xl font-black text-red-50 select-none group-hover:text-red-100 transition-colors">
-                      {s.num}
-                    </span>
-                    <div className="relative">
-                      <div className="w-16 h-16 bg-red-600 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-red-200/40">
-                        {s.icon}
-                      </div>
-                      <h4 className="font-bold text-gray-900 text-2xl mb-2">{s.title}</h4>
-                      <p className="text-gray-500 text-lg">{s.desc}</p>
-                    </div>
-                    {i < steps.length - 1 && (
-                      <div className="absolute top-1/2 -right-4 w-8 border-t-2 border-dashed border-red-200/60" />
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ═══ BLOOD GROUPS ═══ */}
-        <section ref={bloodRef} className="py-28">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <span className="text-sm font-semibold text-red-600 uppercase tracking-wider">Blood Groups</span>
-              <h2 className="blood-title mt-3 text-4xl lg:text-5xl font-extrabold text-gray-900">
-                All Types Available
-              </h2>
-              <p className="mt-4 text-gray-500 text-lg">Check current stock levels at a glance</p>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-              {bloodGroups.map((bg, i) => (
-                <div key={bg.name}
-                  className="blood-card"
-                  onMouseMove={tiltMove}
-                  onMouseLeave={tiltLeave}
-                  style={{ willChange: 'transform', transformStyle: 'preserve-3d' }}
-                >
-                  <div className="glass-card rounded-2xl p-7 text-center border border-white/60 hover:shadow-lg hover:shadow-red-100/40
-                                  transition-all duration-300 cursor-default relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-red-50 rounded-2xl scale-0 group-hover:scale-100 transition-transform duration-500 origin-center opacity-50" />
-                    <div className="relative">
-                      <div className="w-[72px] h-[72px] mx-auto bg-gradient-to-br from-red-50 to-rose-50 rounded-2xl flex items-center justify-center mb-4">
-                        <span className="text-2xl font-extrabold bg-gradient-to-r from-red-600 to-rose-500 bg-clip-text text-transparent">{bg.name}</span>
-                      </div>
-                      <div className="w-full h-1.5 rounded-full bg-gray-100 overflow-hidden mb-2">
-                        <div className="blood-progress h-full rounded-full bg-gradient-to-r from-red-500 to-rose-500"
-                          style={{ width: `${bg.stock}%` }} />
-                      </div>
-                      <p className="text-xs text-gray-400 font-medium">Available</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ═══ CTA ═══ */}
-        <section ref={ctaRef} className="py-28 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-red-600 via-red-600 to-rose-700" />
-          <div className="cta-dots absolute inset-0 opacity-[0.07]"
-            style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
-          <div className="absolute top-0 left-0 w-full overflow-hidden leading-none rotate-180">
-            <svg className="relative block w-full h-[60px]" viewBox="0 0 1440 60" preserveAspectRatio="none">
-              <path d="M0,30 C360,60 720,0 1080,30 C1260,45 1380,40 1440,30 L1440,60 L0,60Z" fill="white" />
-            </svg>
           </div>
 
-          <div className="cta-content relative max-w-4xl mx-auto px-6 text-center">
-            <h2 className="cta-title text-4xl lg:text-5xl font-extrabold text-white leading-tight">
-              Ready to Make a Difference?
-            </h2>
-            <p className="mt-6 text-red-100 text-lg max-w-xl mx-auto">
-              Every drop counts. Register today and become part of our life-saving community.
-            </p>
-            <div className="mt-10 flex flex-wrap justify-center gap-4">
-              <MagneticButton strength={0.25}>
-                <Link href="/auth/register"
-                  className="group inline-flex items-center gap-2 px-8 py-4 bg-white text-red-600 font-bold rounded-full
-                             shadow-xl hover:shadow-2xl hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 text-lg"
-                  onClick={(e) => createRipple(e)}>
-                  Register Now <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </MagneticButton>
-              <MagneticButton strength={0.25}>
-                <Link href="/auth/login"
-                  className="inline-flex items-center gap-2 px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-full
-                             hover:bg-white/10 backdrop-blur-sm transition-all duration-300 text-lg">
-                  Sign In
-                </Link>
-              </MagneticButton>
+          <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+            <p>&copy; {new Date().getFullYear()} Srishti Blood Bank. All rights reserved.</p>
+            <div className="flex items-center gap-6">
+              <span className="hover:text-slate-400 cursor-pointer">Privacy Policy</span>
+              <span className="hover:text-slate-400 cursor-pointer">Terms of Service</span>
+              <span className="hover:text-slate-400 cursor-pointer">Security Protocol</span>
             </div>
           </div>
-        </section>
+        </div>
+      </footer>
 
-        {/* ═══ FOOTER ═══ */}
-        <footer className="site-footer bg-gray-950 text-gray-400 pt-16 pb-8">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="grid md:grid-cols-4 gap-10 pb-12 border-b border-gray-800/60">
-              <div className="footer-col">
-                <div className="flex items-center gap-2 mb-4">
-                  <Droplets className="w-7 h-7 text-red-500" />
-                  <span className="text-lg font-bold text-white">Srishti Blood Bank</span>
-                </div>
-                <p className="text-sm leading-relaxed">
-                  A modern blood bank management system dedicated to saving lives through efficient donation and distribution.
-                </p>
-              </div>
-              <div className="footer-col">
-                <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Quick Links</h4>
-                <ul className="space-y-3 text-sm">
-                  <li><Link href="/auth/login" className="hover:text-white transition-colors">Login</Link></li>
-                  <li><Link href="/auth/register" className="hover:text-white transition-colors">Register</Link></li>
-                  <li><Link href="/auth/register?role=hospital" className="hover:text-white transition-colors">Hospital Registration</Link></li>
-                </ul>
-              </div>
-              <div className="footer-col">
-                <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Contact</h4>
-                <ul className="space-y-3 text-sm">
-                  <li className="flex items-center gap-2"><Mail className="w-4 h-4 text-red-400" /> contact@srishtibloodbank.org</li>
-                  <li className="flex items-center gap-2"><Phone className="w-4 h-4 text-red-400" /> +91 98765 43210</li>
-                  <li className="flex items-center gap-2"><MapPin className="w-4 h-4 text-red-400" /> Mumbai, India</li>
-                </ul>
-              </div>
-              <div className="footer-col">
-                <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Working Hours</h4>
-                <ul className="space-y-3 text-sm">
-                  <li className="flex items-center gap-2"><Clock className="w-4 h-4 text-red-400" /> Mon–Sat: 9 AM – 6 PM</li>
-                  <li className="flex items-center gap-2"><Phone className="w-4 h-4 text-red-400" /> Emergency: 24/7</li>
-                </ul>
-              </div>
-            </div>
-            <div className="pt-8 text-center text-sm text-gray-500">
-              <p>&copy; {new Date().getFullYear()} Srishti Blood Bank. All rights reserved.</p>
-            </div>
-          </div>
-        </footer>
-      </div>
     </div>
   );
 }

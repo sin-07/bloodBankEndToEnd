@@ -1,9 +1,11 @@
 import { BloodGroup } from '@/types';
+export type { BloodGroup };
 
 /**
  * Format date to readable string
  */
 export function formatDate(date: string | Date): string {
+  if (!date) return 'N/A';
   return new Date(date).toLocaleDateString('en-IN', {
     year: 'numeric',
     month: 'short',
@@ -15,6 +17,7 @@ export function formatDate(date: string | Date): string {
  * Format date with time
  */
 export function formatDateTime(date: string | Date): string {
+  if (!date) return 'N/A';
   return new Date(date).toLocaleString('en-IN', {
     year: 'numeric',
     month: 'short',
@@ -25,38 +28,39 @@ export function formatDateTime(date: string | Date): string {
 }
 
 /**
- * Get urgency badge color
+ * Get urgency badge styling classes (modern luminous styling)
  */
 export function getUrgencyColor(urgency: string): string {
   switch (urgency) {
     case 'critical':
-      return 'bg-red-100 text-red-800';
+      return 'bg-rose-500/15 text-rose-400 border border-rose-500/30';
     case 'urgent':
-      return 'bg-orange-100 text-orange-800';
+      return 'bg-amber-500/15 text-amber-400 border border-amber-500/30';
     default:
-      return 'bg-green-100 text-green-800';
+      return 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30';
   }
 }
 
 /**
- * Get status badge color
+ * Get status badge styling classes
  */
 export function getStatusColor(status: string): string {
   switch (status) {
     case 'fulfilled':
     case 'completed':
     case 'available':
-      return 'bg-green-100 text-green-800';
+      return 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30';
     case 'pending':
-      return 'bg-yellow-100 text-yellow-800';
+      return 'bg-amber-500/15 text-amber-400 border border-amber-500/30';
     case 'approved':
-      return 'bg-blue-100 text-blue-800';
+      return 'bg-sky-500/15 text-sky-400 border border-sky-500/30';
     case 'rejected':
     case 'cancelled':
     case 'expired':
-      return 'bg-red-100 text-red-800';
+    case 'discarded':
+      return 'bg-rose-500/15 text-rose-400 border border-rose-500/30';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-slate-500/15 text-slate-400 border border-slate-500/30';
   }
 }
 
@@ -66,17 +70,79 @@ export function getStatusColor(status: string): string {
 export const BLOOD_GROUPS: BloodGroup[] = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
 /**
- * Blood group colors for charts
+ * High-precision blood compatibility matrix
+ */
+export const BLOOD_COMPATIBILITY: Record<
+  BloodGroup,
+  {
+    give: BloodGroup[];
+    receive: BloodGroup[];
+    title: string;
+    description: string;
+  }
+> = {
+  'O-': {
+    give: ['O-', 'O+', 'A-', 'A+', 'B-', 'B+', 'AB-', 'AB+'],
+    receive: ['O-'],
+    title: 'Universal Red Blood Cell Donor',
+    description: 'Can be given to patients of any blood group. Highly vital in emergency trauma care.',
+  },
+  'O+': {
+    give: ['O+', 'A+', 'B+', 'AB+'],
+    receive: ['O+', 'O-'],
+    title: 'Most Common Blood Type',
+    description: 'Can donate to any positive blood group. Present in nearly 38% of patients.',
+  },
+  'A-': {
+    give: ['A-', 'A+', 'AB-', 'AB+'],
+    receive: ['A-', 'O-'],
+    title: 'Valuable Platelet & RBC Donor',
+    description: 'Can donate red blood cells to A and AB blood types regardless of Rh factor.',
+  },
+  'A+': {
+    give: ['A+', 'AB+'],
+    receive: ['A+', 'A-', 'O+', 'O-'],
+    title: 'High-Demand Blood Group',
+    description: 'Second most common blood group. Vital for routine surgeries and cancer treatments.',
+  },
+  'B-': {
+    give: ['B-', 'B+', 'AB-', 'AB+'],
+    receive: ['B-', 'O-'],
+    title: 'Rare Blood Group',
+    description: 'Only 2% of the population has B-. Critical for specialized transfusions.',
+  },
+  'B+': {
+    give: ['B+', 'AB+'],
+    receive: ['B+', 'B-', 'O+', 'O-'],
+    title: 'Major Positive Group',
+    description: 'Can give to B+ and AB+ recipients. High demand in regional medical centers.',
+  },
+  'AB-': {
+    give: ['AB-', 'AB+'],
+    receive: ['AB-', 'A-', 'B-', 'O-'],
+    title: 'Rarest Blood Group',
+    description: 'The rarest blood type (less than 1%). Universal plasma donor.',
+  },
+  'AB+': {
+    give: ['AB+'],
+    receive: ['O-', 'O+', 'A-', 'A+', 'B-', 'B+', 'AB-', 'AB+'],
+    title: 'Universal Red Blood Cell Recipient',
+    description: 'Can receive red blood cells from any blood type. Universal plasma donor.',
+  },
+};
+
+/**
+ * Blood group chart colors
  */
 export const BLOOD_GROUP_COLORS: Record<string, string> = {
-  'A+': '#EF4444',
-  'A-': '#F97316',
-  'B+': '#EAB308',
-  'B-': '#22C55E',
-  'AB+': '#3B82F6',
-  'AB-': '#6366F1',
-  'O+': '#EC4899',
-  'O-': '#8B5CF6',
+  'A+': '#f43f5e',
+  'A-': '#fb7185',
+  'B+': '#f59e0b',
+  'B-': '#fbbf24',
+  'AB+': '#8b5cf6',
+  'AB-': '#a78bfa',
+  'O+': '#10b981',
+  'O-': '#06b6d4',
 };
 
 /**
@@ -108,6 +174,7 @@ export function downloadBlob(blob: Blob, filename: string) {
  * Truncate text with ellipsis
  */
 export function truncate(text: string, length: number = 50): string {
+  if (!text) return '';
   return text.length > length ? text.substring(0, length) + '...' : text;
 }
 
@@ -115,5 +182,6 @@ export function truncate(text: string, length: number = 50): string {
  * Capitalize first letter
  */
 export function capitalize(text: string): string {
+  if (!text) return '';
   return text.charAt(0).toUpperCase() + text.slice(1);
 }

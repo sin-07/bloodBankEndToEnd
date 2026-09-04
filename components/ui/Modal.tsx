@@ -1,22 +1,34 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { X } from 'lucide-react';
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
+  subtitle?: string;
   children: React.ReactNode;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 }
 
 export default function Modal({
   isOpen,
   onClose,
   title,
+  subtitle,
   children,
   size = 'md',
 }: ModalProps) {
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const sizes = {
@@ -24,38 +36,45 @@ export default function Modal({
     md: 'max-w-md',
     lg: 'max-w-lg',
     xl: 'max-w-xl',
+    '2xl': 'max-w-2xl',
   };
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20">
+      <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
         {/* Backdrop */}
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+          className="fixed inset-0 bg-slate-950/85 backdrop-blur-md transition-opacity animate-in fade-in duration-200"
           onClick={onClose}
         />
 
         {/* Modal Panel */}
         <div
-          className={`relative bg-white rounded-xl shadow-xl w-full ${sizes[size]} mx-auto z-50`}
+          className={`relative inline-block align-bottom glass-card-elevated border border-slate-700/80 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle w-full ${sizes[size]} z-50 animate-in zoom-in-95 duration-200`}
         >
           {/* Header */}
           {title && (
-            <div className="flex items-center justify-between px-6 py-4 border-b">
-              <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+            <div className="flex items-center justify-between px-6 py-4.5 border-b border-white/[0.07] bg-white/[0.02]">
+              <div>
+                <h3 className="text-base font-bold text-white tracking-tight">
+                  {title}
+                </h3>
+                {subtitle && (
+                  <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>
+                )}
+              </div>
               <button
                 onClick={onClose}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 transition-colors"
+                aria-label="Close modal"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <X className="w-4 h-4" />
               </button>
             </div>
           )}
 
           {/* Body */}
-          <div className="px-6 py-4">{children}</div>
+          <div className="px-6 py-5 max-h-[80vh] overflow-y-auto">{children}</div>
         </div>
       </div>
     </div>

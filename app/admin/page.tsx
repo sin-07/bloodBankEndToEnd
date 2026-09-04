@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import BloodLoader from '@/components/gsap/BloodLoader';
 import StatsCard from '@/components/charts/StatsCard';
@@ -10,175 +11,300 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import { adminAPI } from '@/lib/api';
 import { formatDate, getStatusColor, getUrgencyColor } from '@/lib/utils';
-import { Users, Droplets, Heart, FileText, AlertTriangle } from 'lucide-react';
+import {
+  Users,
+  Droplets,
+  Heart,
+  FileText,
+  AlertTriangle,
+  ArrowRight,
+  ShieldCheck,
+  RefreshCw,
+  Building2,
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState<any>(null);
+  const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchDashboardStats();
   }, []);
 
-  const fetchDashboardStats = async () => {
+  const fetchDashboardStats = async (isRefresh = false) => {
     try {
+      if (isRefresh) setRefreshing(true);
       const res = await adminAPI.getDashboardStats();
-      setStats(res.data.data);
-    } catch (error) {
-      toast.error('Failed to load dashboard stats');
+      setData(res.data.data);
+      if (isRefresh) toast.success('Telemetry synchronized');
+    } catch {
+      toast.error('Failed to synchronize dashboard stats');
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
   if (loading) {
     return (
       <DashboardLayout>
-        <BloodLoader fullScreen={false} size="lg" text="Loading dashboard" />
+        <BloodLoader fullScreen={false} size="lg" text="Synchronizing Central Telemetry..." />
       </DashboardLayout>
     );
   }
+
+  const stats = data?.stats || data;
 
   const statCards = [
     {
       title: 'Total Donors',
       value: stats?.totalDonors || 0,
       icon: Users,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-100',
+      color: 'blue' as const,
+      change: '+14%',
+      changeType: 'positive' as const,
     },
     {
       title: 'Total Donations',
       value: stats?.totalDonations || 0,
       icon: Heart,
-      color: 'text-red-600',
-      bgColor: 'bg-red-100',
+      color: 'red' as const,
+      change: '+8%',
+      changeType: 'positive' as const,
     },
     {
-      title: 'Blood Requests',
+      title: 'Active Requests',
       value: stats?.totalRequests || 0,
       icon: FileText,
-      color: 'text-green-600',
-      bgColor: 'bg-green-100',
+      color: 'green' as const,
+      change: `${stats?.pendingRequests || 0} Pending`,
+      changeType: 'neutral' as const,
     },
     {
-      title: 'Total Units',
+      title: 'Blood Stock (Units)',
       value: stats?.totalUnits || 0,
       icon: Droplets,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-100',
+      color: 'purple' as const,
+      change: 'Cold-Chain Ready',
+      changeType: 'positive' as const,
     },
   ];
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+      <div className="space-y-8">
+        
+        {/* Page Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
+          <div>
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-2xl sm:text-3xl font-black text-white font-heading tracking-tight">
+                Central Telemetry Command
+              </h1>
+              <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+                <ShieldCheck className="w-3 h-3" /> Live
+              </span>
+            </div>
+            <p className="text-xs text-slate-400 mt-1">
+              Autonomous cold-chain monitoring, supply balancing, and emergency hospital dispatch.
+            </p>
+          </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => fetchDashboardStats(true)}
+              disabled={refreshing}
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700/80 text-xs font-semibold text-slate-300 hover:text-white hover:border-slate-600 transition-all disabled:opacity-50"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+              <span>Refresh</span>
+            </button>
+            <Link
+              href="/admin/blood-stock"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-xs font-bold text-white shadow-glow-sm transition-all"
+            >
+              <Droplets className="w-3.5 h-3.5" />
+              <span>Manage Stock</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* 4 Animated KPI Stat Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {statCards.map((stat) => (
-            <Card key={stat.title}>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-500">{stat.title}</p>
-                    <p className="text-2xl font-bold mt-1">{stat.value}</p>
-                  </div>
-                  <div className={`p-3 rounded-full ${stat.bgColor}`}>
-                    <stat.icon className={`h-6 w-6 ${stat.color}`} />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <StatsCard
+              key={stat.title}
+              title={stat.title}
+              value={stat.value}
+              icon={stat.icon}
+              color={stat.color}
+              change={stat.change}
+              changeType={stat.changeType}
+            />
           ))}
         </div>
 
         {/* Charts Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Blood Stock Overview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <BloodStockChart data={stats?.bloodStock || []} />
-            </CardContent>
+          <Card title="Blood Reserves by Type" subtitle="Current tested units across cold storage">
+            <div className="pt-2">
+              <BloodStockChart data={data?.bloodStock || []} />
+            </div>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Donation Trends</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <DonationTrendChart data={stats?.donationTrends || []} />
-            </CardContent>
+          <Card title="Transfusion Trends" subtitle="Monthly historical donation cadence">
+            <div className="pt-2">
+              <DonationTrendChart data={data?.donationTrends || []} />
+            </div>
           </Card>
         </div>
 
-        {/* Alerts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Low Stock Alerts */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-amber-500" />
-                Low Stock Alerts
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {stats?.lowStockAlerts?.length > 0 ? (
-                <div className="space-y-2">
-                  {stats.lowStockAlerts.map((alert: any) => (
+        {/* Recent Blood Requests & Emergency Alerts */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          {/* Recent Requests Table */}
+          <div className="lg:col-span-2">
+            <Card
+              title="Recent Hospital & Patient Requests"
+              subtitle="Real-time triage queue requiring fulfillment"
+              action={
+                <Link
+                  href="/admin/requests"
+                  className="text-xs font-bold text-rose-400 hover:text-rose-300 inline-flex items-center gap-1"
+                >
+                  View All Requests <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              }
+              noPadding
+            >
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-left">
+                  <thead className="bg-slate-900/90 text-slate-400 uppercase text-[10px] font-bold tracking-wider border-b border-white/[0.06]">
+                    <tr>
+                      <th className="px-5 py-3">Patient / Hospital</th>
+                      <th className="px-5 py-3">Blood Group</th>
+                      <th className="px-5 py-3">Units</th>
+                      <th className="px-5 py-3">Urgency</th>
+                      <th className="px-5 py-3">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/[0.04] text-slate-200">
+                    {data?.recentRequests?.length > 0 ? (
+                      data.recentRequests.map((req: any) => (
+                        <tr key={req._id} className="hover:bg-slate-800/40 transition-colors">
+                          <td className="px-5 py-3.5">
+                            <p className="font-bold text-white">{req.patientName}</p>
+                            <p className="text-[11px] text-slate-400">{req.hospitalName || req.city}</p>
+                          </td>
+                          <td className="px-5 py-3.5">
+                            <span className="font-heading font-extrabold text-sm px-2 py-0.5 rounded-lg bg-rose-500/15 text-rose-400 border border-rose-500/30">
+                              {req.bloodGroup}
+                            </span>
+                          </td>
+                          <td className="px-5 py-3.5 font-bold">
+                            {req.units} unit{req.units > 1 ? 's' : ''}
+                          </td>
+                          <td className="px-5 py-3.5">
+                            <Badge variant={req.urgency === 'critical' ? 'danger' : req.urgency === 'urgent' ? 'warning' : 'success'} dot pulse={req.urgency === 'critical'}>
+                              {req.urgency}
+                            </Badge>
+                          </td>
+                          <td className="px-5 py-3.5">
+                            <Badge variant={req.status === 'fulfilled' ? 'success' : req.status === 'approved' ? 'info' : 'warning'}>
+                              {req.status}
+                            </Badge>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={5} className="px-6 py-8 text-center text-slate-500">
+                          No pending blood requests in queue.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          </div>
+
+          {/* Right Column: Low Stock Alerts & Urgency Breakdown */}
+          <div className="space-y-6">
+            
+            {/* Low Stock Alerts */}
+            <Card title="Stock Threshold Watch" subtitle="Groups approaching critical reserve levels">
+              {data?.lowStockAlerts?.length > 0 ? (
+                <div className="space-y-2.5">
+                  {data.lowStockAlerts.map((alert: any) => (
                     <div
                       key={alert.bloodGroup}
-                      className="flex items-center justify-between p-3 bg-amber-50 rounded-lg border border-amber-200"
+                      className="flex items-center justify-between p-3 rounded-xl bg-rose-500/10 border border-rose-500/20"
                     >
-                      <span className="font-semibold text-red-600">
-                        {alert.bloodGroup}
-                      </span>
-                      <span className="text-sm text-amber-700">
-                        {alert.units} units remaining
+                      <div className="flex items-center gap-2.5">
+                        <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+                        <span className="font-heading font-extrabold text-rose-400">
+                          Type {alert.bloodGroup}
+                        </span>
+                      </div>
+                      <span className="text-xs font-bold text-rose-300">
+                        {alert.units} units left
                       </span>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 text-center py-4">
-                  All blood groups are well stocked.
-                </p>
+                <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-center space-y-1">
+                  <p className="text-xs font-bold text-emerald-300">All Groups Well-Stocked</p>
+                  <p className="text-[11px] text-emerald-400/80">Every blood type satisfies minimum safety reserves.</p>
+                </div>
               )}
-            </CardContent>
-          </Card>
+            </Card>
 
-          {/* Requests by Urgency */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Requests by Urgency</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {stats?.requestsByUrgency?.length > 0 ? (
-                <div className="space-y-2">
-                  {stats.requestsByUrgency.map((item: any) => (
-                    <div
-                      key={item._id}
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                    >
-                      <Badge variant={getUrgencyColor(item._id) as any}>
-                        {item._id}
-                      </Badge>
-                      <span className="font-semibold">{item.count}</span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-500 text-center py-4">
-                  No pending requests.
-                </p>
-              )}
-            </CardContent>
-          </Card>
+            {/* Quick Portal Navigation */}
+            <Card title="Direct Management">
+              <div className="space-y-2 text-xs">
+                <Link
+                  href="/admin/donors"
+                  className="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 hover:bg-slate-800/80 border border-white/[0.05] transition-colors"
+                >
+                  <div className="flex items-center gap-2.5 text-slate-300">
+                    <Users className="w-4 h-4 text-sky-400" />
+                    <span className="font-semibold">Registered Donors Directory</span>
+                  </div>
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-500" />
+                </Link>
+
+                <Link
+                  href="/admin/hospitals"
+                  className="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 hover:bg-slate-800/80 border border-white/[0.05] transition-colors"
+                >
+                  <div className="flex items-center gap-2.5 text-slate-300">
+                    <Building2 className="w-4 h-4 text-rose-400" />
+                    <span className="font-semibold">Partner Hospital Verification</span>
+                  </div>
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-500" />
+                </Link>
+
+                <Link
+                  href="/admin/reports"
+                  className="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 hover:bg-slate-800/80 border border-white/[0.05] transition-colors"
+                >
+                  <div className="flex items-center gap-2.5 text-slate-300">
+                    <FileText className="w-4 h-4 text-emerald-400" />
+                    <span className="font-semibold">Audit & Regulatory Reports</span>
+                  </div>
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-500" />
+                </Link>
+              </div>
+            </Card>
+
+          </div>
+
         </div>
+
       </div>
     </DashboardLayout>
   );
