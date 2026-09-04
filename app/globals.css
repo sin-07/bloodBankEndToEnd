@@ -1,0 +1,214 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+  }
+}
+
+@layer components {
+  .page-header {
+    @apply text-2xl font-bold text-gray-900 mb-6;
+  }
+
+  .card-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8;
+  }
+
+  .form-group {
+    @apply space-y-4;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c4c4c4;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection color */
+::selection {
+  background: rgba(220, 38, 38, 0.15);
+  color: inherit;
+}
+
+/* ═══════════════════ GPU-accelerated CSS animations ═══════════════════ */
+
+/* ---------- Spins & Pulse ---------- */
+@keyframes spin-slow        { to { transform: rotate(360deg);  } }
+@keyframes spin-slow-reverse { to { transform: rotate(-360deg); } }
+@keyframes gentle-pulse      { 0%,100% { transform: scale(1); }  50% { transform: scale(1.05); } }
+
+.animate-spin-slow         { animation: spin-slow 30s linear infinite;         will-change: transform; }
+.animate-spin-slow-reverse { animation: spin-slow-reverse 22s linear infinite; will-change: transform; }
+.animate-gentle-pulse      { animation: gentle-pulse 3s ease-in-out infinite;  will-change: transform; }
+
+/* ---------- Floating icons ---------- */
+@keyframes float-1 { 0%,100%{ transform: translate(-50%, 0); }   50%{ transform: translate(-50%, -10px); } }
+@keyframes float-2 { 0%,100%{ transform: translate(-50%, 0); }   50%{ transform: translate(-50%, 8px);  } }
+@keyframes float-3 { 0%,100%{ transform: translateY(-50%); }     50%{ transform: translateY(calc(-50% - 10px)); } }
+@keyframes float-4 { 0%,100%{ transform: translateY(-50%); }     50%{ transform: translateY(calc(-50% + 8px));  } }
+
+.animate-float-1 { animation: float-1 3s   ease-in-out infinite;     will-change: transform; }
+.animate-float-2 { animation: float-2 3.5s ease-in-out infinite .4s; will-change: transform; }
+.animate-float-3 { animation: float-3 4s   ease-in-out infinite .8s; will-change: transform; }
+.animate-float-4 { animation: float-4 3.2s ease-in-out infinite 1.2s;will-change: transform; }
+
+/* ---------- SVG blood-wave ---------- */
+@keyframes wave-1 {
+  0%  { d: path("M0,64 C360,120 720,0 1080,64 C1260,96 1380,80 1440,64 L1440,120 L0,120Z"); }
+  50% { d: path("M0,80 C320,20 680,110 1020,50 C1200,30 1360,100 1440,80 L1440,120 L0,120Z"); }
+  100%{ d: path("M0,64 C360,120 720,0 1080,64 C1260,96 1380,80 1440,64 L1440,120 L0,120Z"); }
+}
+@keyframes wave-2 {
+  0%  { d: path("M0,80 C320,30 640,110 960,60 C1120,35 1320,90 1440,70 L1440,120 L0,120Z"); }
+  50% { d: path("M0,60 C400,110 760,20 1100,80 C1260,100 1360,40 1440,60 L1440,120 L0,120Z"); }
+  100%{ d: path("M0,80 C320,30 640,110 960,60 C1120,35 1320,90 1440,70 L1440,120 L0,120Z"); }
+}
+.animate-wave-1 { animation: wave-1 6s ease-in-out infinite;      will-change: d; }
+.animate-wave-2 { animation: wave-2 8s ease-in-out infinite .5s;  will-change: d; }
+
+/* ---------- Gradient shift (hero bg) ---------- */
+@keyframes gradient-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.animate-gradient-shift { animation: gradient-shift 12s ease infinite; will-change: background-position; }
+
+/* ---------- Text shimmer ---------- */
+@keyframes text-shimmer {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+.animate-text-shimmer { animation: text-shimmer 4s linear infinite; }
+
+/* ---------- Loading bar ---------- */
+@keyframes load-bar {
+  0%   { width: 0%; }
+  60%  { width: 75%; }
+  100% { width: 100%; }
+}
+.animate-load-bar { animation: load-bar 1.3s ease-out forwards; }
+
+/* ---------- Progress bar fill (blood group cards) ---------- */
+@keyframes progress-fill {
+  0%   { width: 0%; }
+  100% { width: 70%; }
+}
+.animate-progress-fill {
+  width: 0%;
+  animation: progress-fill 1.2s ease-out forwards;
+  animation-play-state: paused;
+}
+/* plays when card scrolls into view (via AnimateIn parent already reveals it) */
+.animate-progress-fill { animation-play-state: running; }
+
+/* ---------- Navbar underline ---------- */
+.nav-link { position: relative; }
+.nav-underline {
+  position: absolute;
+  left: 50%; bottom: 0;
+  width: 0; height: 2px;
+  background: #dc2626;
+  border-radius: 1px;
+  transform: translateX(-50%);
+  transition: width .3s ease;
+}
+.nav-link:hover .nav-underline { width: 60%; }
+
+/* ---------- Glassmorphism utility ---------- */
+.glass-card {
+  background: rgba(255,255,255,.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+.glass-badge {
+  background: rgba(254,226,226,.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(254,202,202,.4);
+}
+
+/* ---------- Particles (hero) ---------- */
+.particle {
+  position: absolute;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(220,38,38,.12);
+  will-change: transform, opacity;
+}
+@keyframes drift {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateY(-120px) translateX(30px); opacity: 0; }
+}
+.particle-0 { top:80%; left:10%; animation: drift 5s ease-in-out infinite     ; }
+.particle-1 { top:70%; left:25%; animation: drift 6s ease-in-out infinite .7s ; width:4px;height:4px; }
+.particle-2 { top:85%; left:40%; animation: drift 5.5s ease-in-out infinite 1.2s; }
+.particle-3 { top:75%; left:55%; animation: drift 6.5s ease-in-out infinite 1.8s; width:5px;height:5px; }
+.particle-4 { top:90%; left:65%; animation: drift 5s ease-in-out infinite 2.4s; width:4px;height:4px; }
+.particle-5 { top:80%; left:78%; animation: drift 6s ease-in-out infinite 3s  ; }
+.particle-6 { top:70%; left:88%; animation: drift 5.5s ease-in-out infinite 3.5s; width:5px;height:5px; }
+.particle-7 { top:85%; left:95%; animation: drift 6.5s ease-in-out infinite 4s; width:4px;height:4px; }
+
+/* ---------- Skeleton shimmer (utility) ---------- */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: 0.5rem;
+}
+
+/* ---------- Scroll indicator dot ---------- */
+@keyframes scroll-dot {
+  0%   { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(6px); opacity: 0; }
+}
+.animate-scroll-dot {
+  animation: scroll-dot 1.5s ease-in-out infinite;
+}
+
+
+
+/* ---------- Page transition (GSAP overlay) ---------- */
+.page-transition-wrapper {
+  /* GSAP handles animation programmatically */
+}
