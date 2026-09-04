@@ -32,12 +32,14 @@ module.exports = {
         },
       },
       boxShadow: {
-        'glow-sm': '0 0 15px rgba(225, 29, 72, 0.25)',
-        'glow-md': '0 0 30px rgba(225, 29, 72, 0.35)',
-        'glow-lg': '0 0 50px rgba(225, 29, 72, 0.45)',
-        'glow-emerald': '0 0 25px rgba(16, 185, 129, 0.35)',
-        'glass-sm': '0 4px 20px -2px rgba(0, 0, 0, 0.4)',
-        'glass-lg': '0 10px 40px -4px rgba(0, 0, 0, 0.5)',
+        'glow-sm': '0 0 15px rgba(225, 29, 72, 0.2)',
+        'glow-md': '0 4px 25px rgba(225, 29, 72, 0.25)',
+        'glow-lg': '0 8px 35px rgba(225, 29, 72, 0.3)',
+        'glow-emerald': '0 4px 20px rgba(16, 185, 129, 0.25)',
+        'card': '0 2px 10px -2px rgba(15, 23, 42, 0.04), 0 8px 24px -4px rgba(15, 23, 42, 0.06)',
+        'card-hover': '0 4px 15px -2px rgba(15, 23, 42, 0.06), 0 16px 36px -4px rgba(225, 29, 72, 0.08)',
+        'glass-sm': '0 4px 20px -2px rgba(15, 23, 42, 0.05)',
+        'glass-lg': '0 10px 40px -4px rgba(15, 23, 42, 0.08)',
       },
       keyframes: {
         marquee: {

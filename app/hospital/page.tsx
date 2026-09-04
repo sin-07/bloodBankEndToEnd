@@ -99,8 +99,8 @@ export default function HospitalDashboard() {
       <div className="space-y-8">
         
         {/* Hospital Header Banner */}
-        <div className="relative rounded-3xl p-6 sm:p-8 glass-card-elevated border border-sky-500/20 overflow-hidden">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-sky-600/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative rounded-3xl p-6 sm:p-8 bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 text-white shadow-xl overflow-hidden">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div className="space-y-2">
@@ -123,15 +123,15 @@ export default function HospitalDashboard() {
             <div className="flex items-center gap-3">
               <Link
                 href="/hospital/availability"
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700/80 text-xs font-semibold text-slate-200 hover:text-white hover:border-slate-600 transition-all"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-semibold text-white transition-all shadow-sm"
               >
-                <Package className="w-4 h-4 text-sky-400" />
+                <Package className="w-4 h-4 text-sky-300" />
                 <span>Check Stock</span>
               </Link>
 
               <Link
                 href="/hospital/new-request"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold text-xs shadow-glow-sm hover:shadow-glow-md transition-all"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold text-xs shadow-md shadow-rose-600/30 transition-all"
               >
                 <PlusCircle className="w-4 h-4" />
                 <span>Emergency Request</span>
@@ -166,7 +166,7 @@ export default function HospitalDashboard() {
               action={
                 <Link
                   href="/hospital/requests"
-                  className="text-xs font-bold text-sky-400 hover:text-sky-300 flex items-center gap-1"
+                  className="text-xs font-bold text-rose-600 hover:text-rose-700 flex items-center gap-1"
                 >
                   All Requests <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
@@ -175,7 +175,7 @@ export default function HospitalDashboard() {
             >
               <div className="overflow-x-auto">
                 <table className="w-full text-xs text-left">
-                  <thead className="bg-slate-900/90 text-slate-400 uppercase text-[10px] font-bold tracking-wider border-b border-white/[0.06]">
+                  <thead className="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold tracking-wider border-b border-slate-200">
                     <tr>
                       <th className="px-5 py-3">Patient / Reason</th>
                       <th className="px-5 py-3">Group</th>
@@ -184,20 +184,20 @@ export default function HospitalDashboard() {
                       <th className="px-5 py-3">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/[0.04] text-slate-200">
+                  <tbody className="divide-y divide-slate-100 text-slate-700">
                     {recentRequestsList.length > 0 ? (
                       recentRequestsList.map((r: any) => (
-                        <tr key={r._id} className="hover:bg-slate-800/40 transition-colors">
+                        <tr key={r._id} className="hover:bg-slate-50/80 transition-colors">
                           <td className="px-5 py-3.5">
-                            <p className="font-bold text-white">{r.patientName}</p>
-                            <p className="text-[11px] text-slate-400">{r.reason}</p>
+                            <p className="font-bold text-slate-900">{r.patientName}</p>
+                            <p className="text-[11px] text-slate-500">{r.reason}</p>
                           </td>
                           <td className="px-5 py-3.5">
-                            <span className="font-heading font-extrabold text-sm px-2 py-0.5 rounded-lg bg-rose-500/15 text-rose-400 border border-rose-500/30">
+                            <span className="font-heading font-extrabold text-sm px-2 py-0.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200">
                               {r.bloodGroup}
                             </span>
                           </td>
-                          <td className="px-5 py-3.5 font-bold">
+                          <td className="px-5 py-3.5 font-bold text-slate-900">
                             {r.units} unit{r.units > 1 ? 's' : ''}
                           </td>
                           <td className="px-5 py-3.5">
@@ -229,23 +229,23 @@ export default function HospitalDashboard() {
           <div className="space-y-6">
             
             <Card title="Emergency Dispatch Protocol">
-              <div className="space-y-3 text-xs text-slate-300">
-                <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 space-y-1">
-                  <p className="font-bold text-rose-300 flex items-center gap-1.5">
-                    <Zap className="w-3.5 h-3.5 text-rose-400" />
+              <div className="space-y-3 text-xs text-slate-700">
+                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 space-y-1">
+                  <p className="font-bold text-rose-700 flex items-center gap-1.5">
+                    <Zap className="w-3.5 h-3.5 text-rose-600" />
                     Code Red Emergencies
                   </p>
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-[11px] text-rose-800 leading-relaxed">
                     Trauma surgical cases tagged 'Critical' receive automated top-priority reserve dispatch within 15 minutes.
                   </p>
                 </div>
 
-                <div className="p-3 rounded-xl bg-slate-900/60 border border-white/[0.05] space-y-1">
-                  <p className="font-bold text-white flex items-center gap-1.5">
-                    <ShieldCheck className="w-3.5 h-3.5 text-sky-400" />
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
+                  <p className="font-bold text-slate-900 flex items-center gap-1.5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-sky-600" />
                     Chain of Custody
                   </p>
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-[11px] text-slate-600 leading-relaxed">
                     All deliveries are temperature monitored with tamper-evident digital tracking from bank to ICU.
                   </p>
                 </div>
@@ -253,9 +253,9 @@ export default function HospitalDashboard() {
             </Card>
 
             <Card title="Hospital Liaison Helpline">
-              <div className="space-y-2 text-xs text-slate-300">
-                <p className="text-slate-400 text-[11px]">Direct hospital concierge line for emergency bulk units:</p>
-                <div className="p-3 rounded-xl bg-slate-900 border border-slate-700/60 font-mono font-bold text-rose-400 text-sm">
+              <div className="space-y-2 text-xs text-slate-700">
+                <p className="text-slate-500 text-[11px]">Direct hospital concierge line for emergency bulk units:</p>
+                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 font-mono font-bold text-rose-700 text-sm">
                   📞 +91 98201 55555
                 </div>
               </div>

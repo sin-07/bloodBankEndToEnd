@@ -97,17 +97,17 @@ export default function AdminDashboard() {
       <div className="space-y-8">
         
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200/80">
           <div>
             <div className="flex items-center gap-2.5">
-              <h1 className="text-2xl sm:text-3xl font-black text-white font-heading tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 font-heading tracking-tight">
                 Central Telemetry Command
               </h1>
-              <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
-                <ShieldCheck className="w-3 h-3" /> Live
+              <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
+                <ShieldCheck className="w-3 h-3 text-emerald-600" /> Live
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               Autonomous cold-chain monitoring, supply balancing, and emergency hospital dispatch.
             </p>
           </div>
@@ -116,14 +116,14 @@ export default function AdminDashboard() {
             <button
               onClick={() => fetchDashboardStats(true)}
               disabled={refreshing}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700/80 text-xs font-semibold text-slate-300 hover:text-white hover:border-slate-600 transition-all disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-all shadow-sm disabled:opacity-50"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
               <span>Refresh</span>
             </button>
             <Link
               href="/admin/blood-stock"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-xs font-bold text-white shadow-glow-sm transition-all"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-xs font-bold text-white shadow-md shadow-rose-600/20 transition-all"
             >
               <Droplets className="w-3.5 h-3.5" />
               <span>Manage Stock</span>
@@ -172,7 +172,7 @@ export default function AdminDashboard() {
               action={
                 <Link
                   href="/admin/requests"
-                  className="text-xs font-bold text-rose-400 hover:text-rose-300 inline-flex items-center gap-1"
+                  className="text-xs font-bold text-rose-600 hover:text-rose-700 inline-flex items-center gap-1"
                 >
                   View All Requests <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
@@ -181,7 +181,7 @@ export default function AdminDashboard() {
             >
               <div className="overflow-x-auto">
                 <table className="w-full text-xs text-left">
-                  <thead className="bg-slate-900/90 text-slate-400 uppercase text-[10px] font-bold tracking-wider border-b border-white/[0.06]">
+                  <thead className="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold tracking-wider border-b border-slate-200">
                     <tr>
                       <th className="px-5 py-3">Patient / Hospital</th>
                       <th className="px-5 py-3">Blood Group</th>
@@ -190,20 +190,20 @@ export default function AdminDashboard() {
                       <th className="px-5 py-3">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/[0.04] text-slate-200">
+                  <tbody className="divide-y divide-slate-100 text-slate-700">
                     {data?.recentRequests?.length > 0 ? (
                       data.recentRequests.map((req: any) => (
-                        <tr key={req._id} className="hover:bg-slate-800/40 transition-colors">
+                        <tr key={req._id} className="hover:bg-slate-50/80 transition-colors">
                           <td className="px-5 py-3.5">
-                            <p className="font-bold text-white">{req.patientName}</p>
-                            <p className="text-[11px] text-slate-400">{req.hospitalName || req.city}</p>
+                            <p className="font-bold text-slate-900">{req.patientName}</p>
+                            <p className="text-[11px] text-slate-500">{req.hospitalName || req.city}</p>
                           </td>
                           <td className="px-5 py-3.5">
-                            <span className="font-heading font-extrabold text-sm px-2 py-0.5 rounded-lg bg-rose-500/15 text-rose-400 border border-rose-500/30">
+                            <span className="font-heading font-extrabold text-sm px-2 py-0.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200">
                               {req.bloodGroup}
                             </span>
                           </td>
-                          <td className="px-5 py-3.5 font-bold">
+                          <td className="px-5 py-3.5 font-bold text-slate-900">
                             {req.units} unit{req.units > 1 ? 's' : ''}
                           </td>
                           <td className="px-5 py-3.5">
@@ -241,24 +241,24 @@ export default function AdminDashboard() {
                   {data.lowStockAlerts.map((alert: any) => (
                     <div
                       key={alert.bloodGroup}
-                      className="flex items-center justify-between p-3 rounded-xl bg-rose-500/10 border border-rose-500/20"
+                      className="flex items-center justify-between p-3 rounded-xl bg-rose-50 border border-rose-200"
                     >
                       <div className="flex items-center gap-2.5">
-                        <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
-                        <span className="font-heading font-extrabold text-rose-400">
+                        <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+                        <span className="font-heading font-extrabold text-rose-700">
                           Type {alert.bloodGroup}
                         </span>
                       </div>
-                      <span className="text-xs font-bold text-rose-300">
+                      <span className="text-xs font-bold text-rose-700">
                         {alert.units} units left
                       </span>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-center space-y-1">
-                  <p className="text-xs font-bold text-emerald-300">All Groups Well-Stocked</p>
-                  <p className="text-[11px] text-emerald-400/80">Every blood type satisfies minimum safety reserves.</p>
+                <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-center space-y-1">
+                  <p className="text-xs font-bold text-emerald-800">All Groups Well-Stocked</p>
+                  <p className="text-[11px] text-emerald-700">Every blood type satisfies minimum safety reserves.</p>
                 </div>
               )}
             </Card>
@@ -268,35 +268,35 @@ export default function AdminDashboard() {
               <div className="space-y-2 text-xs">
                 <Link
                   href="/admin/donors"
-                  className="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 hover:bg-slate-800/80 border border-white/[0.05] transition-colors"
+                  className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/80 transition-colors"
                 >
-                  <div className="flex items-center gap-2.5 text-slate-300">
-                    <Users className="w-4 h-4 text-sky-400" />
+                  <div className="flex items-center gap-2.5 text-slate-700">
+                    <Users className="w-4 h-4 text-sky-600" />
                     <span className="font-semibold">Registered Donors Directory</span>
                   </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500" />
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
                 </Link>
 
                 <Link
                   href="/admin/hospitals"
-                  className="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 hover:bg-slate-800/80 border border-white/[0.05] transition-colors"
+                  className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/80 transition-colors"
                 >
-                  <div className="flex items-center gap-2.5 text-slate-300">
-                    <Building2 className="w-4 h-4 text-rose-400" />
+                  <div className="flex items-center gap-2.5 text-slate-700">
+                    <Building2 className="w-4 h-4 text-rose-600" />
                     <span className="font-semibold">Partner Hospital Verification</span>
                   </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500" />
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
                 </Link>
 
                 <Link
                   href="/admin/reports"
-                  className="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 hover:bg-slate-800/80 border border-white/[0.05] transition-colors"
+                  className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/80 transition-colors"
                 >
-                  <div className="flex items-center gap-2.5 text-slate-300">
-                    <FileText className="w-4 h-4 text-emerald-400" />
+                  <div className="flex items-center gap-2.5 text-slate-700">
+                    <FileText className="w-4 h-4 text-emerald-600" />
                     <span className="font-semibold">Audit & Regulatory Reports</span>
                   </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500" />
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
                 </Link>
               </div>
             </Card>

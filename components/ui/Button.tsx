@@ -25,21 +25,21 @@ export default function Button({
   ...props
 }: ButtonProps) {
   const baseStyles =
-    'relative inline-flex items-center justify-center font-medium rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950 disabled:opacity-50 disabled:cursor-not-allowed select-none overflow-hidden active:scale-[0.98]';
+    'relative inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 disabled:opacity-50 disabled:cursor-not-allowed select-none overflow-hidden active:scale-[0.98]';
 
   const variants = {
     primary:
-      'bg-gradient-to-r from-rose-600 via-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white shadow-lg shadow-rose-900/40 hover:shadow-rose-700/50 border border-rose-500/30 focus:ring-rose-500',
+      'bg-gradient-to-r from-rose-600 via-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white shadow-md shadow-rose-600/25 hover:shadow-lg hover:shadow-rose-600/35 border border-rose-500/30 focus:ring-rose-500',
     glow:
       'bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white shadow-glow-md hover:shadow-glow-lg border border-rose-400/40 focus:ring-rose-500 animate-pulse-glow',
     secondary:
-      'bg-slate-850 hover:bg-slate-800 text-slate-200 border border-slate-700/60 hover:border-slate-600 shadow-sm focus:ring-slate-500',
+      'bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 hover:border-slate-400 shadow-sm focus:ring-slate-400',
     danger:
-      'bg-red-700 hover:bg-red-600 text-white shadow-lg shadow-red-950/50 border border-red-600/40 focus:ring-red-600',
+      'bg-red-600 hover:bg-red-700 text-white shadow-md shadow-red-600/20 border border-red-500 focus:ring-red-600',
     outline:
-      'border-2 border-rose-600/80 text-rose-400 hover:bg-rose-500/10 hover:border-rose-500 focus:ring-rose-500',
+      'border-2 border-rose-600 text-rose-600 hover:bg-rose-50 focus:ring-rose-500',
     ghost:
-      'text-slate-300 hover:text-white hover:bg-slate-800/60 focus:ring-slate-400',
+      'text-slate-600 hover:text-slate-900 hover:bg-slate-100 focus:ring-slate-300',
   };
 
   const sizes = {

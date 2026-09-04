@@ -19,16 +19,16 @@ export function Card({
   subtitle,
   action,
   noPadding = false,
-  glass = true,
+  glass = false,
   glow = false,
   hoverLift = true,
 }: CardProps) {
   const baseCard = glass
-    ? 'glass-card-elevated text-slate-100'
-    : 'bg-slate-900 border border-slate-800 text-slate-100 shadow-xl';
+    ? 'glass-panel text-slate-800 shadow-sm'
+    : 'bg-white border border-slate-200/80 text-slate-800 shadow-sm';
 
   const hoverStyle = hoverLift
-    ? 'transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:border-slate-700/80'
+    ? 'transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover hover:border-rose-200/80'
     : '';
 
   const glowStyle = glow ? 'glow-border' : '';
@@ -38,15 +38,15 @@ export function Card({
       className={`rounded-2xl overflow-hidden ${baseCard} ${hoverStyle} ${glowStyle} ${className}`}
     >
       {(title || action) && (
-        <div className="flex items-center justify-between px-6 py-4.5 border-b border-white/[0.07] bg-white/[0.02]">
+        <div className="flex items-center justify-between px-6 py-4.5 border-b border-slate-100 bg-slate-50/50">
           <div>
             {title && (
-              <h3 className="text-base font-bold tracking-tight text-white">
+              <h3 className="text-base font-bold tracking-tight text-slate-900 font-heading">
                 {title}
               </h3>
             )}
             {subtitle && (
-              <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>
+              <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>
             )}
           </div>
           {action && <div>{action}</div>}
@@ -65,7 +65,7 @@ export function CardHeader({
   className?: string;
 }) {
   return (
-    <div className={`px-6 py-4.5 border-b border-white/[0.07] bg-white/[0.02] ${className}`}>
+    <div className={`px-6 py-4.5 border-b border-slate-100 bg-slate-50/50 ${className}`}>
       {children}
     </div>
   );
@@ -79,7 +79,7 @@ export function CardTitle({
   className?: string;
 }) {
   return (
-    <h3 className={`text-base font-bold tracking-tight text-white ${className}`}>
+    <h3 className={`text-base font-bold tracking-tight text-slate-900 font-heading ${className}`}>
       {children}
     </h3>
   );

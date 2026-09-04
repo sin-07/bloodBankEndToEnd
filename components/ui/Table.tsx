@@ -27,18 +27,18 @@ export default function Table<T extends { _id?: string }>({
   if (loading) {
     return (
       <div className="space-y-2 p-4">
-        <div className="h-10 bg-slate-850 rounded-xl animate-pulse" />
+        <div className="h-10 bg-slate-100 rounded-xl animate-pulse" />
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="h-12 bg-slate-900/60 rounded-xl animate-pulse" />
+          <div key={i} className="h-12 bg-slate-50 rounded-xl animate-pulse" />
         ))}
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-2xl border border-white/[0.07] bg-slate-900/40">
+    <div className="overflow-x-auto rounded-2xl border border-slate-200/80 bg-white shadow-sm">
       <table className="w-full text-xs text-left">
-        <thead className="bg-slate-900/80 text-slate-400 uppercase text-[10px] font-bold tracking-wider border-b border-white/[0.07]">
+        <thead className="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold tracking-wider border-b border-slate-200/80">
           <tr>
             {columns.map((col, i) => (
               <th key={i} className={`px-5 py-3.5 font-bold ${col.className || ''}`}>
@@ -47,18 +47,18 @@ export default function Table<T extends { _id?: string }>({
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-white/[0.04]">
+        <tbody className="divide-y divide-slate-100">
           {data.length === 0 ? (
             <tr>
               <td
                 colSpan={columns.length}
-                className="px-6 py-12 text-center text-slate-400"
+                className="px-6 py-12 text-center text-slate-500"
               >
                 <div className="flex flex-col items-center justify-center gap-2">
-                  <div className="w-10 h-10 rounded-xl bg-slate-850 flex items-center justify-center text-slate-500">
+                  <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400">
                     <Inbox className="w-5 h-5" />
                   </div>
-                  <p className="text-xs font-medium text-slate-300">{emptyMessage}</p>
+                  <p className="text-xs font-medium text-slate-600">{emptyMessage}</p>
                 </div>
               </td>
             </tr>
@@ -66,8 +66,8 @@ export default function Table<T extends { _id?: string }>({
             data.map((row, rowIndex) => (
               <tr
                 key={row._id || rowIndex}
-                className={`transition-colors text-slate-200 hover:bg-slate-800/50 ${
-                  onRowClick ? 'cursor-pointer active:bg-slate-800/70' : ''
+                className={`transition-colors text-slate-700 hover:bg-slate-50/80 ${
+                  onRowClick ? 'cursor-pointer active:bg-slate-100' : ''
                 }`}
                 onClick={() => onRowClick?.(row)}
               >

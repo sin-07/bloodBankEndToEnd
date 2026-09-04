@@ -30,10 +30,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 relative">
+    <div className="min-h-screen bg-slate-50 text-slate-900 relative">
       {/* Background ambient lighting */}
-      <div className="fixed inset-0 pointer-events-none ambient-glow-rose -z-10 opacity-60" />
-      <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-rose-600/[0.04] rounded-full blur-[120px] pointer-events-none -z-10" />
+      <div className="fixed inset-0 pointer-events-none ambient-glow-rose -z-10 opacity-70" />
+      <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-rose-500/[0.03] rounded-full blur-[120px] pointer-events-none -z-10" />
 
       <Navbar onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />

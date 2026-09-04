@@ -44,28 +44,28 @@ export default function Modal({
       <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
         {/* Backdrop */}
         <div
-          className="fixed inset-0 bg-slate-950/85 backdrop-blur-md transition-opacity animate-in fade-in duration-200"
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity animate-in fade-in duration-200"
           onClick={onClose}
         />
 
         {/* Modal Panel */}
         <div
-          className={`relative inline-block align-bottom glass-card-elevated border border-slate-700/80 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle w-full ${sizes[size]} z-50 animate-in zoom-in-95 duration-200`}
+          className={`relative inline-block align-bottom bg-white border border-slate-200 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle w-full ${sizes[size]} z-50 animate-in zoom-in-95 duration-200`}
         >
           {/* Header */}
           {title && (
-            <div className="flex items-center justify-between px-6 py-4.5 border-b border-white/[0.07] bg-white/[0.02]">
+            <div className="flex items-center justify-between px-6 py-4.5 border-b border-slate-100 bg-slate-50/50">
               <div>
-                <h3 className="text-base font-bold text-white tracking-tight">
+                <h3 className="text-base font-bold text-slate-900 tracking-tight font-heading">
                   {title}
                 </h3>
                 {subtitle && (
-                  <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>
+                  <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>
                 )}
               </div>
               <button
                 onClick={onClose}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 transition-colors"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
                 aria-label="Close modal"
               >
                 <X className="w-4 h-4" />
@@ -74,7 +74,7 @@ export default function Modal({
           )}
 
           {/* Body */}
-          <div className="px-6 py-5 max-h-[80vh] overflow-y-auto">{children}</div>
+          <div className="px-6 py-5 max-h-[80vh] overflow-y-auto text-slate-700">{children}</div>
         </div>
       </div>
     </div>

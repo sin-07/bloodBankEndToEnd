@@ -14,7 +14,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
             {label}
             {props.required && <span className="text-rose-500 ml-1">*</span>}
           </label>
@@ -27,21 +27,21 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
           <input
             ref={ref}
-            className={`w-full ${icon ? 'pl-10' : 'px-4'} py-2.5 bg-slate-900/90 text-white rounded-xl border transition-all duration-200 placeholder-slate-500 text-sm shadow-inner
-              focus:outline-none focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500
-              disabled:bg-slate-800/50 disabled:text-slate-500 disabled:cursor-not-allowed
+            className={`w-full ${icon ? 'pl-10' : 'px-4'} py-2.5 bg-white text-slate-900 rounded-xl border transition-all duration-200 placeholder-slate-400 text-sm shadow-sm
+              focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500
+              disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed
               ${
                 error
-                  ? 'border-rose-500/80 focus:ring-rose-500/40 bg-rose-950/20'
-                  : 'border-slate-700/80 hover:border-slate-600 focus:bg-slate-900'
+                  ? 'border-rose-400 focus:ring-rose-500/20 bg-rose-50/30'
+                  : 'border-slate-300 hover:border-slate-400 focus:bg-white'
               }
               ${className}`}
             {...props}
           />
         </div>
-        {error && <p className="mt-1.5 text-xs font-medium text-rose-400">{error}</p>}
+        {error && <p className="mt-1.5 text-xs font-medium text-rose-600">{error}</p>}
         {helperText && !error && (
-          <p className="mt-1 text-xs text-slate-400">{helperText}</p>
+          <p className="mt-1 text-xs text-slate-500">{helperText}</p>
         )}
       </div>
     );

@@ -259,10 +259,10 @@ export default function HomePage() {
     BLOOD_COMPATIBILITY['O-'];
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-slate-950 text-slate-100 selection:bg-rose-500/20 selection:text-rose-200 overflow-x-hidden">
+    <div ref={containerRef} className="min-h-screen bg-slate-50 text-slate-900 selection:bg-rose-500/20 selection:text-rose-700 overflow-x-hidden">
       
       {/* ░░░░░░ TOP EMERGENCY TICKER RIBBON ░░░░░░ */}
-      <div className="bg-gradient-to-r from-rose-950 via-red-900 to-rose-950 border-b border-rose-500/20 py-1.5 px-4 overflow-hidden relative z-50 text-xs text-rose-200">
+      <div className="bg-slate-900 border-b border-slate-800 py-1.5 px-4 overflow-hidden relative z-50 text-xs text-slate-300">
         <div className="flex items-center gap-6 whitespace-nowrap animate-marquee">
           <span className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-rose-400">
             <span className="relative flex h-2 w-2">
@@ -272,12 +272,12 @@ export default function HomePage() {
             Live Network Dispatch
           </span>
           <span>🚨 Urgent: O- (Universal Donor) stock required at Apollo Hospital Mumbai</span>
-          <span>•</span>
-          <span>🩸 418 units currently tested and ready across regional cold storage units</span>
-          <span>•</span>
-          <span>🏥 Lilavati & Fortis Memorial online — 100% cold-chain tracking active</span>
-          <span>•</span>
-          <span>❤️ Voluntary donation drive scheduled this weekend — Book your slot</span>
+          <span className="text-slate-600">•</span>
+          <span>🩸 418 units tested and ready across regional cold-chain storage</span>
+          <span className="text-slate-600">•</span>
+          <span>🏥 Lilavati & Fortis Memorial online — 100% telemetry verified</span>
+          <span className="text-slate-600">•</span>
+          <span>❤️ Voluntary donation drive active this weekend — Reserve your slot</span>
         </div>
       </div>
 
@@ -285,18 +285,18 @@ export default function HomePage() {
       <header
         className={`sticky top-0 z-40 px-6 py-4 transition-all duration-300 ${
           scrolled
-            ? 'bg-slate-950/80 backdrop-blur-2xl border-b border-white/[0.08] shadow-2xl'
+            ? 'bg-white/85 backdrop-blur-2xl border-b border-slate-200/80 shadow-sm'
             : 'bg-transparent'
         }`}
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-rose-500 via-rose-600 to-red-700 flex items-center justify-center shadow-glow-sm group-hover:scale-105 transition-all">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-rose-500 via-rose-600 to-red-600 flex items-center justify-center shadow-md shadow-rose-600/25 group-hover:scale-105 transition-all">
               <Droplets className="w-5 h-5 text-white" />
             </div>
             <div>
-              <span className="text-lg font-extrabold tracking-tight text-white group-hover:text-rose-400 transition-colors">
-                Srishti <span className="text-rose-500">Blood Bank</span>
+              <span className="text-lg font-extrabold tracking-tight text-slate-900 group-hover:text-rose-600 transition-colors">
+                Srishti <span className="text-rose-600">Blood Bank</span>
               </span>
               <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
                 End-to-End Life Network
@@ -304,18 +304,18 @@ export default function HomePage() {
             </div>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-7 text-xs font-semibold tracking-wide text-slate-300">
-            <a href="#compatibility" className="hover:text-rose-400 transition-colors">Compatibility Matrix</a>
-            <a href="#telemetry" className="hover:text-rose-400 transition-colors">Live Telemetry</a>
-            <a href="#workflow" className="hover:text-rose-400 transition-colors">How It Works</a>
-            <a href="#calculator" className="hover:text-rose-400 transition-colors">Impact Calculator</a>
-            <a href="#portals" className="hover:text-rose-400 transition-colors">Portals</a>
+          <nav className="hidden md:flex items-center gap-7 text-xs font-semibold tracking-wide text-slate-600">
+            <a href="#compatibility" className="hover:text-rose-600 transition-colors">Compatibility Matrix</a>
+            <a href="#telemetry" className="hover:text-rose-600 transition-colors">Live Telemetry</a>
+            <a href="#workflow" className="hover:text-rose-600 transition-colors">How It Works</a>
+            <a href="#calculator" className="hover:text-rose-600 transition-colors">Impact Calculator</a>
+            <a href="#portals" className="hover:text-rose-600 transition-colors">Portals</a>
           </nav>
 
           <div className="flex items-center gap-3">
             <Link
               href="/auth/login"
-              className="px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/60 rounded-xl transition-colors"
+              className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors"
             >
               Sign In
             </Link>
@@ -323,7 +323,7 @@ export default function HomePage() {
               <Link
                 href="/auth/register"
                 onClick={(e) => createRipple(e)}
-                className="relative inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-white bg-gradient-to-r from-rose-600 to-red-600 rounded-xl shadow-glow-sm hover:shadow-glow-md hover:scale-[1.02] active:scale-[0.98] transition-all"
+                className="relative inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-white bg-gradient-to-r from-rose-600 to-red-600 rounded-xl shadow-md shadow-rose-600/20 hover:shadow-lg hover:shadow-rose-600/30 hover:scale-[1.02] active:scale-[0.98] transition-all"
               >
                 <span>Donate Blood</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -334,29 +334,29 @@ export default function HomePage() {
       </header>
 
       {/* ░░░░░░ HERO SECTION ░░░░░░ */}
-      <section ref={heroRef} className="relative min-h-[88vh] flex items-center pt-8 pb-20 overflow-hidden">
+      <section ref={heroRef} className="relative min-h-[85vh] flex items-center pt-8 pb-20 overflow-hidden">
         {/* Ambient Glows */}
-        <div className="absolute top-[-100px] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-rose-600/[0.12] rounded-full blur-[140px] pointer-events-none -z-10" />
-        <div className="absolute top-1/3 -left-48 w-96 h-96 bg-red-800/[0.08] rounded-full blur-[100px] pointer-events-none -z-10" />
+        <div className="absolute top-[-100px] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-rose-500/[0.08] rounded-full blur-[140px] pointer-events-none -z-10" />
+        <div className="absolute top-1/3 -left-48 w-96 h-96 bg-red-400/[0.05] rounded-full blur-[100px] pointer-events-none -z-10" />
 
         <div className="max-w-7xl mx-auto px-6 w-full">
           <div className="grid lg:grid-cols-12 gap-12 items-center">
             
             {/* Left Hero Content */}
             <div className="lg:col-span-7 space-y-7">
-              <div className="hero-badge inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-bold tracking-wide backdrop-blur-md">
-                <Sparkles className="w-3.5 h-3.5 text-rose-400 animate-spin-slow" />
+              <div className="hero-badge inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-50 border border-rose-200/80 text-rose-700 text-xs font-bold tracking-wide shadow-sm">
+                <Sparkles className="w-3.5 h-3.5 text-rose-600 animate-spin-slow" />
                 <span>India’s Next-Gen Autonomous Blood Dispatch Lifeline</span>
               </div>
 
-              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.08] tracking-tight text-white">
+              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.08] tracking-tight text-slate-900">
                 <span className="hero-title-1 block overflow-hidden">Every Drop Counts.</span>
-                <span className="hero-title-2 block overflow-hidden bg-gradient-to-r from-rose-400 via-red-500 to-rose-300 bg-clip-text text-transparent animate-text-shimmer">
+                <span className="hero-title-2 block overflow-hidden bg-gradient-to-r from-rose-600 via-red-600 to-rose-700 bg-clip-text text-transparent animate-text-shimmer">
                   Every Second Saves.
                 </span>
               </h1>
 
-              <p className="hero-subtext text-base sm:text-lg text-slate-300 max-w-xl font-normal leading-relaxed">
+              <p className="hero-subtext text-base sm:text-lg text-slate-600 max-w-xl font-normal leading-relaxed">
                 Connect voluntary donors, partner hospitals, and emergency trauma centers through instant compatibility matching, real-time cold-chain tracking, and zero-delay automated dispatch.
               </p>
 
@@ -366,7 +366,7 @@ export default function HomePage() {
                   <Link
                     href="/auth/register"
                     onClick={(e) => createRipple(e)}
-                    className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold text-sm rounded-2xl shadow-glow-md hover:shadow-glow-lg hover:scale-105 active:scale-95 transition-all"
+                    className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold text-sm rounded-2xl shadow-lg shadow-rose-600/25 hover:shadow-xl hover:scale-105 active:scale-95 transition-all"
                   >
                     <span>Register as Donor</span>
                     <ArrowRight className="w-4 h-4" />
@@ -376,7 +376,7 @@ export default function HomePage() {
                 <MagneticButton strength={0.2}>
                   <Link
                     href="#compatibility"
-                    className="inline-flex items-center gap-2.5 px-7 py-4 rounded-2xl glass-panel text-slate-200 hover:text-white hover:border-slate-600 transition-all font-semibold text-sm"
+                    className="inline-flex items-center gap-2.5 px-7 py-4 rounded-2xl bg-white text-slate-700 border border-slate-200/80 shadow-sm hover:border-slate-300 hover:bg-slate-50 transition-all font-semibold text-sm"
                   >
                     <span>Test Blood Compatibility</span>
                     <ChevronRight className="w-4 h-4 text-slate-400" />
@@ -385,18 +385,18 @@ export default function HomePage() {
               </div>
 
               {/* Trust Indicators */}
-              <div className="pt-4 flex items-center gap-6 text-xs text-slate-400 border-t border-white/[0.08]">
+              <div className="pt-4 flex items-center gap-6 text-xs text-slate-500 border-t border-slate-200/80">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  <span>NABH & CDSCO Standard</span>
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span className="font-medium">NABH & CDSCO Standard</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-sky-400" />
-                  <span>100% Verified Centers</span>
+                  <Shield className="w-4 h-4 text-sky-600" />
+                  <span className="font-medium">100% Verified Centers</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-rose-400" />
-                  <span>Cold-Chain Custody</span>
+                  <Zap className="w-4 h-4 text-rose-600" />
+                  <span className="font-medium">Cold-Chain Custody</span>
                 </div>
               </div>
             </div>
@@ -406,24 +406,24 @@ export default function HomePage() {
               <div
                 onMouseMove={handleTiltMove}
                 onMouseLeave={handleTiltLeave}
-                className="hero-floating-card relative rounded-3xl glass-card-elevated border border-rose-500/30 p-7 shadow-2xl overflow-hidden shine-effect"
+                className="hero-floating-card relative rounded-3xl bg-white border border-slate-200/80 p-7 shadow-2xl overflow-hidden shine-effect"
               >
                 {/* Background Accent Pill */}
-                <div className="absolute -top-12 -right-12 w-48 h-48 bg-rose-600/20 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute -top-12 -right-12 w-48 h-48 bg-rose-500/10 rounded-full blur-3xl pointer-events-none" />
 
                 {/* Card Header */}
-                <div className="flex items-center justify-between pb-6 border-b border-white/[0.08]">
+                <div className="flex items-center justify-between pb-6 border-b border-slate-100">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-rose-600/20 border border-rose-500/30 flex items-center justify-center text-rose-400">
+                    <div className="w-10 h-10 rounded-xl bg-rose-50 border border-rose-200/80 flex items-center justify-center text-rose-600">
                       <Activity className="w-5 h-5 animate-pulse" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-white">Live Central Reserve</h4>
-                      <p className="text-[11px] text-slate-400">Cold-chain units ready</p>
+                      <h4 className="text-sm font-bold text-slate-900">Live Central Reserve</h4>
+                      <p className="text-[11px] text-slate-500">Cold-chain units ready</p>
                     </div>
                   </div>
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
                     Operational
                   </span>
                 </div>
@@ -436,8 +436,8 @@ export default function HomePage() {
                       onClick={() => setSelectedGroup(bg)}
                       className={`cursor-pointer rounded-xl p-3 text-center transition-all duration-200 border ${
                         selectedGroup === bg
-                          ? 'bg-rose-600 text-white border-rose-400 shadow-glow-sm scale-105'
-                          : 'bg-slate-900/60 border-white/[0.06] text-slate-300 hover:border-rose-500/40 hover:bg-slate-800/80'
+                          ? 'bg-rose-600 text-white border-rose-600 shadow-md shadow-rose-600/25 scale-105'
+                          : 'bg-slate-50 border-slate-200/80 text-slate-700 hover:border-rose-300 hover:bg-rose-50/50'
                       }`}
                     >
                       <p className="text-xs font-extrabold font-heading">{bg}</p>
@@ -447,27 +447,27 @@ export default function HomePage() {
                 </div>
 
                 {/* Selected Group Quick Insight */}
-                <div className="p-4 rounded-2xl bg-slate-900/70 border border-white/[0.07] space-y-2">
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-2">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-rose-300">Selected Type: {selectedGroup}</span>
-                    <span className="text-[10px] text-slate-400 uppercase tracking-wider">
+                    <span className="font-bold text-rose-700">Selected Type: {selectedGroup}</span>
+                    <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">
                       {selectedCompat.title}
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-400 leading-relaxed">
+                  <p className="text-[11px] text-slate-600 leading-relaxed">
                     {selectedCompat.description}
                   </p>
                 </div>
 
                 {/* Card Footer Call */}
-                <div className="mt-6 pt-4 border-t border-white/[0.08] flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs text-slate-300">
-                    <Phone className="w-3.5 h-3.5 text-rose-400" />
-                    <span>Emergency Hotline: <strong>1800-BLOOD-LIFE</strong></span>
+                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs text-slate-600">
+                    <Phone className="w-3.5 h-3.5 text-rose-600" />
+                    <span>Emergency Hotline: <strong className="text-slate-900">1800-BLOOD-LIFE</strong></span>
                   </div>
                   <Link
                     href="/auth/register?role=hospital"
-                    className="text-xs font-bold text-rose-400 hover:text-rose-300 flex items-center gap-1"
+                    className="text-xs font-bold text-rose-600 hover:text-rose-700 flex items-center gap-1"
                   >
                     Hospital Login <ChevronRight className="w-3 h-3" />
                   </Link>
@@ -480,22 +480,22 @@ export default function HomePage() {
       </section>
 
       {/* ░░░░░░ LIVE TELEMETRY STATS SECTION ░░░░░░ */}
-      <section id="telemetry" ref={statsRef} className="py-16 border-y border-white/[0.08] bg-slate-900/50 backdrop-blur-xl relative">
+      <section id="telemetry" ref={statsRef} className="py-16 border-y border-slate-200/80 bg-white relative">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {telemetryStats.map((stat, i) => (
               <div key={i} className="text-center md:text-left space-y-1">
                 <p
-                  className="stat-number text-3xl sm:text-5xl font-extrabold text-white font-heading tracking-tight"
+                  className="stat-number text-3xl sm:text-5xl font-extrabold text-slate-900 font-heading tracking-tight"
                   data-target={stat.target}
                   data-suffix={stat.suffix}
                 >
                   0{stat.suffix}
                 </p>
-                <p className="text-xs sm:text-sm font-bold text-rose-400 tracking-wide uppercase">
+                <p className="text-xs sm:text-sm font-bold text-rose-600 tracking-wide uppercase">
                   {stat.label}
                 </p>
-                <p className="text-xs text-slate-400 hidden sm:block">
+                <p className="text-xs text-slate-500 hidden sm:block">
                   {stat.desc}
                 </p>
               </div>
@@ -505,19 +505,19 @@ export default function HomePage() {
       </section>
 
       {/* ░░░░░░ INTERACTIVE BLOOD COMPATIBILITY EXPLORER ░░░░░░ */}
-      <section id="compatibility" className="py-24 relative overflow-hidden">
+      <section id="compatibility" className="py-24 relative overflow-hidden bg-slate-50/70">
         {/* Ambient background glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-rose-600/[0.06] rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-rose-500/[0.04] rounded-full blur-[140px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="text-center max-w-2xl mx-auto space-y-3 mb-16">
-            <span className="px-3.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-bold uppercase tracking-wider">
+            <span className="px-3.5 py-1 rounded-full bg-rose-50 border border-rose-200/80 text-rose-700 text-xs font-bold uppercase tracking-wider shadow-sm">
               Clinical Transfusion Intelligence
             </span>
-            <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
+            <h2 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight">
               Interactive Compatibility Matrix
             </h2>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-slate-600">
               Click on any blood type to explore real-time compatibility for donation and reception.
             </p>
           </div>
@@ -530,8 +530,8 @@ export default function HomePage() {
                 onClick={() => setSelectedGroup(group)}
                 className={`px-5 py-3 rounded-2xl font-heading font-extrabold text-base transition-all duration-300 border ${
                   selectedGroup === group
-                    ? 'bg-gradient-to-r from-rose-600 to-red-600 text-white border-rose-400 shadow-glow-md scale-110'
-                    : 'bg-slate-900/70 border-white/[0.08] text-slate-300 hover:border-slate-600 hover:text-white'
+                    ? 'bg-gradient-to-r from-rose-600 to-red-600 text-white border-rose-600 shadow-lg shadow-rose-600/30 scale-110'
+                    : 'bg-white border-slate-200 text-slate-700 hover:border-rose-300 hover:bg-rose-50/50 shadow-sm'
                 }`}
               >
                 {group}
@@ -540,20 +540,20 @@ export default function HomePage() {
           </div>
 
           {/* Compatibility Display Panel */}
-          <div className="max-w-4xl mx-auto rounded-3xl glass-card-elevated border border-rose-500/20 p-8 shadow-2xl space-y-8">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
+          <div className="max-w-4xl mx-auto rounded-3xl bg-white border border-slate-200/80 p-8 shadow-xl space-y-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
               <div>
                 <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Selected Blood Type</span>
-                <h3 className="text-2xl sm:text-3xl font-black text-white font-heading mt-0.5 flex items-center gap-3">
+                <h3 className="text-2xl sm:text-3xl font-black text-slate-900 font-heading mt-0.5 flex items-center gap-3">
                   <span>Group {selectedGroup}</span>
-                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200/80">
                     {selectedCompat.title}
                   </span>
                 </h3>
               </div>
               <Link
                 href="/auth/register"
-                className="inline-flex items-center gap-2 text-xs font-bold text-rose-400 hover:text-rose-300"
+                className="inline-flex items-center gap-2 text-xs font-bold text-rose-600 hover:text-rose-700"
               >
                 Register as {selectedGroup} Donor <ArrowRight className="w-3.5 h-3.5" />
               </Link>
@@ -563,9 +563,9 @@ export default function HomePage() {
             <div className="grid md:grid-cols-2 gap-8">
               
               {/* Can Give Blood To */}
-              <div className="p-6 rounded-2xl bg-slate-900/60 border border-white/[0.06] space-y-4">
-                <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm">
-                  <CheckCircle2 className="w-5 h-5" />
+              <div className="p-6 rounded-2xl bg-emerald-50/40 border border-emerald-100 space-y-4">
+                <div className="flex items-center gap-2 text-emerald-800 font-bold text-sm">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600" />
                   <h4>Can Give Blood To ({selectedCompat.give.length} groups)</h4>
                 </div>
                 <div className="grid grid-cols-4 gap-2.5">
@@ -576,8 +576,8 @@ export default function HomePage() {
                         key={bg}
                         className={`p-3 rounded-xl text-center border font-heading font-extrabold text-xs transition-all ${
                           isCompatible
-                            ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300 shadow-[0_0_12px_rgba(52,211,153,0.2)]'
-                            : 'bg-slate-950/40 border-white/[0.03] text-slate-600 opacity-40'
+                            ? 'bg-emerald-50 border-emerald-300 text-emerald-800 shadow-sm'
+                            : 'bg-slate-100/70 border-slate-200/60 text-slate-400 opacity-50'
                         }`}
                       >
                         {bg}
@@ -588,9 +588,9 @@ export default function HomePage() {
               </div>
 
               {/* Can Receive Blood From */}
-              <div className="p-6 rounded-2xl bg-slate-900/60 border border-white/[0.06] space-y-4">
-                <div className="flex items-center gap-2 text-sky-400 font-bold text-sm">
-                  <CheckCircle2 className="w-5 h-5" />
+              <div className="p-6 rounded-2xl bg-sky-50/40 border border-sky-100 space-y-4">
+                <div className="flex items-center gap-2 text-sky-800 font-bold text-sm">
+                  <CheckCircle2 className="w-5 h-5 text-sky-600" />
                   <h4>Can Receive Blood From ({selectedCompat.receive.length} groups)</h4>
                 </div>
                 <div className="grid grid-cols-4 gap-2.5">
@@ -601,8 +601,8 @@ export default function HomePage() {
                         key={bg}
                         className={`p-3 rounded-xl text-center border font-heading font-extrabold text-xs transition-all ${
                           isCompatible
-                            ? 'bg-sky-500/15 border-sky-500/40 text-sky-300 shadow-[0_0_12px_rgba(56,189,248,0.2)]'
-                            : 'bg-slate-950/40 border-white/[0.03] text-slate-600 opacity-40'
+                            ? 'bg-sky-50 border-sky-300 text-sky-800 shadow-sm'
+                            : 'bg-slate-100/70 border-slate-200/60 text-slate-400 opacity-50'
                         }`}
                       >
                         {bg}
@@ -615,8 +615,8 @@ export default function HomePage() {
             </div>
 
             {/* Medical Context Banner */}
-            <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-200 flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+            <div className="p-4 rounded-2xl bg-rose-50/80 border border-rose-200/80 text-xs text-rose-900 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
               <p className="leading-relaxed">
                 {selectedCompat.description} Whole blood can be safely separated into Packed Red Blood Cells (RBCs), Platelets, and Plasma, multiplying the number of patient lives saved from a single donation.
               </p>
@@ -626,25 +626,25 @@ export default function HomePage() {
       </section>
 
       {/* ░░░░░░ DONATION IMPACT CALCULATOR ░░░░░░ */}
-      <section id="calculator" className="py-24 border-t border-white/[0.08] bg-slate-900/40 relative">
+      <section id="calculator" className="py-24 border-t border-slate-200/80 bg-white relative">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-12 gap-12 items-center">
             
             <div className="lg:col-span-5 space-y-6">
-              <span className="px-3.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-bold uppercase tracking-wider">
+              <span className="px-3.5 py-1 rounded-full bg-rose-50 border border-rose-200/80 text-rose-700 text-xs font-bold uppercase tracking-wider shadow-sm">
                 Live Impact Engine
               </span>
-              <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
+              <h2 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight">
                 Calculate Your Life Impact
               </h2>
-              <p className="text-sm text-slate-300 leading-relaxed">
+              <p className="text-sm text-slate-600 leading-relaxed">
                 Voluntary blood donors can safely donate every 90 days. Slide to discover how many patients, surgeries, and cancer treatments your contribution directly supports over a single year.
               </p>
 
-              <div className="p-5 rounded-2xl glass-panel space-y-3">
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
                 <div className="flex items-center justify-between text-xs font-bold">
-                  <span className="text-slate-300">Annual Donation Frequency</span>
-                  <span className="text-rose-400 text-sm font-extrabold">{annualDonations} times / year</span>
+                  <span className="text-slate-700">Annual Donation Frequency</span>
+                  <span className="text-rose-600 text-sm font-extrabold">{annualDonations} times / year</span>
                 </div>
                 <input
                   type="range"
@@ -653,7 +653,7 @@ export default function HomePage() {
                   step="1"
                   value={annualDonations}
                   onChange={(e) => setAnnualDonations(parseInt(e.target.value))}
-                  className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-rose-500"
+                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-rose-600"
                 />
                 <div className="flex justify-between text-[11px] text-slate-500 font-semibold px-1">
                   <span>1x (Starter)</span>
@@ -668,40 +668,40 @@ export default function HomePage() {
             <div className="lg:col-span-7">
               <div className="grid sm:grid-cols-3 gap-6">
                 
-                <div className="p-6 rounded-3xl glass-card-elevated border border-rose-500/30 text-center space-y-2">
-                  <div className="w-12 h-12 mx-auto rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400 shadow-glow-sm">
+                <div className="p-6 rounded-3xl bg-white border border-rose-200/80 text-center space-y-2 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="w-12 h-12 mx-auto rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 shadow-sm">
                     <Heart className="w-6 h-6 animate-pulse" />
                   </div>
-                  <p className="text-4xl font-extrabold text-white font-heading">
+                  <p className="text-4xl font-extrabold text-slate-900 font-heading">
                     {annualDonations * 3}
                   </p>
-                  <p className="text-xs font-bold uppercase text-rose-400">Potential Lives Saved</p>
-                  <p className="text-[11px] text-slate-400">3 patient components per unit donated</p>
+                  <p className="text-xs font-bold uppercase text-rose-600">Potential Lives Saved</p>
+                  <p className="text-[11px] text-slate-500">3 patient components per unit donated</p>
                 </div>
 
-                <div className="p-6 rounded-3xl glass-card-elevated border border-sky-500/30 text-center space-y-2">
-                  <div className="w-12 h-12 mx-auto rounded-2xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400 shadow-[0_0_15px_rgba(56,189,248,0.25)]">
+                <div className="p-6 rounded-3xl bg-white border border-sky-200/80 text-center space-y-2 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="w-12 h-12 mx-auto rounded-2xl bg-sky-50 border border-sky-200 flex items-center justify-center text-sky-600 shadow-sm">
                     <Droplets className="w-6 h-6" />
                   </div>
-                  <p className="text-4xl font-extrabold text-white font-heading">
+                  <p className="text-4xl font-extrabold text-slate-900 font-heading">
                     {annualDonations * 450} <span className="text-lg">ml</span>
                   </p>
-                  <p className="text-xs font-bold uppercase text-sky-400">Blood Volume Contributed</p>
-                  <p className="text-[11px] text-slate-400">Restored by body within 24–48 hours</p>
+                  <p className="text-xs font-bold uppercase text-sky-600">Blood Volume Contributed</p>
+                  <p className="text-[11px] text-slate-500">Restored by body within 24–48 hours</p>
                 </div>
 
-                <div className="p-6 rounded-3xl glass-card-elevated border border-emerald-500/30 text-center space-y-2">
-                  <div className="w-12 h-12 mx-auto rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.25)]">
+                <div className="p-6 rounded-3xl bg-white border border-emerald-200/80 text-center space-y-2 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="w-12 h-12 mx-auto rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shadow-sm">
                     <Award className="w-6 h-6" />
                   </div>
-                  <p className="text-2xl font-extrabold text-white font-heading pt-2">
+                  <p className="text-xl font-extrabold text-slate-900 font-heading pt-2 truncate">
                     {annualDonations === 1 && 'Silver Badge'}
                     {annualDonations === 2 && 'Gold Guardian'}
                     {annualDonations === 3 && 'Platinum Hero'}
                     {annualDonations >= 4 && 'Diamond Champion'}
                   </p>
-                  <p className="text-xs font-bold uppercase text-emerald-400">Donor Honor Tier</p>
-                  <p className="text-[11px] text-slate-400">Digital NFT-ready certificates issued</p>
+                  <p className="text-xs font-bold uppercase text-emerald-600">Donor Honor Tier</p>
+                  <p className="text-[11px] text-slate-500">Digital NFT-ready certificates issued</p>
                 </div>
 
               </div>
@@ -709,7 +709,7 @@ export default function HomePage() {
               <div className="mt-8 text-center sm:text-right">
                 <Link
                   href="/auth/register"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shadow-glow-sm transition-all"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-md shadow-rose-600/20 transition-all"
                 >
                   <span>Start Your Lifesaving Journey</span>
                   <ArrowRight className="w-4 h-4" />
@@ -722,16 +722,16 @@ export default function HomePage() {
       </section>
 
       {/* ░░░░░░ HOW IT WORKS SECTION ░░░░░░ */}
-      <section id="workflow" className="py-24 relative">
+      <section id="workflow" className="py-24 relative bg-slate-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center max-w-2xl mx-auto space-y-3 mb-16">
-            <span className="px-3.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-bold uppercase tracking-wider">
+            <span className="px-3.5 py-1 rounded-full bg-rose-50 border border-rose-200/80 text-rose-700 text-xs font-bold uppercase tracking-wider shadow-sm">
               Seamless 4-Step Architecture
             </span>
-            <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
+            <h2 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight">
               How Srishti Saves Lives
             </h2>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-slate-600">
               A transparent, zero-delay loop connecting donors, testing laboratories, and acute care wards.
             </p>
           </div>
@@ -740,14 +740,14 @@ export default function HomePage() {
             {workflowSteps.map((step, i) => (
               <div
                 key={i}
-                className="workflow-card relative p-7 rounded-3xl glass-card-elevated border border-white/[0.07] hover:border-rose-500/40 transition-all group"
+                className="workflow-card relative p-7 rounded-3xl bg-white border border-slate-200/80 hover:border-rose-300 shadow-sm hover:shadow-card-hover transition-all group"
               >
-                <span className="text-4xl font-black text-slate-800 font-heading group-hover:text-rose-500/30 transition-colors">
+                <span className="text-4xl font-black text-slate-200 font-heading group-hover:text-rose-200 transition-colors">
                   {step.num}
                 </span>
                 <div className="mt-4 mb-3">{step.icon}</div>
-                <h4 className="text-base font-bold text-white mb-2">{step.title}</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">{step.desc}</p>
+                <h4 className="text-base font-bold text-slate-900 mb-2">{step.title}</h4>
+                <p className="text-xs text-slate-600 leading-relaxed">{step.desc}</p>
               </div>
             ))}
           </div>
@@ -755,16 +755,16 @@ export default function HomePage() {
       </section>
 
       {/* ░░░░░░ PORTAL CARDS (Donors, Hospitals, Admins) ░░░░░░ */}
-      <section id="portals" className="py-24 border-t border-white/[0.08] bg-slate-900/30 relative">
+      <section id="portals" className="py-24 border-t border-slate-200/80 bg-white relative">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center max-w-2xl mx-auto space-y-3 mb-16">
-            <span className="px-3.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-bold uppercase tracking-wider">
+            <span className="px-3.5 py-1 rounded-full bg-rose-50 border border-rose-200/80 text-rose-700 text-xs font-bold uppercase tracking-wider shadow-sm">
               Integrated Ecosystem
             </span>
-            <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
+            <h2 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight">
               Tailored Portals for Every Role
             </h2>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-slate-600">
               Purpose-built experiences engineered for speed, reliability, and precision healthcare.
             </p>
           </div>
@@ -775,11 +775,11 @@ export default function HomePage() {
                 key={i}
                 onMouseMove={handleTiltMove}
                 onMouseLeave={handleTiltLeave}
-                className="portal-card relative rounded-3xl glass-card-elevated border border-white/[0.08] p-8 flex flex-col justify-between hover:border-rose-500/30 shadow-xl transition-all"
+                className="portal-card relative rounded-3xl bg-white border border-slate-200/80 p-8 flex flex-col justify-between hover:border-rose-300 shadow-md hover:shadow-2xl transition-all"
               >
                 <div className="space-y-5">
                   <div className="flex items-center justify-between">
-                    <div className="w-12 h-12 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400">
+                    <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 shadow-sm">
                       {p.icon}
                     </div>
                     <span className={`text-[11px] font-bold px-3 py-1 rounded-full border ${p.badgeColor}`}>
@@ -791,18 +791,18 @@ export default function HomePage() {
                     <span className="text-xs font-bold uppercase text-slate-400 tracking-wider">
                       {p.role}
                     </span>
-                    <h3 className="text-xl font-bold text-white mt-1 mb-2">
+                    <h3 className="text-xl font-bold text-slate-900 mt-1 mb-2">
                       {p.title}
                     </h3>
-                    <p className="text-xs text-slate-400 leading-relaxed">
+                    <p className="text-xs text-slate-600 leading-relaxed">
                       {p.desc}
                     </p>
                   </div>
 
-                  <ul className="space-y-2 pt-2 border-t border-white/[0.06]">
+                  <ul className="space-y-2 pt-2 border-t border-slate-100">
                     {p.features.map((feat, fi) => (
-                      <li key={fi} className="flex items-center gap-2 text-xs text-slate-300">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                      <li key={fi} className="flex items-center gap-2 text-xs text-slate-700">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                         <span>{feat}</span>
                       </li>
                     ))}
@@ -812,7 +812,7 @@ export default function HomePage() {
                 <div className="pt-8">
                   <Link
                     href={p.link}
-                    className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-850 hover:bg-rose-600 border border-slate-700 hover:border-rose-500 text-white text-xs font-bold transition-all shadow-sm group"
+                    className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-900 hover:bg-rose-600 text-white text-xs font-bold transition-all shadow-sm group"
                   >
                     <span>{p.btnText}</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -825,14 +825,14 @@ export default function HomePage() {
       </section>
 
       {/* ░░░░░░ FINAL CALL TO ACTION ░░░░░░ */}
-      <section className="py-24 relative overflow-hidden">
+      <section className="py-24 relative overflow-hidden bg-slate-50">
         <div className="max-w-5xl mx-auto px-6 relative z-10">
-          <div className="rounded-3xl p-10 sm:p-16 bg-gradient-to-br from-rose-900 via-red-900 to-slate-950 border border-rose-500/40 shadow-glow-lg text-center space-y-6 relative overflow-hidden">
+          <div className="rounded-3xl p-10 sm:p-16 bg-gradient-to-br from-rose-600 via-rose-700 to-red-800 text-white shadow-2xl text-center space-y-6 relative overflow-hidden">
             {/* Background Glow */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(244,63,94,0.3),transparent_70%)] pointer-events-none" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.2),transparent_70%)] pointer-events-none" />
 
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-rose-200 text-xs font-bold border border-white/20">
-              <Heart className="w-3.5 h-3.5 text-rose-300 animate-pulse" />
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 text-white text-xs font-bold border border-white/25">
+              <Heart className="w-3.5 h-3.5 text-white animate-pulse" />
               <span>Join 5,000+ Voluntary Donors Saving Lives Today</span>
             </span>
 
@@ -840,7 +840,7 @@ export default function HomePage() {
               Ready to Give the Gift of Life?
             </h2>
 
-            <p className="text-sm sm:text-base text-rose-100/90 max-w-xl mx-auto leading-relaxed">
+            <p className="text-sm sm:text-base text-rose-100 max-w-xl mx-auto leading-relaxed">
               Every voluntary donation can save up to 3 lives. Sign up in seconds, locate certified donation centers near you, and track your ongoing clinical impact.
             </p>
 
@@ -849,7 +849,7 @@ export default function HomePage() {
                 <Link
                   href="/auth/register"
                   onClick={(e) => createRipple(e)}
-                  className="inline-flex items-center gap-3 px-8 py-4 bg-white text-rose-700 font-extrabold text-sm rounded-2xl shadow-2xl hover:bg-rose-50 hover:scale-105 active:scale-95 transition-all"
+                  className="inline-flex items-center gap-3 px-8 py-4 bg-white text-rose-700 font-extrabold text-sm rounded-2xl shadow-xl hover:bg-rose-50 hover:scale-105 active:scale-95 transition-all"
                 >
                   <span>Register as Donor Now</span>
                   <ArrowRight className="w-4 h-4" />
@@ -859,7 +859,7 @@ export default function HomePage() {
               <MagneticButton strength={0.2}>
                 <Link
                   href="/auth/login"
-                  className="inline-flex items-center gap-2 px-7 py-4 rounded-2xl bg-black/30 border border-white/20 text-white hover:bg-black/50 transition-all font-bold text-sm"
+                  className="inline-flex items-center gap-2 px-7 py-4 rounded-2xl bg-black/20 border border-white/20 text-white hover:bg-black/30 transition-all font-bold text-sm"
                 >
                   <span>Sign In to Portal</span>
                 </Link>

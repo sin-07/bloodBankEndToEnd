@@ -121,19 +121,19 @@ export default function DonorDashboard() {
       <div className="space-y-8">
         
         {/* Welcome Banner */}
-        <div className="relative rounded-3xl p-6 sm:p-8 glass-card-elevated border border-rose-500/30 overflow-hidden">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-rose-600/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative rounded-3xl p-6 sm:p-8 bg-gradient-to-r from-rose-600 via-rose-600 to-red-600 text-white shadow-xl overflow-hidden">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div className="space-y-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30 text-xs font-bold">
-                <Sparkles className="w-3.5 h-3.5 text-rose-400" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 text-white border border-white/20 text-xs font-bold">
+                <Sparkles className="w-3.5 h-3.5 text-rose-200" />
                 <span>Donor Lifeline Pass</span>
               </div>
               <h1 className="text-2xl sm:text-4xl font-black text-white font-heading tracking-tight">
                 Welcome back, {user?.name}!
               </h1>
-              <p className="text-xs sm:text-sm text-slate-300 max-w-lg">
+              <p className="text-xs sm:text-sm text-rose-100 max-w-lg">
                 Your contributions have directly saved up to {(profile?.totalDonations || donations.length || 1) * 3} lives. Thank you for being an active lifeline.
               </p>
             </div>
@@ -141,9 +141,9 @@ export default function DonorDashboard() {
             <div className="flex items-center gap-3">
               <Link
                 href="/dashboard/appointments"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold text-xs shadow-glow-sm hover:shadow-glow-md transition-all"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-rose-700 hover:bg-rose-50 font-bold text-xs shadow-lg transition-all"
               >
-                <CalendarCheck className="w-4 h-4" />
+                <CalendarCheck className="w-4 h-4 text-rose-600" />
                 <span>Schedule Donation</span>
               </Link>
             </div>
@@ -177,7 +177,7 @@ export default function DonorDashboard() {
               action={
                 <Link
                   href="/dashboard/donations"
-                  className="text-xs font-bold text-rose-400 hover:text-rose-300 flex items-center gap-1"
+                  className="text-xs font-bold text-rose-600 hover:text-rose-700 flex items-center gap-1"
                 >
                   Full History <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
@@ -186,7 +186,7 @@ export default function DonorDashboard() {
             >
               <div className="overflow-x-auto">
                 <table className="w-full text-xs text-left">
-                  <thead className="bg-slate-900/90 text-slate-400 uppercase text-[10px] font-bold tracking-wider border-b border-white/[0.06]">
+                  <thead className="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold tracking-wider border-b border-slate-200">
                     <tr>
                       <th className="px-5 py-3">Date & Location</th>
                       <th className="px-5 py-3">Units</th>
@@ -195,19 +195,19 @@ export default function DonorDashboard() {
                       <th className="px-5 py-3 text-right">Certificate</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/[0.04] text-slate-200">
+                  <tbody className="divide-y divide-slate-100 text-slate-700">
                     {donations.length > 0 ? (
                       donations.map((d: any) => (
-                        <tr key={d._id} className="hover:bg-slate-800/40 transition-colors">
+                        <tr key={d._id} className="hover:bg-slate-50/80 transition-colors">
                           <td className="px-5 py-3.5">
-                            <p className="font-bold text-white">{formatDate(d.donationDate)}</p>
-                            <p className="text-[11px] text-slate-400">{d.location}</p>
+                            <p className="font-bold text-slate-900">{formatDate(d.donationDate)}</p>
+                            <p className="text-[11px] text-slate-500">{d.location}</p>
                           </td>
-                          <td className="px-5 py-3.5 font-bold text-rose-400">
+                          <td className="px-5 py-3.5 font-bold text-rose-600">
                             {d.units} unit (Group {d.bloodGroup})
                           </td>
                           <td className="px-5 py-3.5">
-                            <div className="flex items-center gap-1.5 text-emerald-400">
+                            <div className="flex items-center gap-1.5 text-emerald-600">
                               <CheckCircle2 className="w-4 h-4" />
                               <span className="text-[11px] font-semibold">Cleared (Hb: {d.healthScreening?.hemoglobin || '14.2'})</span>
                             </div>
@@ -221,7 +221,7 @@ export default function DonorDashboard() {
                             <button
                               onClick={() => handleDownloadCertificate(d._id)}
                               disabled={downloadingId === d._id}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-rose-600 text-slate-200 hover:text-white text-xs font-semibold border border-slate-700 hover:border-rose-500 transition-all disabled:opacity-50"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-rose-600 text-slate-700 hover:text-white text-xs font-semibold border border-slate-200 hover:border-rose-600 transition-all disabled:opacity-50"
                             >
                               <Download className="w-3.5 h-3.5" />
                               <span>{downloadingId === d._id ? 'Generating...' : 'PDF'}</span>
@@ -252,7 +252,7 @@ export default function DonorDashboard() {
               action={
                 <Link
                   href="/dashboard/requests"
-                  className="text-xs font-bold text-rose-400 hover:text-rose-300"
+                  className="text-xs font-bold text-rose-600 hover:text-rose-700"
                 >
                   View All
                 </Link>
@@ -263,10 +263,10 @@ export default function DonorDashboard() {
                   requests.slice(0, 3).map((r: any) => (
                     <div
                       key={r._id}
-                      className="p-3.5 rounded-2xl bg-slate-900/70 border border-white/[0.06] space-y-2 hover:border-rose-500/30 transition-all"
+                      className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2 hover:border-rose-300 transition-all"
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-heading font-extrabold text-sm px-2.5 py-0.5 rounded-lg bg-rose-500/15 text-rose-400 border border-rose-500/30">
+                        <span className="font-heading font-extrabold text-sm px-2.5 py-0.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200">
                           Type {r.bloodGroup}
                         </span>
                         <Badge variant={r.urgency === 'critical' ? 'danger' : 'warning'} dot pulse={r.urgency === 'critical'}>
@@ -275,8 +275,8 @@ export default function DonorDashboard() {
                       </div>
 
                       <div>
-                        <p className="text-xs font-bold text-white">{r.patientName}</p>
-                        <p className="text-[11px] text-slate-400">{r.hospitalName || r.city} • {r.units} units needed</p>
+                        <p className="text-xs font-bold text-slate-900">{r.patientName}</p>
+                        <p className="text-[11px] text-slate-500">{r.hospitalName || r.city} • {r.units} units needed</p>
                       </div>
                     </div>
                   ))
@@ -288,17 +288,17 @@ export default function DonorDashboard() {
 
             {/* Quick Donor Guidance */}
             <Card title="Preparation Guide">
-              <div className="space-y-2.5 text-xs text-slate-300">
+              <div className="space-y-2.5 text-xs text-slate-600">
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                   <span>Drink at least 500ml of water before your appointment.</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                   <span>Have a healthy meal avoiding high-fat foods within 2 hours.</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                   <span>Carry government photo ID (Aadhaar / Driving License).</span>
                 </div>
               </div>
