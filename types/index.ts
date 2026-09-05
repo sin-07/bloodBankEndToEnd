@@ -40,6 +40,8 @@ export interface Donation {
   donorId: string;
   userId: string;
   bloodGroup: BloodGroup;
+  component?: BloodComponent;
+  donationType?: 'whole_blood' | 'platelets' | 'plasma';
   units: number;
   donationDate: string;
   location: string;
@@ -63,6 +65,7 @@ export interface BloodRequest {
   requesterType: 'hospital' | 'individual';
   patientName: string;
   bloodGroup: BloodGroup;
+  component?: BloodComponent;
   units: number;
   urgency: 'normal' | 'urgent' | 'critical';
   reason: string;
@@ -77,6 +80,19 @@ export interface BloodRequest {
   fulfilledDate?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Appointment {
+  _id: string;
+  donorId: string | DonorProfile;
+  userId: string | User;
+  bloodGroup: BloodGroup;
+  donationType?: 'whole_blood' | 'platelets' | 'plasma';
+  donationDate: string;
+  location: string;
+  status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
+  notes?: string;
+  createdAt: string;
 }
 
 export interface MatchedDonor {

@@ -20,6 +20,16 @@ const donationSchema = new mongoose.Schema(
       required: true,
       enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
     },
+    donationType: {
+      type: String,
+      enum: ['whole_blood', 'platelets', 'plasma'],
+      default: 'whole_blood',
+    },
+    component: {
+      type: String,
+      enum: ['whole_blood', 'packed_rbc', 'platelets', 'plasma', 'cryoprecipitate'],
+      default: 'whole_blood',
+    },
     units: {
       type: Number,
       required: true,

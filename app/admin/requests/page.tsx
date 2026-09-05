@@ -10,8 +10,8 @@ import Select from '@/components/ui/Select';
 import Modal from '@/components/ui/Modal';
 import Table from '@/components/ui/Table';
 import { bloodRequestAPI } from '@/lib/api';
-import { formatDate, formatDateTime, getStatusVariant, getUrgencyVariant, BLOOD_GROUPS } from '@/lib/utils';
-import { Eye, Check, X, Droplets, Filter, RefreshCw, Activity, Building2, Phone, Calendar, UserCheck } from 'lucide-react';
+import { formatDate, formatDateTime, getStatusVariant, getUrgencyVariant, BLOOD_GROUPS, COMPONENT_NAMES, getComponentBadgeClass } from '@/lib/utils';
+import { Eye, Check, X, Droplets, Filter, RefreshCw, Activity, Building2, Phone, Calendar, UserCheck, FlaskConical, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function AdminRequestsPage() {
@@ -23,6 +23,7 @@ export default function AdminRequestsPage() {
     status: '',
     bloodGroup: '',
     urgency: '',
+    component: '',
   });
 
   useEffect(() => {
@@ -77,6 +78,17 @@ export default function AdminRequestsPage() {
           <span>{req.bloodGroup}</span>
         </div>
       ),
+    },
+    {
+      header: 'Component',
+      accessor: (req: any) => {
+        const comp = req.component || 'whole_blood';
+        return (
+          <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs font-bold ${getComponentBadgeClass(comp)}`}>
+            {COMPONENT_NAMES[comp] || comp}
+          </span>
+        );
+      },
     },
     {
       header: 'Units',
@@ -253,6 +265,22 @@ export default function AdminRequestsPage() {
               ]}
               className="text-xs py-1.5"
             />
+
+            <Select
+              value={filters.component}
+              onChange={(e) =>
+                setFilters({ ...filters, component: e.target.value })
+              }
+              options={[
+                { label: 'All Components', value: '' },
+                { label: 'Whole Blood', value: 'whole_blood' },
+                { label: 'Platelets (SDP)', value: 'platelets' },
+                { label: 'Plasma (FFP)', value: 'plasma' },
+                { label: 'Packed RBC', value: 'packed_rbc' },
+                { label: 'Cryoprecipitate', value: 'cryoprecipitate' },
+              ]}
+              className="text-xs py-1.5"
+            />
           </div>
 
           <div className="text-xs font-medium text-slate-500 w-full md:w-auto text-right">
@@ -290,6 +318,9 @@ export default function AdminRequestsPage() {
                 </div>
 
                 <div className="flex items-center gap-2">
+                  <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${getComponentBadgeClass(selectedRequest.component || 'whole_blood')}`}>
+                    {COMPONENT_NAMES[selectedRequest.component || 'whole_blood'] || selectedRequest.component}
+                  </span>
                   <Badge variant={getUrgencyVariant(selectedRequest.urgency)} dot>
                     {selectedRequest.urgency}
                   </Badge>
@@ -300,10 +331,14 @@ export default function AdminRequestsPage() {
               </div>
 
               {/* Grid of Info */}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-xs">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                <div className="p-3 bg-white rounded-xl border border-slate-200">
+                  <span className="text-slate-500 block mb-1">Component</span>
+                  <span className="font-bold text-slate-900 text-sm">{COMPONENT_NAMES[selectedRequest.component || 'whole_blood'] || 'Whole Blood'}</span>
+                </div>
                 <div className="p-3 bg-white rounded-xl border border-slate-200">
                   <span className="text-slate-500 block mb-1">Units Required</span>
-                  <span className="font-bold text-slate-900 text-base">{selectedRequest.units} units</span>
+                  <span className="font-bold text-slate-900 text-sm">{selectedRequest.units} units</span>
                 </div>
                 <div className="p-3 bg-white rounded-xl border border-slate-200">
                   <span className="text-slate-500 block mb-1">Destination City</span>
@@ -313,7 +348,7 @@ export default function AdminRequestsPage() {
                   <span className="text-slate-500 block mb-1">Emergency Contact</span>
                   <span className="font-semibold text-slate-800">{selectedRequest.contactNumber || 'N/A'}</span>
                 </div>
-                <div className="p-3 bg-white rounded-xl border border-slate-200 col-span-2 md:col-span-3">
+                <div className="p-3 bg-white rounded-xl border border-slate-200 col-span-2 md:col-span-4">
                   <span className="text-slate-500 block mb-1">Clinical Diagnosis & Reason</span>
                   <span className="font-medium text-slate-800">{selectedRequest.reason || 'General emergency transfusion required.'}</span>
                 </div>

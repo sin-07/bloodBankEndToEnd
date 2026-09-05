@@ -10,8 +10,8 @@ import Button from '@/components/ui/Button';
 import Select from '@/components/ui/Select';
 import Table from '@/components/ui/Table';
 import { hospitalAPI } from '@/lib/api';
-import { formatDate, getStatusVariant, getUrgencyVariant } from '@/lib/utils';
-import { Droplets, Plus, Filter, RefreshCw, User, Calendar, Activity } from 'lucide-react';
+import { formatDate, getStatusVariant, getUrgencyVariant, COMPONENT_NAMES, getComponentBadgeClass } from '@/lib/utils';
+import { Droplets, Plus, Filter, RefreshCw, User, Calendar, Activity, FlaskConical } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function HospitalRequestsPage() {
@@ -62,6 +62,17 @@ export default function HospitalRequestsPage() {
           <span>{req.bloodGroup}</span>
         </div>
       ),
+    },
+    {
+      header: 'Component',
+      accessor: (req: any) => {
+        const comp = req.component || 'whole_blood';
+        return (
+          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-semibold ${getComponentBadgeClass(comp)}`}>
+            {COMPONENT_NAMES[comp] || comp}
+          </span>
+        );
+      },
     },
     {
       header: 'Units',

@@ -9,8 +9,8 @@ import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import Table from '@/components/ui/Table';
 import { donorAPI } from '@/lib/api';
-import { formatDate, getStatusVariant } from '@/lib/utils';
-import { Download, Droplets, Calendar, MapPin, Award, Plus } from 'lucide-react';
+import { formatDate, getStatusVariant, COMPONENT_NAMES, getComponentBadgeClass } from '@/lib/utils';
+import { Download, Droplets, Calendar, MapPin, Award, Plus, FlaskConical, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function DonationsPage() {
@@ -66,18 +66,45 @@ export default function DonationsPage() {
       header: 'Blood Group',
       accessor: (d: any) => (
         <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 font-bold text-xs">
-          <Droplets className="w-3.5 h-3.5 fill-rose-600" />
+          <Droplets className="w-3.5 h-3.5 fill-rose-600 text-rose-600" />
           <span>{d.bloodGroup}</span>
         </div>
       ),
     },
     {
+      header: 'Donation Stream',
+      accessor: (d: any) => {
+        const stream = d.donationType || d.component || 'whole_blood';
+        return (
+          <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs font-bold ${getComponentBadgeClass(stream)}`}>
+            {stream === 'platelets' ? (
+              <>
+                <Sparkles className="w-3 h-3" />
+                <span>Platelets (SDP)</span>
+              </>
+            ) : stream === 'plasma' ? (
+              <>
+                <FlaskConical className="w-3 h-3" />
+                <span>Plasma (FFP)</span>
+              </>
+            ) : (
+              <span>Whole Blood</span>
+            )}
+          </span>
+        );
+      },
+    },
+    {
       header: 'Volume',
-      accessor: (d: any) => (
-        <span className="font-bold text-slate-900 text-xs">
-          {d.units} {d.units === 1 ? 'Unit (350ml)' : 'Units'}
-        </span>
-      ),
+      accessor: (d: any) => {
+        const stream = d.donationType || d.component || 'whole_blood';
+        const vol = stream === 'platelets' ? '300ml SDP' : stream === 'plasma' ? '250ml FFP' : `${d.units * 350}ml`;
+        return (
+          <span className="font-bold text-slate-900 text-xs">
+            {d.units} {d.units === 1 ? 'Unit' : 'Units'} <span className="text-slate-500 font-normal">({vol})</span>
+          </span>
+        );
+      },
     },
     {
       header: 'Center / Medical Facility',

@@ -103,6 +103,7 @@ const createBulkRequest = async (req, res, next) => {
         requesterType: 'hospital',
         patientName: reqData.patientName,
         bloodGroup: reqData.bloodGroup,
+        component: reqData.component || 'whole_blood',
         units: reqData.units,
         urgency: reqData.urgency || 'normal',
         reason: reqData.reason,

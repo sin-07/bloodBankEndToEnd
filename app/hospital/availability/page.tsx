@@ -8,8 +8,8 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import { inventoryAPI } from '@/lib/api';
-import { BLOOD_GROUPS, COMPONENT_NAMES } from '@/lib/utils';
-import { Droplets, AlertTriangle, CheckCircle2, Clock, Plus, RefreshCw, ShieldAlert } from 'lucide-react';
+import { BLOOD_GROUPS, COMPONENT_NAMES, getComponentBadgeClass } from '@/lib/utils';
+import { Droplets, AlertTriangle, CheckCircle2, Clock, Plus, RefreshCw, ShieldAlert, Sparkles, FlaskConical, Layers, Thermometer } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function AvailabilityPage() {
@@ -56,10 +56,10 @@ export default function AvailabilityPage() {
               <span>Real-Time Logistics Telemetry</span>
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-              Central Blood Availability
+              Central Blood & Component Availability
             </h1>
             <p className="text-xs text-slate-600">
-              Live inventory tracking across all 8 ABO/Rh blood groups and separated components
+              Live telemetry tracking across all 8 ABO/Rh blood groups, Platelets (SDP), and Fresh Frozen Plasma (FFP)
             </p>
           </div>
 
@@ -76,40 +76,84 @@ export default function AvailabilityPage() {
             <Link href="/hospital/new-request">
               <Button size="sm">
                 <Plus className="w-4 h-4 mr-2" />
-                Request Blood
+                Dispatch Requisition
               </Button>
             </Link>
           </div>
         </div>
 
         {/* Global Inventory Health Banner */}
-        <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 font-bold text-xl shadow-sm">
-              <Droplets className="w-7 h-7 fill-rose-600" />
-            </div>
-            <div>
-              <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                Total Blood Reserves Available
+        <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-sm space-y-6">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-6 border-b border-slate-100">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 font-bold text-xl shadow-sm">
+                <Droplets className="w-7 h-7 fill-rose-600" />
               </div>
-              <div className="text-3xl font-extrabold text-slate-900 tracking-tight">
-                {totalAvailable} <span className="text-sm font-semibold text-slate-500">Units Ready</span>
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Total Cold-Chain Reserves Available
+                </div>
+                <div className="text-3xl font-extrabold text-slate-900 tracking-tight">
+                  {totalAvailable} <span className="text-sm font-semibold text-slate-500">Units Ready for Transfusion</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 text-xs font-semibold">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <span>Normal Reserve: &gt; 10 Units</span>
+              </div>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 text-amber-800 border border-amber-200">
+                <AlertTriangle className="w-4 h-4 text-amber-600" />
+                <span>Low: &lt; 5 Units</span>
+              </div>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 text-rose-700 border border-rose-200">
+                <ShieldAlert className="w-4 h-4 text-rose-600" />
+                <span>Critical: 0 Units</span>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-4 text-xs font-semibold">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              <span>Normal Reserve: &gt; 10 Units</span>
+          {/* Component Fractionation Mini-Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="p-4 rounded-2xl bg-amber-50/50 border border-amber-200 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-amber-900">Platelets (SDP / RDP)</div>
+                  <div className="text-[11px] text-amber-700 font-medium">5-Day Lifespan (20-24°C Agitated)</div>
+                </div>
+              </div>
+              <Badge variant="warning">Continuous Demand</Badge>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 text-amber-800 border border-amber-200">
-              <AlertTriangle className="w-4 h-4 text-amber-600" />
-              <span>Low: &lt; 5 Units</span>
+
+            <div className="p-4 rounded-2xl bg-sky-50/50 border border-sky-200 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-sky-100 text-sky-800 flex items-center justify-center font-bold">
+                  <FlaskConical className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-sky-900">Fresh Frozen Plasma (FFP)</div>
+                  <div className="text-[11px] text-sky-700 font-medium">1-Year Reserve (-18°C Cryo)</div>
+                </div>
+              </div>
+              <Badge variant="info">Deep Frozen</Badge>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 text-rose-700 border border-rose-200">
-              <ShieldAlert className="w-4 h-4 text-rose-600" />
-              <span>Critical: 0 Units</span>
+
+            <div className="p-4 rounded-2xl bg-rose-50/50 border border-rose-200 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-rose-100 text-rose-800 flex items-center justify-center font-bold">
+                  <Droplets className="w-5 h-5 fill-rose-600" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-rose-900">Whole Blood & PRBC</div>
+                  <div className="text-[11px] text-rose-700 font-medium">42-Day Life (2-6°C Cold-Chain)</div>
+                </div>
+              </div>
+              <Badge variant="success">Active Custody</Badge>
             </div>
           </div>
         </div>

@@ -11,8 +11,8 @@ import Select from '@/components/ui/Select';
 import Modal from '@/components/ui/Modal';
 import Table from '@/components/ui/Table';
 import { bloodRequestAPI } from '@/lib/api';
-import { formatDate, getStatusVariant, getUrgencyVariant, BLOOD_GROUPS } from '@/lib/utils';
-import { Plus, Search, Droplets, Filter, RefreshCw, Activity, Calendar } from 'lucide-react';
+import { formatDate, getStatusVariant, getUrgencyVariant, BLOOD_GROUPS, COMPONENT_NAMES, getComponentBadgeClass } from '@/lib/utils';
+import { Plus, Search, Droplets, Filter, RefreshCw, Activity, Calendar, FlaskConical, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function RequestsPage() {
@@ -20,10 +20,11 @@ export default function RequestsPage() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [filters, setFilters] = useState({ status: '', bloodGroup: '' });
+  const [filters, setFilters] = useState({ status: '', bloodGroup: '', component: '' });
   const [formData, setFormData] = useState({
     patientName: '',
     bloodGroup: 'O+',
+    component: 'whole_blood',
     units: '1',
     urgency: 'normal',
     reason: '',
@@ -61,6 +62,7 @@ export default function RequestsPage() {
       setFormData({
         patientName: '',
         bloodGroup: 'O+',
+        component: 'whole_blood',
         units: '1',
         urgency: 'normal',
         reason: '',
@@ -101,10 +103,21 @@ export default function RequestsPage() {
       header: 'Blood Group',
       accessor: (req: any) => (
         <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 font-bold text-xs">
-          <Droplets className="w-3.5 h-3.5 fill-rose-600" />
+          <Droplets className="w-3.5 h-3.5 fill-rose-600 text-rose-600" />
           <span>{req.bloodGroup}</span>
         </div>
       ),
+    },
+    {
+      header: 'Component',
+      accessor: (req: any) => {
+        const comp = req.component || 'whole_blood';
+        return (
+          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-bold ${getComponentBadgeClass(comp)}`}>
+            {COMPONENT_NAMES[comp] || comp}
+          </span>
+        );
+      },
     },
     {
       header: 'Units',
@@ -191,7 +204,7 @@ export default function RequestsPage() {
 
         {/* Filters */}
         <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
             <Filter className="w-4 h-4 text-slate-500" />
             <Select
               placeholder="All Statuses"
@@ -221,6 +234,22 @@ export default function RequestsPage() {
               ]}
               className="text-xs py-1.5"
             />
+            <Select
+              placeholder="All Components"
+              value={filters.component}
+              onChange={(e) =>
+                setFilters({ ...filters, component: e.target.value })
+              }
+              options={[
+                { label: 'All Components', value: '' },
+                { label: 'Whole Blood', value: 'whole_blood' },
+                { label: 'Platelets (SDP)', value: 'platelets' },
+                { label: 'Plasma (FFP)', value: 'plasma' },
+                { label: 'Packed RBC', value: 'packed_rbc' },
+                { label: 'Cryoprecipitate', value: 'cryoprecipitate' },
+              ]}
+              className="text-xs py-1.5"
+            />
           </div>
 
           <div className="text-xs font-medium text-slate-500 w-full sm:w-auto text-right">
@@ -240,7 +269,7 @@ export default function RequestsPage() {
         <Modal
           isOpen={showModal}
           onClose={() => setShowModal(false)}
-          title="Dispatch Emergency Blood Request"
+          title="Dispatch Emergency Blood / Component Request"
           size="lg"
         >
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -261,6 +290,21 @@ export default function RequestsPage() {
                   setFormData({ ...formData, bloodGroup: e.target.value })
                 }
                 options={BLOOD_GROUPS.map((bg) => ({ label: bg, value: bg }))}
+                required
+              />
+              <Select
+                label="Required Component *"
+                value={formData.component}
+                onChange={(e) =>
+                  setFormData({ ...formData, component: e.target.value })
+                }
+                options={[
+                  { label: 'Whole Blood (Standard)', value: 'whole_blood' },
+                  { label: 'Platelets / SDP (Dengue / Oncology)', value: 'platelets' },
+                  { label: 'Fresh Frozen Plasma / FFP (Burns / Clotting)', value: 'plasma' },
+                  { label: 'Packed RBC (Anemia / Surgery)', value: 'packed_rbc' },
+                  { label: 'Cryoprecipitate (Hemophilia)', value: 'cryoprecipitate' },
+                ]}
                 required
               />
               <Input

@@ -26,6 +26,11 @@ import {
   ChevronDown,
   ExternalLink,
   ShieldCheck,
+  Flame,
+  Layers,
+  Thermometer,
+  RotateCcw,
+  FlaskConical,
 } from 'lucide-react';
 import {
   gsap,
@@ -34,7 +39,13 @@ import {
 } from '@/lib/gsap';
 import { useGSAP } from '@gsap/react';
 import MagneticButton from '@/components/gsap/MagneticButton';
-import { BLOOD_GROUPS, BLOOD_COMPATIBILITY, BloodGroup } from '@/lib/utils';
+import {
+  BLOOD_GROUPS,
+  BLOOD_COMPATIBILITY,
+  PLASMA_COMPATIBILITY,
+  COMPONENT_DETAILS,
+  BloodGroup,
+} from '@/lib/utils';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -164,20 +175,28 @@ const workflowSteps = [
 
 const faqs = [
   {
-    q: 'Who is eligible to donate blood?',
-    a: 'Any healthy individual between 18 and 65 years of age weighing at least 45 kg with normal blood pressure and hemoglobin levels above 12.5 g/dL can safely donate blood.',
+    q: 'What is the difference between Whole Blood, Platelet Apheresis, and Plasma donation?',
+    a: 'In a traditional whole blood donation, all blood components are collected together and later separated in our laboratory. In apheresis (SDP / Plasma), an automated cell separator collects only platelets or plasma while returning red blood cells back to your body. This allows platelet donors to donate every 15 days and plasma donors every 28 days!',
+  },
+  {
+    q: 'Why are Platelets (SDP) so critically needed during Dengue and Chemotherapy?',
+    a: 'Platelets have a very short lifespan of only 5 days at 20–24°C under continuous agitation. A single donor platelet (SDP) apheresis collection provides the equivalent of 6 to 8 random donor platelet units, instantly stabilizing patients with critical bleeding risk.',
+  },
+  {
+    q: 'Why is the AB blood group called the "Universal Plasma Donor"?',
+    a: 'While O- is the universal donor for Red Blood Cells, the rule is inverted for plasma! AB plasma contains neither anti-A nor anti-B antibodies, making AB+ and AB- plasma 100% universally safe to transfuse into ANY recipient in burn units, trauma surgery, and pediatric emergency care.',
+  },
+  {
+    q: 'Who is eligible to donate blood and platelets?',
+    a: 'Any healthy individual between 18 and 65 years of age weighing at least 45 kg with normal blood pressure and hemoglobin above 12.5 g/dL can donate. For Platelet Apheresis, donors should have a healthy platelet count above 1.5 lakh and have not taken aspirin within 48 hours.',
   },
   {
     q: 'How often can I donate blood?',
-    a: 'Men can donate whole blood every 90 days (3 months), and women can donate every 120 days (4 months). Platelet and plasma apheresis donations can be performed more frequently.',
+    a: 'Men can donate whole blood every 90 days, and women every 120 days. Platelet apheresis can be performed every 15 days (up to 24 times/year) because your body replenishes platelets within 48 to 72 hours.',
   },
   {
     q: 'How fast are emergency blood requisitions fulfilled?',
     a: 'For registered partner hospitals, critical emergency requisitions are prioritized by our algorithmic triage engine and dispatched in under 15 minutes with verified cold-chain tracking.',
-  },
-  {
-    q: 'Is my donation tested for safety?',
-    a: 'Yes, 100% of collected blood units undergo rigorous Nucleic Acid Testing (NAT) and serological screening for infectious pathogens before being approved for clinical transfusion.',
   },
 ];
 
@@ -189,7 +208,10 @@ export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrolled, setScrolled] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<BloodGroup>('O-');
+  const [compatType, setCompatType] = useState<'rbc' | 'plasma'>('rbc');
+  const [calculatorType, setCalculatorType] = useState<'whole_blood' | 'platelets' | 'plasma'>('whole_blood');
   const [annualDonations, setAnnualDonations] = useState<number>(2);
+  const [selectedComponentTab, setSelectedComponentTab] = useState<string>('platelets');
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   // Navbar scroll blur effect
@@ -554,6 +576,166 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ░░░░░░ BLOOD FRACTIONATION: PLATELETS & PLASMA HUB ░░░░░░ */}
+      <section id="fractionation" className="py-16 bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-6">
+          {/* Section Header */}
+          <div className="text-center max-w-3xl mx-auto space-y-2 mb-12">
+            <span className="px-3.5 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold uppercase tracking-wider">
+              Component Fractionation Science
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+              Beyond Whole Blood: Platelets & Plasma Lifelines
+            </h2>
+            <p className="text-sm text-slate-600">
+              Modern transfusion medicine separates blood into targeted cellular components. A single donor can power cancer therapy, trauma resuscitation, or severe burn healing.
+            </p>
+          </div>
+
+          {/* Component Tabs Switcher */}
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-8">
+            {[
+              { id: 'platelets', label: 'Platelets (SDP / Apheresis)', badge: '5-Day Shelf Life', color: 'bg-amber-50 text-amber-800 border-amber-300' },
+              { id: 'plasma', label: 'Fresh Frozen Plasma (FFP)', badge: '1-Year Deep Freeze', color: 'bg-sky-50 text-sky-800 border-sky-300' },
+              { id: 'whole_blood', label: 'Whole Blood & PRBC', badge: 'Trauma Lifeline', color: 'bg-rose-50 text-rose-800 border-rose-300' },
+              { id: 'cryoprecipitate', label: 'Cryoprecipitate (Cryo)', badge: 'Clotting Factors', color: 'bg-indigo-50 text-indigo-800 border-indigo-300' },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setSelectedComponentTab(tab.id)}
+                className={`px-4 py-2.5 rounded-2xl font-bold text-xs transition-all border flex items-center gap-2 ${
+                  selectedComponentTab === tab.id
+                    ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
+                    : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+                }`}
+              >
+                <span>{tab.label}</span>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full border ${selectedComponentTab === tab.id ? 'bg-white/20 text-white border-white/30' : tab.color}`}>
+                  {tab.badge}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          {/* Active Component Deep Dive Card */}
+          {COMPONENT_DETAILS[selectedComponentTab] && (
+            <div className="rounded-3xl bg-slate-50 border border-slate-200/90 p-6 sm:p-10 shadow-sm transition-all">
+              <div className="grid lg:grid-cols-12 gap-8 items-center">
+                {/* Left Specs */}
+                <div className="lg:col-span-7 space-y-6">
+                  <div className="flex items-center gap-3">
+                    <span className={`px-3 py-1 rounded-xl text-xs font-bold border ${COMPONENT_DETAILS[selectedComponentTab].badgeBg} ${COMPONENT_DETAILS[selectedComponentTab].badgeBorder} ${COMPONENT_DETAILS[selectedComponentTab].badgeText}`}>
+                      {COMPONENT_DETAILS[selectedComponentTab].shortName} Specialization
+                    </span>
+                    {COMPONENT_DETAILS[selectedComponentTab].universalDonorType && (
+                      <span className="px-3 py-1 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                        {COMPONENT_DETAILS[selectedComponentTab].universalDonorType}
+                      </span>
+                    )}
+                  </div>
+
+                  <div>
+                    <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                      {COMPONENT_DETAILS[selectedComponentTab].name}
+                    </h3>
+                    <p className="text-sm text-slate-600 mt-1 leading-relaxed">
+                      {COMPONENT_DETAILS[selectedComponentTab].subtitle}
+                    </p>
+                  </div>
+
+                  {/* Clinical Indication Badges */}
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2.5">
+                      Primary Clinical Indications:
+                    </h4>
+                    <div className="grid sm:grid-cols-2 gap-2.5">
+                      {COMPONENT_DETAILS[selectedComponentTab].clinicalUses.map((use, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-start gap-2 p-2.5 rounded-xl bg-white border border-slate-200/80 text-xs text-slate-800"
+                        >
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                          <span>{use}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {COMPONENT_DETAILS[selectedComponentTab].urgentNotice && (
+                    <div className="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200/80 text-amber-950 text-xs flex items-center gap-2.5">
+                      <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                      <span>{COMPONENT_DETAILS[selectedComponentTab].urgentNotice}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Right Metrics Grid */}
+                <div className="lg:col-span-5 space-y-4">
+                  <div className="grid grid-cols-2 gap-3.5">
+                    <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
+                      <div className="flex items-center gap-2 text-slate-500 text-xs mb-1">
+                        <Thermometer className="w-4 h-4 text-rose-500" />
+                        <span>Storage Temp</span>
+                      </div>
+                      <div className="text-sm font-bold text-slate-900">
+                        {COMPONENT_DETAILS[selectedComponentTab].storageTemp}
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
+                      <div className="flex items-center gap-2 text-slate-500 text-xs mb-1">
+                        <Clock className="w-4 h-4 text-amber-500" />
+                        <span>Shelf Life</span>
+                      </div>
+                      <div className="text-sm font-bold text-slate-900">
+                        {COMPONENT_DETAILS[selectedComponentTab].shelfLife}
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
+                      <div className="flex items-center gap-2 text-slate-500 text-xs mb-1">
+                        <RotateCcw className="w-4 h-4 text-sky-500" />
+                        <span>Donation Interval</span>
+                      </div>
+                      <div className="text-sm font-bold text-slate-900">
+                        Every {COMPONENT_DETAILS[selectedComponentTab].donationIntervalDays} Days
+                      </div>
+                      <div className="text-[10px] text-slate-500 mt-0.5">
+                        Up to {COMPONENT_DETAILS[selectedComponentTab].maxDonationsPerYear}x / year
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
+                      <div className="flex items-center gap-2 text-slate-500 text-xs mb-1">
+                        <Droplets className="w-4 h-4 text-emerald-500" />
+                        <span>Unit Volume</span>
+                      </div>
+                      <div className="text-sm font-bold text-slate-900">
+                        {COMPONENT_DETAILS[selectedComponentTab].volumePerUnit}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-slate-900 text-white flex items-center justify-between">
+                    <div>
+                      <div className="text-xs text-slate-400">Ready to donate this component?</div>
+                      <div className="text-sm font-bold">Schedule an Apheresis or Whole Blood slot</div>
+                    </div>
+                    <Link
+                      href="/dashboard/appointments"
+                      className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs transition-colors shrink-0"
+                    >
+                      Book Slot
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* ░░░░░░ WORKFLOW STEPS (HOW SRISHTI SAVES LIVES) ░░░░░░ */}
       <section id="workflow" className="py-16 bg-slate-50 relative">
         <div className="max-w-7xl mx-auto px-6">
@@ -570,7 +752,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Connected 4 Steps Grid - 100% visible, no hidden opacity */}
+          {/* Connected 4 Steps Grid */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {workflowSteps.map((step, i) => (
               <div
@@ -609,10 +791,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ░░░░░░ INTERACTIVE BLOOD COMPATIBILITY EXPLORER ░░░░░░ */}
+      {/* ░░░░░░ INTERACTIVE DUAL COMPATIBILITY EXPLORER (RBC vs. PLASMA) ░░░░░░ */}
       <section id="compatibility" className="py-16 bg-white border-y border-slate-200">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center max-w-2xl mx-auto space-y-2 mb-10">
+          <div className="text-center max-w-2xl mx-auto space-y-2 mb-8">
             <span className="px-3.5 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold uppercase tracking-wider">
               Clinical Transfusion Intelligence
             </span>
@@ -620,8 +802,43 @@ export default function HomePage() {
               Interactive Compatibility Matrix
             </h2>
             <p className="text-sm text-slate-600">
-              Select any ABO/Rh blood type to view safe cross-match donor and recipient pathways.
+              Cross-match donor and recipient compatibility for Red Blood Cells vs. Inverted Plasma dynamics.
             </p>
+          </div>
+
+          {/* Dual Mode Switcher: RBC vs Plasma */}
+          <div className="flex items-center justify-center gap-3 mb-8">
+            <button
+              type="button"
+              onClick={() => setCompatType('rbc')}
+              className={`px-5 py-2.5 rounded-2xl font-bold text-xs transition-all border flex items-center gap-2 ${
+                compatType === 'rbc'
+                  ? 'bg-rose-600 text-white border-rose-600 shadow-sm'
+                  : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+              }`}
+            >
+              <Droplets className="w-4 h-4 fill-current" />
+              <span>Red Blood Cells (RBC) Matrix</span>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full ${compatType === 'rbc' ? 'bg-white/20 text-white' : 'bg-rose-100 text-rose-800'}`}>
+                O- Universal Donor
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setCompatType('plasma')}
+              className={`px-5 py-2.5 rounded-2xl font-bold text-xs transition-all border flex items-center gap-2 ${
+                compatType === 'plasma'
+                  ? 'bg-sky-600 text-white border-sky-600 shadow-sm'
+                  : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+              }`}
+            >
+              <FlaskConical className="w-4 h-4" />
+              <span>Fresh Frozen Plasma (FFP) Matrix</span>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full ${compatType === 'plasma' ? 'bg-white/20 text-white' : 'bg-sky-100 text-sky-800'}`}>
+                AB Universal Plasma Donor
+              </span>
+            </button>
           </div>
 
           {/* Blood Group Tabs */}
@@ -633,7 +850,9 @@ export default function HomePage() {
                 onClick={() => setSelectedGroup(group)}
                 className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all border ${
                   selectedGroup === group
-                    ? 'bg-rose-600 text-white border-rose-600 shadow-sm'
+                    ? compatType === 'plasma'
+                      ? 'bg-sky-600 text-white border-sky-600 shadow-sm'
+                      : 'bg-rose-600 text-white border-rose-600 shadow-sm'
                     : 'bg-white border-slate-200 text-slate-700 hover:border-rose-300 hover:bg-slate-50'
                 }`}
               >
@@ -643,92 +862,101 @@ export default function HomePage() {
           </div>
 
           {/* Compatibility Display Box */}
-          <div className="max-w-4xl mx-auto rounded-3xl bg-slate-50 border border-slate-200 p-6 sm:p-8 space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-slate-200">
-              <div>
-                <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-                  Inspecting Blood Type
-                </span>
-                <h3 className="text-2xl font-black text-slate-900 mt-0.5 flex items-center gap-3">
-                  <span>Group {selectedGroup}</span>
-                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-rose-100 text-rose-800">
-                    {selectedCompat.title}
-                  </span>
-                </h3>
-              </div>
-              <Link
-                href="/auth/register"
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-rose-600 hover:text-rose-700"
-              >
-                Register as {selectedGroup} Donor <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
+          {(() => {
+            const currentCompat =
+              compatType === 'plasma'
+                ? PLASMA_COMPATIBILITY[selectedGroup as keyof typeof PLASMA_COMPATIBILITY] || PLASMA_COMPATIBILITY['AB+']
+                : BLOOD_COMPATIBILITY[selectedGroup as keyof typeof BLOOD_COMPATIBILITY] || BLOOD_COMPATIBILITY['O-'];
 
-            {/* 2 Grid Columns: Can Give / Can Receive */}
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Can Give */}
-              <div className="p-5 rounded-2xl bg-white border border-emerald-200 space-y-3">
-                <div className="flex items-center gap-2 text-emerald-800 font-bold text-sm">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <h4>Can Give Blood To ({selectedCompat.give.length} groups)</h4>
+            return (
+              <div className="max-w-4xl mx-auto rounded-3xl bg-slate-50 border border-slate-200 p-6 sm:p-8 space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-slate-200">
+                  <div>
+                    <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                      {compatType === 'plasma' ? 'Inspecting Plasma Transfusion Type' : 'Inspecting Red Blood Cell Transfusion Type'}
+                    </span>
+                    <h3 className="text-2xl font-black text-slate-900 mt-0.5 flex items-center gap-3">
+                      <span>Group {selectedGroup}</span>
+                      <span className={`text-xs font-bold px-3 py-1 rounded-full ${compatType === 'plasma' ? 'bg-sky-100 text-sky-800' : 'bg-rose-100 text-rose-800'}`}>
+                        {currentCompat.title}
+                      </span>
+                    </h3>
+                  </div>
+                  <Link
+                    href="/auth/register"
+                    className={`inline-flex items-center gap-1.5 text-xs font-bold ${compatType === 'plasma' ? 'text-sky-600 hover:text-sky-700' : 'text-rose-600 hover:text-rose-700'}`}
+                  >
+                    Register as {selectedGroup} Donor <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
                 </div>
-                <div className="grid grid-cols-4 gap-2">
-                  {BLOOD_GROUPS.map((bg) => {
-                    const isCompatible = selectedCompat.give.includes(bg);
-                    return (
-                      <div
-                        key={bg}
-                        className={`p-2.5 rounded-xl text-center border font-bold text-xs ${
-                          isCompatible
-                            ? 'bg-emerald-50 border-emerald-300 text-emerald-800 shadow-xs'
-                            : 'bg-slate-50 border-slate-200 text-slate-400 opacity-60'
-                        }`}
-                      >
-                        {bg}
-                      </div>
-                    );
-                  })}
+
+                {/* 2 Grid Columns: Can Give / Can Receive */}
+                <div className="grid md:grid-cols-2 gap-6">
+                  {/* Can Give */}
+                  <div className="p-5 rounded-2xl bg-white border border-emerald-200 space-y-3">
+                    <div className="flex items-center gap-2 text-emerald-800 font-bold text-sm">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      <h4>Can Donate {compatType === 'plasma' ? 'Plasma' : 'Red Cells'} To ({currentCompat.give.length} groups)</h4>
+                    </div>
+                    <div className="grid grid-cols-4 gap-2">
+                      {BLOOD_GROUPS.map((bg) => {
+                        const isCompatible = currentCompat.give.includes(bg);
+                        return (
+                          <div
+                            key={bg}
+                            className={`p-2.5 rounded-xl text-center border font-bold text-xs ${
+                              isCompatible
+                                ? 'bg-emerald-50 border-emerald-300 text-emerald-800 shadow-xs'
+                                : 'bg-slate-50 border-slate-200 text-slate-400 opacity-60'
+                            }`}
+                          >
+                            {bg}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Can Receive */}
+                  <div className="p-5 rounded-2xl bg-white border border-sky-200 space-y-3">
+                    <div className="flex items-center gap-2 text-sky-800 font-bold text-sm">
+                      <CheckCircle2 className="w-4 h-4 text-sky-600" />
+                      <h4>Can Receive {compatType === 'plasma' ? 'Plasma' : 'Red Cells'} From ({currentCompat.receive.length} groups)</h4>
+                    </div>
+                    <div className="grid grid-cols-4 gap-2">
+                      {BLOOD_GROUPS.map((bg) => {
+                        const isCompatible = currentCompat.receive.includes(bg);
+                        return (
+                          <div
+                            key={bg}
+                            className={`p-2.5 rounded-xl text-center border font-bold text-xs ${
+                              isCompatible
+                                ? 'bg-sky-50 border-sky-300 text-sky-800 shadow-xs'
+                                : 'bg-slate-50 border-slate-200 text-slate-400 opacity-60'
+                            }`}
+                          >
+                            {bg}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Context Note */}
+                <div className={`p-4 rounded-2xl text-xs flex items-start gap-3 ${compatType === 'plasma' ? 'bg-sky-50/70 border border-sky-200 text-sky-950' : 'bg-rose-50/70 border border-rose-200 text-rose-950'}`}>
+                  <AlertCircle className={`w-5 h-5 shrink-0 mt-0.5 ${compatType === 'plasma' ? 'text-sky-600' : 'text-rose-600'}`} />
+                  <p className="leading-relaxed">
+                    {currentCompat.description}
+                  </p>
                 </div>
               </div>
-
-              {/* Can Receive */}
-              <div className="p-5 rounded-2xl bg-white border border-sky-200 space-y-3">
-                <div className="flex items-center gap-2 text-sky-800 font-bold text-sm">
-                  <CheckCircle2 className="w-4 h-4 text-sky-600" />
-                  <h4>Can Receive Blood From ({selectedCompat.receive.length} groups)</h4>
-                </div>
-                <div className="grid grid-cols-4 gap-2">
-                  {BLOOD_GROUPS.map((bg) => {
-                    const isCompatible = selectedCompat.receive.includes(bg);
-                    return (
-                      <div
-                        key={bg}
-                        className={`p-2.5 rounded-xl text-center border font-bold text-xs ${
-                          isCompatible
-                            ? 'bg-sky-50 border-sky-300 text-sky-800 shadow-xs'
-                            : 'bg-slate-50 border-slate-200 text-slate-400 opacity-60'
-                        }`}
-                      >
-                        {bg}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-
-            {/* Context Note */}
-            <div className="p-4 rounded-2xl bg-rose-50/70 border border-rose-200 text-xs text-rose-950 flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
-              <p className="leading-relaxed">
-                {selectedCompat.description} Whole blood is separated into packed Red Blood Cells, Platelets, and Cryoprecipitate, multiplying clinical impact.
-              </p>
-            </div>
-          </div>
+            );
+          })()}
         </div>
       </section>
 
-      {/* ░░░░░░ IMPACT CALCULATOR SECTION ░░░░░░ */}
+      {/* ░░░░░░ ADAPTIVE IMPACT CALCULATOR (WHOLE BLOOD / PLATELETS / PLASMA) ░░░░░░ */}
       <section id="calculator" className="py-16 bg-slate-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-12 gap-10 items-center">
@@ -742,20 +970,47 @@ export default function HomePage() {
                 Calculate Your Life Impact
               </h2>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Healthy donors can safely donate every 90 days. Slide to discover how many trauma patients and surgeries your contribution directly powers annually.
+                Choose your preferred donation stream to see the clinical magnitude of your regular voluntary contributions.
               </p>
+
+              {/* Stream Switcher */}
+              <div className="flex gap-2">
+                {[
+                  { id: 'whole_blood', label: 'Whole Blood (90d)' },
+                  { id: 'platelets', label: 'Platelet SDP (15d)' },
+                  { id: 'plasma', label: 'Plasma FFP (28d)' },
+                ].map((st) => (
+                  <button
+                    key={st.id}
+                    type="button"
+                    onClick={() => {
+                      setCalculatorType(st.id as any);
+                      if (st.id === 'platelets') setAnnualDonations(6);
+                      else if (st.id === 'plasma') setAnnualDonations(4);
+                      else setAnnualDonations(2);
+                    }}
+                    className={`flex-1 py-2 px-2 text-center rounded-xl text-xs font-bold transition-all border ${
+                      calculatorType === st.id
+                        ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                        : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    {st.label}
+                  </button>
+                ))}
+              </div>
 
               <div className="p-5 rounded-2xl bg-white border border-slate-200 space-y-3 shadow-xs">
                 <div className="flex items-center justify-between text-xs font-bold">
                   <span className="text-slate-700">Donations Per Year</span>
                   <span className="text-rose-600 text-sm font-extrabold">
-                    {annualDonations} times / year
+                    {annualDonations} {annualDonations === 1 ? 'time' : 'times'} / year
                   </span>
                 </div>
                 <input
                   type="range"
                   min="1"
-                  max="4"
+                  max={calculatorType === 'platelets' ? 24 : calculatorType === 'plasma' ? 12 : 4}
                   step="1"
                   value={annualDonations}
                   onChange={(e) => setAnnualDonations(parseInt(e.target.value))}
@@ -763,9 +1018,8 @@ export default function HomePage() {
                 />
                 <div className="flex justify-between text-[11px] text-slate-500 font-semibold px-1">
                   <span>1x (Starter)</span>
-                  <span>2x (Regular)</span>
-                  <span>3x (Hero)</span>
-                  <span>4x (Champion)</span>
+                  <span>{calculatorType === 'platelets' ? '12x (Monthly)' : calculatorType === 'plasma' ? '6x (Hero)' : '2x (Regular)'}</span>
+                  <span>{calculatorType === 'platelets' ? '24x (Maximum)' : calculatorType === 'plasma' ? '12x (Max FFP)' : '4x (Max WB)'}</span>
                 </div>
               </div>
             </div>
@@ -778,13 +1032,21 @@ export default function HomePage() {
                     <Heart className="w-6 h-6 animate-pulse" />
                   </div>
                   <div className="text-4xl font-extrabold text-slate-900">
-                    {annualDonations * 3}
+                    {calculatorType === 'platelets'
+                      ? annualDonations * 2
+                      : calculatorType === 'plasma'
+                      ? annualDonations * 2
+                      : annualDonations * 3}
                   </div>
                   <div className="text-xs font-bold uppercase text-rose-600">
-                    Potential Lives Saved
+                    Patients Directly Saved
                   </div>
                   <p className="text-[11px] text-slate-500">
-                    3 clinical components per unit
+                    {calculatorType === 'platelets'
+                      ? '1 SDP = 1 complete transfusion dose'
+                      : calculatorType === 'plasma'
+                      ? 'Clotting & burn resuscitation'
+                      : '3 fractionated clinical products'}
                   </p>
                 </div>
 
@@ -793,13 +1055,21 @@ export default function HomePage() {
                     <Droplets className="w-6 h-6" />
                   </div>
                   <div className="text-4xl font-extrabold text-slate-900">
-                    {annualDonations * 450} <span className="text-base font-medium">ml</span>
+                    {calculatorType === 'platelets'
+                      ? annualDonations * 300
+                      : calculatorType === 'plasma'
+                      ? annualDonations * 250
+                      : annualDonations * 450} <span className="text-base font-medium">ml</span>
                   </div>
                   <div className="text-xs font-bold uppercase text-sky-600">
-                    Volume Contributed
+                    {calculatorType === 'platelets' ? 'SDP Apheresis Yield' : calculatorType === 'plasma' ? 'FFP Fluid Volume' : 'Volume Contributed'}
                   </div>
                   <p className="text-[11px] text-slate-500">
-                    Fluid volume replenished in 48 hrs
+                    {calculatorType === 'platelets'
+                      ? 'Platelets regenerate in 48-72h'
+                      : calculatorType === 'plasma'
+                      ? 'Proteins replenish in 48h'
+                      : 'Fluid volume restored in 48h'}
                   </p>
                 </div>
 
@@ -808,16 +1078,25 @@ export default function HomePage() {
                     <Award className="w-6 h-6" />
                   </div>
                   <div className="text-lg font-black text-slate-900 pt-1.5 truncate">
-                    {annualDonations === 1 && 'Silver Badge'}
-                    {annualDonations === 2 && 'Gold Guardian'}
-                    {annualDonations === 3 && 'Platinum Hero'}
-                    {annualDonations >= 4 && 'Diamond Champion'}
+                    {calculatorType === 'platelets'
+                      ? annualDonations >= 18
+                        ? 'Master Apheresis Hero'
+                        : annualDonations >= 10
+                        ? 'Platelet Guardian'
+                        : 'Oncology Supporter'
+                      : annualDonations === 1
+                      ? 'Silver Badge'
+                      : annualDonations === 2
+                      ? 'Gold Guardian'
+                      : annualDonations === 3
+                      ? 'Platinum Hero'
+                      : 'Diamond Champion'}
                   </div>
                   <div className="text-xs font-bold uppercase text-emerald-600">
-                    Donor Honor Tier
+                    Honor Recognition Tier
                   </div>
                   <p className="text-[11px] text-slate-500">
-                    Signed digital certificate issued
+                    Signed clinical impact certificate
                   </p>
                 </div>
               </div>

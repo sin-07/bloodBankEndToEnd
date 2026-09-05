@@ -10,8 +10,8 @@ import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
 import Modal from '@/components/ui/Modal';
 import { donorAPI } from '@/lib/api';
-import { formatDate, BLOOD_GROUPS, getStatusVariant } from '@/lib/utils';
-import { CalendarCheck, MapPin, Droplets, Clock, CheckCircle2, XCircle, Plus, Calendar, AlertCircle } from 'lucide-react';
+import { formatDate, BLOOD_GROUPS, getStatusVariant, COMPONENT_NAMES, getComponentBadgeClass } from '@/lib/utils';
+import { CalendarCheck, MapPin, Droplets, Clock, CheckCircle2, XCircle, Plus, Calendar, AlertCircle, FlaskConical, Sparkles, Activity } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function AppointmentsPage() {
@@ -24,6 +24,7 @@ export default function AppointmentsPage() {
     preferredDate: '',
     location: '',
     bloodGroup: '',
+    donationType: 'whole_blood',
     notes: '',
   });
 
@@ -54,7 +55,7 @@ export default function AppointmentsPage() {
       await donorAPI.bookAppointment(form);
       toast.success('Donation appointment scheduled successfully!');
       setShowModal(false);
-      setForm({ preferredDate: '', location: '', bloodGroup: '', notes: '' });
+      setForm({ preferredDate: '', location: '', bloodGroup: '', donationType: 'whole_blood', notes: '' });
       fetchData();
     } catch (err: any) {
       toast.error(err?.response?.data?.message || 'Failed to book appointment');
@@ -152,45 +153,61 @@ export default function AppointmentsPage() {
             </div>
           ) : (
             <div className="space-y-3">
-              {appointments.map((appt: any) => (
-                <div
-                  key={appt._id}
-                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 hover:bg-slate-50 transition-colors"
-                >
-                  <div className="flex items-center gap-3.5">
-                    <div className="w-10 h-10 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 shrink-0">
-                      <Droplets className="w-5 h-5 fill-rose-600" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-slate-900 text-sm">
-                          Group: {appt.bloodGroup}
-                        </span>
-                        <Badge
-                          variant={getStatusVariant(appt.status)}
-                          dot
-                          className="capitalize font-semibold text-[11px]"
-                        >
-                          {appt.status}
-                        </Badge>
+              {appointments.map((appt: any) => {
+                const stream = appt.donationType || 'whole_blood';
+                return (
+                  <div
+                    key={appt._id}
+                    className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 hover:bg-slate-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-10 h-10 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 shrink-0">
+                        {stream === 'platelets' ? (
+                          <Sparkles className="w-5 h-5 text-amber-600" />
+                        ) : stream === 'plasma' ? (
+                          <FlaskConical className="w-5 h-5 text-sky-600" />
+                        ) : (
+                          <Droplets className="w-5 h-5 fill-rose-600" />
+                        )}
                       </div>
-                      <div className="flex items-center gap-3 mt-1 text-xs text-slate-600">
-                        <span className="flex items-center gap-1 font-medium">
-                          <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                          {formatDate(appt.donationDate)}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                          {appt.location}
-                        </span>
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="font-bold text-slate-900 text-sm">
+                            Group: {appt.bloodGroup}
+                          </span>
+                          <span className={`px-2 py-0.5 rounded-lg text-[11px] font-bold ${getComponentBadgeClass(stream)}`}>
+                            {stream === 'platelets'
+                              ? 'Platelet Apheresis (SDP)'
+                              : stream === 'plasma'
+                              ? 'Plasma Donation (FFP)'
+                              : 'Whole Blood Donation'}
+                          </span>
+                          <Badge
+                            variant={getStatusVariant(appt.status)}
+                            dot
+                            className="capitalize font-semibold text-[11px]"
+                          >
+                            {appt.status}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center gap-3 mt-1 text-xs text-slate-600">
+                          <span className="flex items-center gap-1 font-medium">
+                            <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                            {formatDate(appt.donationDate)}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                            {appt.location}
+                          </span>
+                        </div>
+                        {appt.notes && (
+                          <p className="text-[11px] text-slate-500 mt-1 italic">{appt.notes}</p>
+                        )}
                       </div>
-                      {appt.notes && (
-                        <p className="text-[11px] text-slate-500 mt-1 italic">{appt.notes}</p>
-                      )}
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -199,9 +216,25 @@ export default function AppointmentsPage() {
         <Modal
           isOpen={showModal}
           onClose={() => setShowModal(false)}
-          title="Schedule Voluntary Blood Donation"
+          title="Schedule Voluntary Blood / Apheresis Donation"
         >
           <form onSubmit={handleBook} className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                Donation Stream Type *
+              </label>
+              <Select
+                value={form.donationType}
+                onChange={e => setForm(f => ({ ...f, donationType: e.target.value as any }))}
+                options={[
+                  { label: 'Whole Blood Donation (Standard - 90 Days recovery)', value: 'whole_blood' },
+                  { label: 'Platelet Apheresis / SDP (Dengue & Chemo - 15 Days recovery)', value: 'platelets' },
+                  { label: 'Plasma Donation / FFP (Burns & Clotting - 28 Days recovery)', value: 'plasma' },
+                ]}
+                required
+              />
+            </div>
+
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
                 Preferred Donation Date *
@@ -251,8 +284,24 @@ export default function AppointmentsPage() {
               />
             </div>
 
-            <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl p-3 text-xs text-amber-900 leading-relaxed">
-              <strong>Medical Advice:</strong> Ensure you drink at least 500ml of water and consume a light meal prior to your appointment.
+            {/* Dynamic Clinical Recovery Note */}
+            <div className={`p-3 rounded-xl text-xs leading-relaxed border ${
+              form.donationType === 'platelets'
+                ? 'bg-amber-50 text-amber-950 border-amber-200'
+                : form.donationType === 'plasma'
+                ? 'bg-sky-50 text-sky-950 border-sky-200'
+                : 'bg-rose-50 text-rose-950 border-rose-200'
+            }`}>
+              <strong>Clinical Protocol: </strong>
+              {form.donationType === 'platelets' && (
+                <span>Platelet apheresis donors can safely donate every 15 days (up to 24x/yr). Avoid aspirin for 48 hours prior.</span>
+              )}
+              {form.donationType === 'plasma' && (
+                <span>Plasma donation interval is 28 days (up to 12x/yr). Hydrate with at least 500ml water beforehand.</span>
+              )}
+              {form.donationType === 'whole_blood' && (
+                <span>Standard Whole Blood donation interval is 90 days. Drink water and have a light meal prior.</span>
+              )}
             </div>
 
             <div className="flex gap-3 pt-3 border-t border-slate-100">

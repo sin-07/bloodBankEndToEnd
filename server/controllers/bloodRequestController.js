@@ -15,6 +15,7 @@ const createBloodRequest = async (req, res, next) => {
     const {
       patientName,
       bloodGroup,
+      component,
       units,
       urgency,
       reason,
@@ -28,6 +29,7 @@ const createBloodRequest = async (req, res, next) => {
       requesterType: req.user.role === 'hospital' ? 'hospital' : 'individual',
       patientName,
       bloodGroup,
+      component: component || 'whole_blood',
       units,
       urgency: urgency || 'normal',
       reason,

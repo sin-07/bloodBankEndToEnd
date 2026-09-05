@@ -26,6 +26,11 @@ const bloodRequestSchema = new mongoose.Schema(
       required: [true, 'Blood group is required'],
       enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
     },
+    component: {
+      type: String,
+      enum: ['whole_blood', 'packed_rbc', 'platelets', 'plasma', 'cryoprecipitate'],
+      default: 'whole_blood',
+    },
     units: {
       type: Number,
       required: [true, 'Number of units is required'],

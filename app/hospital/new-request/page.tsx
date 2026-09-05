@@ -10,13 +10,14 @@ import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
 import Badge from '@/components/ui/Badge';
 import { hospitalAPI } from '@/lib/api';
-import { BLOOD_GROUPS, BLOOD_COMPATIBILITY } from '@/lib/utils';
-import { Plus, Trash2, Send, ArrowLeft, AlertCircle, Droplets, HeartPulse } from 'lucide-react';
+import { BLOOD_GROUPS, BLOOD_COMPATIBILITY, PLASMA_COMPATIBILITY, COMPONENT_NAMES } from '@/lib/utils';
+import { Plus, Trash2, Send, ArrowLeft, AlertCircle, Droplets, HeartPulse, FlaskConical, Activity } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface RequestItem {
   patientName: string;
   bloodGroup: string;
+  component: string;
   units: string;
   urgency: 'normal' | 'urgent' | 'critical';
   reason: string;
@@ -26,6 +27,7 @@ interface RequestItem {
 const emptyRequest: RequestItem = {
   patientName: '',
   bloodGroup: 'O+',
+  component: 'whole_blood',
   units: '1',
   urgency: 'normal',
   reason: '',
@@ -212,6 +214,22 @@ export default function NewRequestPage() {
                     required
                   />
 
+                  <Select
+                    label="Blood Component Requisition *"
+                    value={req.component}
+                    onChange={(e) =>
+                      updateRequest(index, 'component', e.target.value)
+                    }
+                    options={[
+                      { label: 'Whole Blood (Standard Transfusion)', value: 'whole_blood' },
+                      { label: 'Platelets / SDP (Dengue / Oncology / Chemo)', value: 'platelets' },
+                      { label: 'Fresh Frozen Plasma / FFP (Coagulation / Burns)', value: 'plasma' },
+                      { label: 'Packed Red Blood Cells / PRBC (Anemia / Surgery)', value: 'packed_rbc' },
+                      { label: 'Cryoprecipitate (Hemophilia / Fibrinogen)', value: 'cryoprecipitate' },
+                    ]}
+                    required
+                  />
+
                   <Input
                     label="Units Required *"
                     type="number"
@@ -248,35 +266,52 @@ export default function NewRequestPage() {
                     required
                   />
 
-                  <Input
-                    label="Clinical Indication / Diagnosis"
-                    placeholder="e.g. Scheduled cardiac bypass"
-                    value={req.reason}
-                    onChange={(e) =>
-                      updateRequest(index, 'reason', e.target.value)
-                    }
-                  />
+                  <div className="md:col-span-2 lg:col-span-3">
+                    <Input
+                      label="Clinical Indication / Diagnosis *"
+                      placeholder="e.g. Acute Dengue thrombocytopenia (Platelet count < 20,000/mcL) or Burn coagulopathy"
+                      value={req.reason}
+                      onChange={(e) =>
+                        updateRequest(index, 'reason', e.target.value)
+                      }
+                    />
+                  </div>
                 </div>
 
                 {/* Compatibility Quick Hint */}
-                {compInfo && (
-                  <div className="mt-5 pt-4 border-t border-slate-100 flex flex-wrap items-center gap-2 text-xs">
-                    <span className="font-semibold text-slate-700">Compatible Donors:</span>
-                    <div className="flex flex-wrap gap-1">
-                      {compInfo.receive.map((bg) => (
-                        <span
-                          key={bg}
-                          className="px-2 py-0.5 rounded bg-slate-100 font-bold text-slate-800 border border-slate-200 text-[11px]"
-                        >
-                          {bg}
-                        </span>
-                      ))}
+                {(() => {
+                  const isPlasma = req.component === 'plasma';
+                  const activeCompat = isPlasma
+                    ? PLASMA_COMPATIBILITY[req.bloodGroup as keyof typeof PLASMA_COMPATIBILITY]
+                    : compInfo;
+
+                  if (!activeCompat) return null;
+
+                  return (
+                    <div className="mt-5 pt-4 border-t border-slate-100 flex flex-wrap items-center gap-2 text-xs">
+                      <span className="font-semibold text-slate-700">
+                        {isPlasma ? 'Compatible Plasma Donors:' : 'Compatible RBC Donors:'}
+                      </span>
+                      <div className="flex flex-wrap gap-1">
+                        {activeCompat.receive.map((bg) => (
+                          <span
+                            key={bg}
+                            className={`px-2 py-0.5 rounded font-bold border text-[11px] ${
+                              isPlasma
+                                ? 'bg-sky-50 text-sky-900 border-sky-200'
+                                : 'bg-slate-100 text-slate-800 border-slate-200'
+                            }`}
+                          >
+                            {bg}
+                          </span>
+                        ))}
+                      </div>
+                      <span className="text-[11px] text-slate-500 ml-auto font-medium">
+                        {activeCompat.title} {isPlasma && '(Inverted AB Universal Plasma rule applies)'}
+                      </span>
                     </div>
-                    <span className="text-[11px] text-slate-500 ml-auto">
-                      {compInfo.title}
-                    </span>
-                  </div>
-                )}
+                  );
+                })()}
               </div>
             );
           })}

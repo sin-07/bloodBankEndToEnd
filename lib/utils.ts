@@ -182,10 +182,233 @@ export const BLOOD_GROUP_COLORS: Record<string, string> = {
 export const COMPONENT_NAMES: Record<string, string> = {
   whole_blood: 'Whole Blood',
   packed_rbc: 'Packed RBC',
-  platelets: 'Platelets',
-  plasma: 'Plasma',
+  platelets: 'Platelets (SDP / RDP)',
+  plasma: 'Fresh Frozen Plasma (FFP)',
   cryoprecipitate: 'Cryoprecipitate',
 };
+
+/**
+ * Detailed clinical specifications for all fractionated components
+ */
+export interface ComponentDetail {
+  id: string;
+  name: string;
+  shortName: string;
+  subtitle: string;
+  storageTemp: string;
+  shelfLife: string;
+  shelfLifeDays: number;
+  donationIntervalDays: number;
+  maxDonationsPerYear: number;
+  clinicalUses: string[];
+  volumePerUnit: string;
+  badgeBg: string;
+  badgeBorder: string;
+  badgeText: string;
+  themeColor: string;
+  urgentNotice?: string;
+  universalDonorType?: string;
+}
+
+export const COMPONENT_DETAILS: Record<string, ComponentDetail> = {
+  platelets: {
+    id: 'platelets',
+    name: 'Platelets (Single Donor Platelets - SDP)',
+    shortName: 'Platelets',
+    subtitle: 'Thrombocyte cell fragments crucial for clot formation & bleeding arrest',
+    storageTemp: '20°C to 24°C (Continuous horizontal agitation)',
+    shelfLife: '5 Days maximum',
+    shelfLifeDays: 5,
+    donationIntervalDays: 15,
+    maxDonationsPerYear: 24,
+    clinicalUses: [
+      'Dengue & acute viral thrombocytopenia',
+      'Leukemia & chemotherapy-induced bone marrow suppression',
+      'Bone marrow & organ transplants',
+      'Major surgical & trauma hemorrhages',
+    ],
+    volumePerUnit: '250 - 300 ml (Equivalent to 6-8 random units)',
+    badgeBg: 'bg-amber-50',
+    badgeBorder: 'border-amber-200',
+    badgeText: 'text-amber-800',
+    themeColor: '#f59e0b',
+    urgentNotice: 'Ultra-perishable: 5-day lifespan requires continuous rolling replenishment.',
+    universalDonorType: 'AB+ / AB- (or group-specific matching)',
+  },
+  plasma: {
+    id: 'plasma',
+    name: 'Fresh Frozen Plasma (FFP)',
+    shortName: 'Plasma',
+    subtitle: 'Liquid portion of blood carrying proteins, clotting factors & antibodies',
+    storageTemp: '-18°C or colder (Deep Cryogenic Freeze)',
+    shelfLife: '1 Year (365 Days)',
+    shelfLifeDays: 365,
+    donationIntervalDays: 28,
+    maxDonationsPerYear: 12,
+    clinicalUses: [
+      'Severe burn victims & extensive fluid loss',
+      'Trauma coagulopathy & massive transfusions',
+      'Liver failure & cirrhosis clotting factor replenishment',
+      'Warfarin overdose & immediate anticoagulation reversal',
+    ],
+    volumePerUnit: '200 - 250 ml per pack',
+    badgeBg: 'bg-sky-50',
+    badgeBorder: 'border-sky-200',
+    badgeText: 'text-sky-800',
+    themeColor: '#0284c7',
+    urgentNotice: 'AB Positive & Negative are the prized Universal Plasma Donors.',
+    universalDonorType: 'AB+ / AB- (Universal Plasma Donor)',
+  },
+  whole_blood: {
+    id: 'whole_blood',
+    name: 'Whole Blood',
+    shortName: 'Whole Blood',
+    subtitle: 'Unseparated blood containing red cells, white cells, platelets, and plasma',
+    storageTemp: '2°C to 6°C (Refrigerated)',
+    shelfLife: '35 - 42 Days',
+    shelfLifeDays: 42,
+    donationIntervalDays: 90,
+    maxDonationsPerYear: 4,
+    clinicalUses: [
+      'Acute hemorrhagic trauma & roadside accidents',
+      'Massive intraoperative blood loss',
+      'Fractionation into RBC, Plasma, and Cryoprecipitate',
+    ],
+    volumePerUnit: '350 ml or 450 ml',
+    badgeBg: 'bg-rose-50',
+    badgeBorder: 'border-rose-200',
+    badgeText: 'text-rose-800',
+    themeColor: '#e11d48',
+    urgentNotice: 'Fractionated into 3 components to save up to 3 lives per unit.',
+    universalDonorType: 'O- (Universal Red Cell Donor)',
+  },
+  packed_rbc: {
+    id: 'packed_rbc',
+    name: 'Packed Red Blood Cells (PRBC)',
+    shortName: 'Packed RBC',
+    subtitle: 'Concentrated erythrocytes for rapid oxygen-carrying capacity',
+    storageTemp: '2°C to 6°C (Refrigerated)',
+    shelfLife: '42 Days with SAGM anticoagulant',
+    shelfLifeDays: 42,
+    donationIntervalDays: 90,
+    maxDonationsPerYear: 4,
+    clinicalUses: [
+      'Severe chronic anemia & hemoglobin deficiency',
+      'Thalassemia major & Sickle Cell disease',
+      'Cardiac & orthopedic surgeries',
+    ],
+    volumePerUnit: '220 - 300 ml',
+    badgeBg: 'bg-red-50',
+    badgeBorder: 'border-red-200',
+    badgeText: 'text-red-800',
+    themeColor: '#dc2626',
+    universalDonorType: 'O- (Universal RBC Donor)',
+  },
+  cryoprecipitate: {
+    id: 'cryoprecipitate',
+    name: 'Cryoprecipitate (Cryo)',
+    shortName: 'Cryoprecipitate',
+    subtitle: 'Insoluble precipitate rich in Factor VIII, Fibrinogen, and von Willebrand factor',
+    storageTemp: '-18°C or colder',
+    shelfLife: '1 Year (365 Days)',
+    shelfLifeDays: 365,
+    donationIntervalDays: 28,
+    maxDonationsPerYear: 12,
+    clinicalUses: [
+      'Hemophilia A & von Willebrand disease',
+      'Hypofibrinogenemia & massive obstetric hemorrhage',
+      'Disseminated Intravascular Coagulation (DIC)',
+    ],
+    volumePerUnit: '15 - 20 ml per unit',
+    badgeBg: 'bg-indigo-50',
+    badgeBorder: 'border-indigo-200',
+    badgeText: 'text-indigo-800',
+    themeColor: '#4f46e5',
+    universalDonorType: 'AB+ / AB- preferred',
+  },
+};
+
+/**
+ * Plasma Compatibility Matrix
+ * In plasma transfusion, AB is the Universal Donor (plasma contains no anti-A or anti-B antibodies)
+ * and O is the Universal Recipient.
+ */
+export const PLASMA_COMPATIBILITY: Record<
+  BloodGroup,
+  {
+    give: BloodGroup[];
+    receive: BloodGroup[];
+    title: string;
+    description: string;
+  }
+> = {
+  'AB+': {
+    give: ['AB+', 'AB-', 'A+', 'A-', 'B+', 'B-', 'O+', 'O-'],
+    receive: ['AB+', 'AB-'],
+    title: 'Universal Plasma Donor',
+    description: 'AB plasma lacks anti-A and anti-B antibodies, making it universally safe for ALL patients in emergency burns, trauma, and neonatal care.',
+  },
+  'AB-': {
+    give: ['AB+', 'AB-', 'A+', 'A-', 'B+', 'B-', 'O+', 'O-'],
+    receive: ['AB+', 'AB-'],
+    title: 'Universal Plasma Donor',
+    description: 'AB- plasma is prized in pediatric and emergency transfusions because it can be safely infused into any patient regardless of recipient blood type.',
+  },
+  'A+': {
+    give: ['A+', 'A-', 'O+', 'O-'],
+    receive: ['A+', 'A-', 'AB+', 'AB-'],
+    title: 'A-Group Plasma Donor',
+    description: 'Contains only anti-B antibodies. Compatible with Type A and Type O plasma recipients.',
+  },
+  'A-': {
+    give: ['A+', 'A-', 'O+', 'O-'],
+    receive: ['A+', 'A-', 'AB+', 'AB-'],
+    title: 'A-Group Plasma Donor',
+    description: 'Can donate plasma safely to patients with blood groups A and O.',
+  },
+  'B+': {
+    give: ['B+', 'B-', 'O+', 'O-'],
+    receive: ['B+', 'B-', 'AB+', 'AB-'],
+    title: 'B-Group Plasma Donor',
+    description: 'Contains only anti-A antibodies. Compatible with Type B and Type O plasma recipients.',
+  },
+  'B-': {
+    give: ['B+', 'B-', 'O+', 'O-'],
+    receive: ['B+', 'B-', 'AB+', 'AB-'],
+    title: 'B-Group Plasma Donor',
+    description: 'Can donate plasma safely to patients with blood groups B and O.',
+  },
+  'O+': {
+    give: ['O+', 'O-'],
+    receive: ['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'],
+    title: 'Universal Plasma Recipient',
+    description: 'O+ plasma contains both anti-A and anti-B antibodies, so it can only be given to O patients, but O patients can receive plasma from any group.',
+  },
+  'O-': {
+    give: ['O+', 'O-'],
+    receive: ['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'],
+    title: 'Universal Plasma Recipient',
+    description: 'While O- is universal for red cells, for plasma O- can receive plasma safely from all groups.',
+  },
+};
+
+/**
+ * Get styling class for component badges
+ */
+export function getComponentBadgeClass(component: string): string {
+  switch (component) {
+    case 'platelets':
+      return 'bg-amber-50 text-amber-800 border border-amber-200 font-bold';
+    case 'plasma':
+      return 'bg-sky-50 text-sky-800 border border-sky-200 font-bold';
+    case 'packed_rbc':
+      return 'bg-red-50 text-red-800 border border-red-200 font-bold';
+    case 'cryoprecipitate':
+      return 'bg-indigo-50 text-indigo-800 border border-indigo-200 font-bold';
+    default:
+      return 'bg-rose-50 text-rose-800 border border-rose-200 font-bold';
+  }
+}
 
 /**
  * Download file from blob
@@ -216,3 +439,4 @@ export function capitalize(text: string): string {
   if (!text) return '';
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
+

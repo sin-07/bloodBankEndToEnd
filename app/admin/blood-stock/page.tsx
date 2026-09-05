@@ -11,8 +11,8 @@ import Select from '@/components/ui/Select';
 import Modal from '@/components/ui/Modal';
 import Table from '@/components/ui/Table';
 import { inventoryAPI } from '@/lib/api';
-import { formatDate, getStatusVariant, BLOOD_GROUPS, COMPONENT_NAMES } from '@/lib/utils';
-import { Plus, Droplets, AlertTriangle, Trash2, Filter, RefreshCw, Layers, Calendar, MapPin } from 'lucide-react';
+import { formatDate, getStatusVariant, BLOOD_GROUPS, COMPONENT_NAMES, getComponentBadgeClass } from '@/lib/utils';
+import { Plus, Droplets, AlertTriangle, Trash2, Filter, RefreshCw, Layers, Calendar, MapPin, Sparkles, FlaskConical } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function AdminBloodStockPage() {
@@ -98,11 +98,16 @@ export default function AdminBloodStockPage() {
     },
     {
       header: 'Component',
-      accessor: (item: any) => (
-        <span className="font-semibold text-slate-800 text-xs">
-          {COMPONENT_NAMES[item.component] || item.component}
-        </span>
-      ),
+      accessor: (item: any) => {
+        const comp = item.component || 'whole_blood';
+        return (
+          <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs font-bold ${getComponentBadgeClass(comp)}`}>
+            {comp === 'platelets' && <Sparkles className="w-3 h-3" />}
+            {comp === 'plasma' && <FlaskConical className="w-3 h-3" />}
+            <span>{COMPONENT_NAMES[comp] || comp}</span>
+          </span>
+        );
+      },
     },
     {
       header: 'Units',
