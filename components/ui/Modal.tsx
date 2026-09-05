@@ -54,13 +54,13 @@ export default function Modal({
         >
           {/* Header */}
           {title && (
-            <div className="flex items-center justify-between px-6 py-4.5 border-b border-slate-100 bg-slate-50/50">
+            <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-slate-100 bg-slate-50/50">
               <div>
-                <h3 className="text-base font-bold text-slate-900 tracking-tight font-heading">
+                <h3 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight font-heading">
                   {title}
                 </h3>
                 {subtitle && (
-                  <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>
+                  <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">{subtitle}</p>
                 )}
               </div>
               <button
@@ -74,7 +74,7 @@ export default function Modal({
           )}
 
           {/* Body */}
-          <div className="px-6 py-5 max-h-[80vh] overflow-y-auto text-slate-700">{children}</div>
+          <div className="px-4 sm:px-6 py-5 max-h-[80vh] overflow-y-auto text-slate-700">{children}</div>
         </div>
       </div>
     </div>

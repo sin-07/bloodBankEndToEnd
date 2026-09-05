@@ -9,6 +9,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
   ripple?: boolean;
   icon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
   children: React.ReactNode;
 }
 
@@ -18,6 +19,7 @@ export default function Button({
   loading = false,
   ripple = true,
   icon,
+  rightIcon,
   children,
   className = '',
   disabled,
@@ -25,7 +27,7 @@ export default function Button({
   ...props
 }: ButtonProps) {
   const baseStyles =
-    'relative inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 disabled:opacity-50 disabled:cursor-not-allowed select-none overflow-hidden active:scale-[0.98]';
+    'relative inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 disabled:opacity-50 disabled:cursor-not-allowed select-none overflow-hidden active:scale-[0.98] whitespace-nowrap flex-nowrap';
 
   const variants = {
     primary:
@@ -64,7 +66,7 @@ export default function Button({
     >
       {loading ? (
         <svg
-          className="animate-spin -ml-1 mr-2 h-4 w-4 text-current"
+          className="animate-spin -ml-1 mr-2 h-4 w-4 text-current shrink-0"
           fill="none"
           viewBox="0 0 24 24"
         >
@@ -83,9 +85,14 @@ export default function Button({
           />
         </svg>
       ) : icon ? (
-        <span className="shrink-0">{icon}</span>
+        <span className="shrink-0 inline-flex items-center">{icon}</span>
       ) : null}
-      <span>{children}</span>
+      <span className="inline-flex items-center justify-center gap-2 whitespace-nowrap flex-nowrap">
+        {children}
+      </span>
+      {rightIcon && !loading ? (
+        <span className="shrink-0 inline-flex items-center ml-1">{rightIcon}</span>
+      ) : null}
     </button>
   );
 }

@@ -42,10 +42,10 @@ export default function Navbar({ onMenuToggle }: NavbarProps) {
               <Droplets className="w-5 h-5 text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="text-base font-bold tracking-tight text-slate-900 group-hover:text-rose-600 transition-colors">
+              <span className="text-sm sm:text-base font-bold tracking-tight text-slate-900 group-hover:text-rose-600 transition-colors whitespace-nowrap">
                 Srishti <span className="text-rose-600 font-extrabold">Blood Bank</span>
               </span>
-              <span className="text-[10px] uppercase font-semibold tracking-wider text-slate-400 -mt-0.5">
+              <span className="hidden sm:block text-[10px] uppercase font-semibold tracking-wider text-slate-400 -mt-0.5">
                 LifeFlow Network
               </span>
             </div>
@@ -53,7 +53,7 @@ export default function Navbar({ onMenuToggle }: NavbarProps) {
         </div>
 
         {/* Right side */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* Live Network Status Indicator */}
           <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
             <span className="relative flex h-2 w-2">
@@ -67,7 +67,7 @@ export default function Navbar({ onMenuToggle }: NavbarProps) {
             <>
               {/* Notification Bell */}
               <button
-                className="relative p-2.5 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+                className="relative p-2 sm:p-2.5 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors"
                 title="Notifications"
               >
                 <Bell className="w-4 h-4" />
@@ -78,7 +78,7 @@ export default function Navbar({ onMenuToggle }: NavbarProps) {
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setShowDropdown(!showDropdown)}
-                  className="flex items-center gap-2.5 p-1.5 pr-3 rounded-xl hover:bg-slate-100 transition-colors text-left border border-slate-200"
+                  className="flex items-center gap-2 sm:gap-2.5 p-1.5 pr-2 sm:pr-3 rounded-xl hover:bg-slate-100 transition-colors text-left border border-slate-200"
                 >
                   <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-600 to-red-600 flex items-center justify-center text-white font-bold text-xs shadow-inner">
                     {user.name ? user.name.slice(0, 2).toUpperCase() : 'U'}

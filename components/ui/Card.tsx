@@ -38,21 +38,21 @@ export function Card({
       className={`rounded-2xl overflow-hidden ${baseCard} ${hoverStyle} ${glowStyle} ${className}`}
     >
       {(title || action) && (
-        <div className="flex items-center justify-between px-6 py-4.5 border-b border-slate-100 bg-slate-50/50">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-slate-100 bg-slate-50/50">
           <div>
             {title && (
-              <h3 className="text-base font-bold tracking-tight text-slate-900 font-heading">
+              <h3 className="text-sm sm:text-base font-bold tracking-tight text-slate-900 font-heading">
                 {title}
               </h3>
             )}
             {subtitle && (
-              <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>
+              <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">{subtitle}</p>
             )}
           </div>
-          {action && <div>{action}</div>}
+          {action && <div className="shrink-0">{action}</div>}
         </div>
       )}
-      <div className={noPadding ? '' : 'p-6'}>{children}</div>
+      <div className={noPadding ? '' : 'p-4 sm:p-6'}>{children}</div>
     </div>
   );
 }
@@ -65,7 +65,7 @@ export function CardHeader({
   className?: string;
 }) {
   return (
-    <div className={`px-6 py-4.5 border-b border-slate-100 bg-slate-50/50 ${className}`}>
+    <div className={`px-4 sm:px-6 py-4 border-b border-slate-100 bg-slate-50/50 ${className}`}>
       {children}
     </div>
   );

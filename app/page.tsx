@@ -31,6 +31,8 @@ import {
   Thermometer,
   RotateCcw,
   FlaskConical,
+  Menu,
+  X,
 } from 'lucide-react';
 import {
   gsap,
@@ -213,6 +215,7 @@ export default function HomePage() {
   const [annualDonations, setAnnualDonations] = useState<number>(2);
   const [selectedComponentTab, setSelectedComponentTab] = useState<string>('platelets');
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Navbar scroll blur effect
   useEffect(() => {
@@ -306,21 +309,21 @@ export default function HomePage() {
     >
       {/* ░░░░░░ TOP EMERGENCY TELEMETRY TICKER ░░░░░░ */}
       <div className="bg-slate-900 border-b border-slate-800 py-2 px-4 relative z-50 text-xs text-slate-300">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2 font-semibold">
-            <span className="relative flex h-2.5 w-2.5">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 font-semibold overflow-hidden">
+            <span className="relative flex h-2.5 w-2.5 shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500" />
             </span>
-            <span className="text-rose-400 font-bold uppercase tracking-wider text-[11px]">
-              Live Regional Lifeline:
+            <span className="text-rose-400 font-bold uppercase tracking-wider text-[10px] sm:text-[11px] shrink-0">
+              Lifeline:
             </span>
-            <span className="text-slate-200">
+            <span className="text-slate-200 text-[11px] sm:text-xs truncate">
               Trauma units active across Mumbai, Pune & Western Maharashtra
             </span>
           </div>
 
-          <div className="hidden sm:flex items-center gap-5 text-[11px] text-slate-400">
+          <div className="hidden sm:flex items-center gap-5 text-[11px] text-slate-400 shrink-0">
             <span className="flex items-center gap-1.5">
               <Phone className="w-3 h-3 text-rose-400" /> Emergency Hotline:{' '}
               <strong className="text-white">1800-BLOOD-LIFE</strong>
@@ -335,33 +338,37 @@ export default function HomePage() {
 
       {/* ░░░░░░ STICKY NAVBAR ░░░░░░ */}
       <header
-        className={`sticky top-0 z-40 px-6 py-3.5 transition-all duration-200 ${
-          scrolled
-            ? 'bg-white/90 backdrop-blur-xl border-b border-slate-200/80 shadow-sm'
-            : 'bg-white/60 backdrop-blur-md border-b border-slate-200/50'
+        className={`sticky top-0 z-40 px-4 sm:px-6 py-3 transition-all duration-300 ${
+          scrolled || mobileMenuOpen
+            ? 'bg-white/95 backdrop-blur-xl border-b border-slate-200/90 shadow-sm'
+            : 'bg-white/70 backdrop-blur-md border-b border-slate-200/50'
         }`}
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-rose-500 to-rose-700 flex items-center justify-center text-white shadow-md shadow-rose-500/20 group-hover:scale-105 transition-transform duration-200">
-              <Droplets className="w-5 h-5 fill-white" />
+          <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-br from-rose-500 to-rose-700 flex items-center justify-center text-white shadow-md shadow-rose-500/20 group-hover:scale-105 transition-transform duration-200">
+              <Droplets className="w-4 h-4 sm:w-5 sm:h-5 fill-white" />
             </div>
             <div>
-              <span className="text-lg font-bold tracking-tight text-slate-900 group-hover:text-rose-600 transition-colors">
+              <span className="text-base sm:text-lg font-bold tracking-tight text-slate-900 group-hover:text-rose-600 transition-colors">
                 Srishti <span className="text-rose-600">Blood Bank</span>
               </span>
-              <p className="text-[10px] uppercase font-semibold text-slate-500 tracking-wider">
+              <p className="hidden sm:block text-[10px] uppercase font-semibold text-slate-500 tracking-wider">
                 Clinical Logistics Hub
               </p>
             </div>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-7 text-xs font-semibold text-slate-600">
+          {/* Desktop Navigation Links */}
+          <nav className="hidden lg:flex items-center gap-6 xl:gap-7 text-xs font-semibold text-slate-600">
             <a href="#compatibility" className="hover:text-rose-600 transition-colors">
               Compatibility Matrix
             </a>
             <a href="#workflow" className="hover:text-rose-600 transition-colors">
               How It Works
+            </a>
+            <a href="#fractionation" className="hover:text-rose-600 transition-colors">
+              Component Separation
             </a>
             <a href="#calculator" className="hover:text-rose-600 transition-colors">
               Impact Calculator
@@ -374,23 +381,91 @@ export default function HomePage() {
             </a>
           </nav>
 
-          <div className="flex items-center gap-3">
+          {/* Action buttons & mobile toggle */}
+          <div className="flex items-center gap-2 sm:gap-3">
             <Link
               href="/auth/login"
-              className="text-xs font-semibold text-slate-700 hover:text-slate-900 px-3.5 py-2 rounded-xl hover:bg-slate-100 transition-colors"
+              className="text-xs font-semibold text-slate-700 hover:text-slate-900 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl hover:bg-slate-100 transition-colors whitespace-nowrap"
             >
               Sign In
             </Link>
-            <MagneticButton strength={0.2}>
-              <Link
-                href="/auth/register"
-                onClick={(e) => createRipple(e)}
-                className="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold text-white bg-rose-600 rounded-xl shadow-sm hover:bg-rose-700 transition-all hover:shadow-rose-600/25"
-              >
-                <span>Donate Blood</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </MagneticButton>
+            <div className="hidden sm:block">
+              <MagneticButton strength={0.2}>
+                <Link
+                  href="/auth/register"
+                  onClick={(e) => createRipple(e)}
+                  className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 text-xs font-bold text-white bg-rose-600 rounded-xl shadow-sm hover:bg-rose-700 transition-all hover:shadow-rose-600/25 whitespace-nowrap flex-nowrap"
+                >
+                  <span>Donate Blood</span>
+                  <ArrowRight className="w-3.5 h-3.5 shrink-0" />
+                </Link>
+              </MagneticButton>
+            </div>
+
+            {/* Mobile Hamburger Menu Toggle Button */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 rounded-xl text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-all duration-200 focus:outline-none"
+              aria-label="Toggle Navigation Menu"
+            >
+              <div className="relative w-5 h-5 flex items-center justify-center">
+                {mobileMenuOpen ? (
+                  <X className="w-5 h-5 text-rose-600 transition-all duration-300 rotate-90 scale-100" />
+                ) : (
+                  <Menu className="w-5 h-5 text-slate-700 transition-all duration-300 rotate-0 scale-100" />
+                )}
+              </div>
+            </button>
+          </div>
+        </div>
+
+        {/* Animated Mobile Navigation Drawer with smooth opening AND closing animation */}
+        <div
+          className={`lg:hidden grid transition-[grid-template-rows,opacity] duration-300 ease-in-out ${
+            mobileMenuOpen
+              ? 'grid-rows-[1fr] opacity-100 mt-3 pt-3 border-t border-slate-100 pointer-events-auto'
+              : 'grid-rows-[0fr] opacity-0 pointer-events-none'
+          }`}
+        >
+          <div className="overflow-hidden">
+            <div className="space-y-3 pb-3">
+              <nav className="flex flex-col space-y-1">
+                {[
+                  { href: '#compatibility', label: 'Compatibility Matrix', icon: <Droplets className="w-4 h-4 text-rose-500 shrink-0" /> },
+                  { href: '#workflow', label: 'How It Works (4-Step Flow)', icon: <Clock className="w-4 h-4 text-amber-500 shrink-0" /> },
+                  { href: '#fractionation', label: 'Component Separation (Platelets & Plasma)', icon: <FlaskConical className="w-4 h-4 text-sky-500 shrink-0" /> },
+                  { href: '#calculator', label: 'Impact Calculator', icon: <Activity className="w-4 h-4 text-emerald-500 shrink-0" /> },
+                  { href: '#portals', label: 'Hospital & Donor Portals', icon: <Building2 className="w-4 h-4 text-indigo-500 shrink-0" /> },
+                  { href: '#faq', label: 'Frequently Asked Questions', icon: <HelpCircle className="w-4 h-4 text-slate-500 shrink-0" /> },
+                ].map((item) => (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-100/80 transition-colors"
+                  >
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </a>
+                ))}
+              </nav>
+
+              <div className="pt-2 border-t border-slate-100 flex flex-col gap-2">
+                <Link
+                  href="/auth/register"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-sm transition-all whitespace-nowrap flex-nowrap"
+                >
+                  <span>Donate Blood / Register</span>
+                  <ArrowRight className="w-3.5 h-3.5 shrink-0" />
+                </Link>
+                <div className="flex items-center justify-center gap-2 py-2 text-[11px] font-semibold text-slate-500 bg-slate-50 rounded-xl border border-slate-100">
+                  <Phone className="w-3 h-3 text-rose-600 shrink-0" />
+                  <span>24/7 Hotline: <strong>1800-BLOOD-LIFE</strong></span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </header>
@@ -425,22 +500,22 @@ export default function HomePage() {
               </p>
 
               {/* Action Buttons */}
-              <div className="hero-cta-group flex flex-wrap items-center gap-3 pt-2">
+              <div className="hero-cta-group flex flex-col sm:flex-row sm:items-center gap-3 pt-2">
                 <Link
                   href="/auth/register"
                   onClick={(e) => createRipple(e)}
-                  className="inline-flex items-center gap-2.5 px-7 py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm rounded-2xl shadow-md hover:shadow-rose-600/30 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                  className="inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm rounded-2xl shadow-md hover:shadow-rose-600/30 hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap flex-nowrap"
                 >
                   <span>Register as Donor</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4 shrink-0" />
                 </Link>
 
                 <Link
                   href="#compatibility"
-                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-white text-slate-700 border border-slate-200 shadow-sm hover:border-slate-300 hover:bg-slate-50 transition-all font-semibold text-sm"
+                  className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3.5 rounded-2xl bg-white text-slate-700 border border-slate-200 shadow-sm hover:border-slate-300 hover:bg-slate-50 transition-all font-semibold text-sm whitespace-nowrap flex-nowrap"
                 >
                   <span>Test Blood Compatibility</span>
-                  <ChevronRight className="w-4 h-4 text-slate-400" />
+                  <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
                 </Link>
               </div>
 
@@ -593,7 +668,7 @@ export default function HomePage() {
           </div>
 
           {/* Component Tabs Switcher */}
-          <div className="flex flex-wrap items-center justify-center gap-2 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap items-center justify-center gap-2.5 mb-8">
             {[
               { id: 'platelets', label: 'Platelets (SDP / Apheresis)', badge: '5-Day Shelf Life', color: 'bg-amber-50 text-amber-800 border-amber-300' },
               { id: 'plasma', label: 'Fresh Frozen Plasma (FFP)', badge: '1-Year Deep Freeze', color: 'bg-sky-50 text-sky-800 border-sky-300' },
@@ -604,14 +679,14 @@ export default function HomePage() {
                 key={tab.id}
                 type="button"
                 onClick={() => setSelectedComponentTab(tab.id)}
-                className={`px-4 py-2.5 rounded-2xl font-bold text-xs transition-all border flex items-center gap-2 ${
+                className={`px-4 py-2.5 rounded-2xl font-bold text-xs transition-all border flex items-center justify-between sm:justify-center gap-2 ${
                   selectedComponentTab === tab.id
                     ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
                     : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
                 }`}
               >
                 <span>{tab.label}</span>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full border ${selectedComponentTab === tab.id ? 'bg-white/20 text-white border-white/30' : tab.color}`}>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full border shrink-0 ${selectedComponentTab === tab.id ? 'bg-white/20 text-white border-white/30' : tab.color}`}>
                   {tab.badge}
                 </span>
               </button>
@@ -717,14 +792,14 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-slate-900 text-white flex items-center justify-between">
+                  <div className="p-4 rounded-2xl bg-slate-900 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
                       <div className="text-xs text-slate-400">Ready to donate this component?</div>
                       <div className="text-sm font-bold">Schedule an Apheresis or Whole Blood slot</div>
                     </div>
                     <Link
                       href="/dashboard/appointments"
-                      className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs transition-colors shrink-0"
+                      className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs transition-colors shrink-0 text-center whitespace-nowrap"
                     >
                       Book Slot
                     </Link>
@@ -807,19 +882,19 @@ export default function HomePage() {
           </div>
 
           {/* Dual Mode Switcher: RBC vs Plasma */}
-          <div className="flex items-center justify-center gap-3 mb-8">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 mb-8">
             <button
               type="button"
               onClick={() => setCompatType('rbc')}
-              className={`px-5 py-2.5 rounded-2xl font-bold text-xs transition-all border flex items-center gap-2 ${
+              className={`px-4 sm:px-5 py-2.5 rounded-2xl font-bold text-xs transition-all border flex items-center justify-center gap-2 ${
                 compatType === 'rbc'
                   ? 'bg-rose-600 text-white border-rose-600 shadow-sm'
                   : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
               }`}
             >
-              <Droplets className="w-4 h-4 fill-current" />
+              <Droplets className="w-4 h-4 fill-current shrink-0" />
               <span>Red Blood Cells (RBC) Matrix</span>
-              <span className={`text-[10px] px-2 py-0.5 rounded-full ${compatType === 'rbc' ? 'bg-white/20 text-white' : 'bg-rose-100 text-rose-800'}`}>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full shrink-0 ${compatType === 'rbc' ? 'bg-white/20 text-white' : 'bg-rose-100 text-rose-800'}`}>
                 O- Universal Donor
               </span>
             </button>
@@ -827,28 +902,28 @@ export default function HomePage() {
             <button
               type="button"
               onClick={() => setCompatType('plasma')}
-              className={`px-5 py-2.5 rounded-2xl font-bold text-xs transition-all border flex items-center gap-2 ${
+              className={`px-4 sm:px-5 py-2.5 rounded-2xl font-bold text-xs transition-all border flex items-center justify-center gap-2 ${
                 compatType === 'plasma'
                   ? 'bg-sky-600 text-white border-sky-600 shadow-sm'
                   : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
               }`}
             >
-              <FlaskConical className="w-4 h-4" />
+              <FlaskConical className="w-4 h-4 shrink-0" />
               <span>Fresh Frozen Plasma (FFP) Matrix</span>
-              <span className={`text-[10px] px-2 py-0.5 rounded-full ${compatType === 'plasma' ? 'bg-white/20 text-white' : 'bg-sky-100 text-sky-800'}`}>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full shrink-0 ${compatType === 'plasma' ? 'bg-white/20 text-white' : 'bg-sky-100 text-sky-800'}`}>
                 AB Universal Plasma Donor
               </span>
             </button>
           </div>
 
-          {/* Blood Group Tabs */}
-          <div className="flex flex-wrap items-center justify-center gap-2 mb-8">
+          {/* Blood Group Tabs - 4 cols on mobile for clean touch layout */}
+          <div className="grid grid-cols-4 sm:flex sm:flex-wrap items-center justify-center gap-2 mb-8 max-w-sm sm:max-w-none mx-auto">
             {BLOOD_GROUPS.map((group) => (
               <button
                 key={group}
                 type="button"
                 onClick={() => setSelectedGroup(group)}
-                className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all border ${
+                className={`py-2.5 px-3 sm:px-5 rounded-xl font-bold text-xs sm:text-sm transition-all border text-center ${
                   selectedGroup === group
                     ? compatType === 'plasma'
                       ? 'bg-sky-600 text-white border-sky-600 shadow-sm'
@@ -869,13 +944,13 @@ export default function HomePage() {
                 : BLOOD_COMPATIBILITY[selectedGroup as keyof typeof BLOOD_COMPATIBILITY] || BLOOD_COMPATIBILITY['O-'];
 
             return (
-              <div className="max-w-4xl mx-auto rounded-3xl bg-slate-50 border border-slate-200 p-6 sm:p-8 space-y-6">
+              <div className="max-w-4xl mx-auto rounded-3xl bg-slate-50 border border-slate-200 p-5 sm:p-8 space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-slate-200">
                   <div>
                     <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
                       {compatType === 'plasma' ? 'Inspecting Plasma Transfusion Type' : 'Inspecting Red Blood Cell Transfusion Type'}
                     </span>
-                    <h3 className="text-2xl font-black text-slate-900 mt-0.5 flex items-center gap-3">
+                    <h3 className="text-xl sm:text-2xl font-black text-slate-900 mt-0.5 flex items-center gap-3">
                       <span>Group {selectedGroup}</span>
                       <span className={`text-xs font-bold px-3 py-1 rounded-full ${compatType === 'plasma' ? 'bg-sky-100 text-sky-800' : 'bg-rose-100 text-rose-800'}`}>
                         {currentCompat.title}
@@ -884,9 +959,10 @@ export default function HomePage() {
                   </div>
                   <Link
                     href="/auth/register"
-                    className={`inline-flex items-center gap-1.5 text-xs font-bold ${compatType === 'plasma' ? 'text-sky-600 hover:text-sky-700' : 'text-rose-600 hover:text-rose-700'}`}
+                    className={`inline-flex items-center gap-1.5 text-xs font-bold whitespace-nowrap flex-nowrap ${compatType === 'plasma' ? 'text-sky-600 hover:text-sky-700' : 'text-rose-600 hover:text-rose-700'}`}
                   >
-                    Register as {selectedGroup} Donor <ArrowRight className="w-3.5 h-3.5" />
+                    <span>Register as {selectedGroup} Donor</span>
+                    <ArrowRight className="w-3.5 h-3.5 shrink-0" />
                   </Link>
                 </div>
 
@@ -1164,10 +1240,10 @@ export default function HomePage() {
                 <div className="pt-8">
                   <Link
                     href={p.link}
-                    className={`w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-all shadow-sm ${p.btnClass}`}
+                    className={`w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-all shadow-sm ${p.btnClass} whitespace-nowrap flex-nowrap`}
                   >
                     <span>{p.btnText}</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <ArrowRight className="w-3.5 h-3.5 shrink-0" />
                   </Link>
                 </div>
               </div>
@@ -1191,31 +1267,56 @@ export default function HomePage() {
             </p>
           </div>
 
+          {/* FAQ Accordion List with Beautiful Smooth Opening and Closing Animation */}
           <div className="space-y-3">
             {faqs.map((faq, index) => {
               const isOpen = openFaq === index;
               return (
                 <div
                   key={index}
-                  className="bg-white rounded-2xl border border-slate-200 overflow-hidden transition-all shadow-xs"
+                  className={`rounded-2xl border overflow-hidden transition-all duration-300 shadow-xs ${
+                    isOpen
+                      ? 'border-rose-300 ring-2 ring-rose-500/10 shadow-sm bg-white'
+                      : 'bg-white border-slate-200 hover:border-slate-300 hover:shadow-xs'
+                  }`}
                 >
                   <button
                     type="button"
                     onClick={() => setOpenFaq(isOpen ? null : index)}
-                    className="w-full p-5 text-left flex items-center justify-between gap-4 hover:bg-slate-50/50 transition-colors"
+                    className={`w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 transition-colors duration-200 ${
+                      isOpen ? 'bg-rose-50/30' : 'hover:bg-slate-50/60'
+                    }`}
                   >
-                    <span className="font-bold text-slate-900 text-sm">{faq.q}</span>
-                    <ChevronDown
-                      className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${
-                        isOpen ? 'rotate-180 text-rose-600' : ''
+                    <span className={`font-bold text-xs sm:text-sm transition-colors duration-200 ${
+                      isOpen ? 'text-rose-950' : 'text-slate-900'
+                    }`}>
+                      {faq.q}
+                    </span>
+                    <div
+                      className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${
+                        isOpen
+                          ? 'bg-rose-100 text-rose-600 rotate-180'
+                          : 'bg-slate-100 text-slate-400 rotate-0'
                       }`}
-                    />
-                  </button>
-                  {isOpen && (
-                    <div className="px-5 pb-5 text-xs text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
-                      {faq.a}
+                    >
+                      <ChevronDown className="w-3.5 h-3.5" />
                     </div>
-                  )}
+                  </button>
+
+                  {/* Smooth height and opacity animation for BOTH opening AND closing */}
+                  <div
+                    className={`grid transition-[grid-template-rows,opacity] duration-300 ease-in-out ${
+                      isOpen
+                        ? 'grid-rows-[1fr] opacity-100'
+                        : 'grid-rows-[0fr] opacity-0'
+                    }`}
+                  >
+                    <div className="overflow-hidden">
+                      <div className="px-4 sm:px-5 pb-4 sm:pb-5 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100/90 pt-3">
+                        {faq.a}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               );
             })}
@@ -1226,13 +1327,13 @@ export default function HomePage() {
       {/* ░░░░░░ CALL TO ACTION BANNER ░░░░░░ */}
       <section className="py-16 bg-white border-t border-slate-200">
         <div className="max-w-5xl mx-auto px-6">
-          <div className="rounded-3xl p-8 sm:p-12 bg-gradient-to-br from-rose-600 via-rose-700 to-red-800 text-white shadow-xl text-center space-y-5 relative overflow-hidden">
+          <div className="rounded-3xl p-6 sm:p-12 bg-gradient-to-br from-rose-600 via-rose-700 to-red-800 text-white shadow-xl text-center space-y-5 relative overflow-hidden">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/15 text-white text-xs font-semibold border border-white/20">
               <Heart className="w-3.5 h-3.5 fill-white" />
               <span>Join 5,000+ Voluntary Donors Saving Lives Today</span>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight max-w-xl mx-auto">
+            <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight max-w-xl mx-auto">
               Ready to Give the Gift of Life?
             </h2>
 
@@ -1240,19 +1341,19 @@ export default function HomePage() {
               Every voluntary donation can save up to 3 patients. Sign up in seconds, locate certified centers near you, and track your ongoing clinical impact.
             </p>
 
-            <div className="pt-3 flex flex-wrap items-center justify-center gap-3">
+            <div className="pt-3 flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link
                 href="/auth/register"
                 onClick={(e) => createRipple(e)}
-                className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-rose-700 font-bold text-xs rounded-xl shadow-md hover:bg-rose-50 hover:scale-105 active:scale-95 transition-all"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-white text-rose-700 font-bold text-xs rounded-xl shadow-md hover:bg-rose-50 hover:scale-105 active:scale-95 transition-all whitespace-nowrap flex-nowrap"
               >
                 <span>Register as Donor Now</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 shrink-0" />
               </Link>
 
               <Link
                 href="/auth/login"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-black/20 border border-white/20 text-white hover:bg-black/30 transition-all font-semibold text-xs"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-black/20 border border-white/20 text-white hover:bg-black/30 transition-all font-semibold text-xs whitespace-nowrap flex-nowrap"
               >
                 <span>Sign In to Portal</span>
               </Link>

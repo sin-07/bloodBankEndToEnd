@@ -55,14 +55,14 @@ export default function LoginPage() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gradient-to-b from-rose-100/40 via-transparent to-transparent pointer-events-none blur-3xl -z-10" />
 
       {/* Modern Clean Navbar */}
-      <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200/80 px-6 py-4 sticky top-0 z-40">
+      <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-6 py-3.5 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-rose-700 flex items-center justify-center text-white shadow-md shadow-rose-500/20 group-hover:scale-105 transition-transform duration-200">
-              <Droplets className="w-5 h-5 fill-white" />
+          <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-rose-500 to-rose-700 flex items-center justify-center text-white shadow-md shadow-rose-500/20 group-hover:scale-105 transition-transform duration-200">
+              <Droplets className="w-4 h-4 sm:w-5 sm:h-5 fill-white" />
             </div>
             <div>
-              <span className="text-lg font-bold tracking-tight text-slate-900">
+              <span className="text-base sm:text-lg font-bold tracking-tight text-slate-900">
                 Srishti <span className="text-rose-600">Blood Bank</span>
               </span>
               <span className="hidden sm:block text-[10px] uppercase font-semibold text-slate-500 tracking-wider">
@@ -70,16 +70,16 @@ export default function LoginPage() {
               </span>
             </div>
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <Link
               href="/auth/register"
-              className="text-xs sm:text-sm font-semibold text-slate-700 hover:text-slate-900 px-3.5 py-2 rounded-lg hover:bg-slate-100/80 transition-colors"
+              className="hidden sm:inline-block text-xs sm:text-sm font-semibold text-slate-700 hover:text-slate-900 px-3.5 py-2 rounded-lg hover:bg-slate-100/80 transition-colors whitespace-nowrap"
             >
               Need an account?
             </Link>
             <Link
               href="/auth/register"
-              className="text-xs sm:text-sm font-semibold bg-rose-600 text-white px-4 py-2 rounded-xl shadow-sm hover:bg-rose-700 transition-all hover:shadow-rose-600/20"
+              className="text-xs sm:text-sm font-semibold bg-rose-600 text-white px-3.5 sm:px-4 py-2 rounded-xl shadow-sm hover:bg-rose-700 transition-all hover:shadow-rose-600/20 whitespace-nowrap"
             >
               Register
             </Link>
@@ -88,9 +88,9 @@ export default function LoginPage() {
       </nav>
 
       {/* Main Authentication Card */}
-      <div className="flex-1 flex items-center justify-center p-4 py-12">
+      <div className="flex-1 flex items-center justify-center p-3 sm:p-4 py-8 sm:py-12">
         <div className="w-full max-w-md">
-          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-card p-8 sm:p-10 relative">
+          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-card p-5 sm:p-10 relative">
             {/* Header */}
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-rose-50 border border-rose-100 text-rose-600 mb-4">
@@ -130,9 +130,9 @@ export default function LoginPage() {
                 className="w-full mt-2"
                 size="lg"
                 loading={loading}
+                rightIcon={<ArrowRight className="w-4 h-4 shrink-0" />}
               >
                 Sign In to Portal
-                <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </form>
 
