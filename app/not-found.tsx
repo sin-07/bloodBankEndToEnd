@@ -9,8 +9,12 @@ export default function NotFound() {
       <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[850px] h-[400px] bg-gradient-to-b from-rose-400/[0.14] via-rose-300/[0.06] to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
       <div className="absolute top-0 -left-20 w-[500px] h-[500px] bg-gradient-to-br from-rose-500/[0.10] via-rose-400/[0.05] to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
 
-      <div className="text-center max-w-md bg-white rounded-3xl border border-slate-200/80 shadow-card p-8 sm:p-10 relative z-10">
-        <div className="w-16 h-16 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 mx-auto mb-5 shadow-sm">
+      <div className="text-center max-w-md bg-gradient-to-b from-rose-50/70 via-white to-white rounded-3xl border border-rose-100/90 shadow-2xl p-8 sm:p-10 relative z-10 overflow-hidden">
+        {/* Ambient Reddish Glow */}
+        <div className="absolute -top-10 -right-10 w-48 h-48 bg-gradient-to-br from-rose-500/[0.10] via-red-500/[0.04] to-transparent rounded-full blur-2xl pointer-events-none" />
+
+        <div className="relative z-10">
+          <div className="w-16 h-16 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 mx-auto mb-5 shadow-sm">
           <Droplets className="w-8 h-8 fill-rose-600" />
         </div>
 
@@ -32,6 +36,7 @@ export default function NotFound() {
             <Home className="w-4 h-4" />
             Return to Home
           </Link>
+          </div>
         </div>
       </div>
     </div>

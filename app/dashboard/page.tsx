@@ -225,8 +225,12 @@ export default function DonorDashboard() {
         {/* ░░░░░░ 1. MINIMAL & PROFESSIONAL GSAP-ANIMATED HERO ░░░░░░ */}
         <div
           ref={heroContainerRef}
-          className="relative rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 bg-white border border-slate-200/80 shadow-xs overflow-hidden"
+          className="relative rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 bg-gradient-to-b from-rose-50/60 via-white to-white border border-rose-100/90 shadow-xs overflow-hidden"
         >
+          {/* Subtle Ambient Reddish Glow Orbs */}
+          <div className="absolute -top-16 -right-16 w-80 h-80 bg-gradient-to-br from-rose-500/[0.09] via-red-500/[0.04] to-transparent rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-16 -left-16 w-64 h-64 bg-gradient-to-tr from-rose-500/[0.06] to-transparent rounded-full blur-3xl pointer-events-none" />
+
           <div className="relative z-10 space-y-6">
             {/* Top Status & Verification Row */}
             <div className="gsap-hero-item flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-100">
@@ -261,7 +265,7 @@ export default function DonorDashboard() {
                 </p>
 
                 {/* Minimal Tier Progress Section */}
-                <div className="gsap-hero-item p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200/70 max-w-xl space-y-2.5">
+                <div className="gsap-hero-item p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-rose-50/40 via-white/80 to-white/80 border border-rose-100/80 max-w-xl space-y-2.5 shadow-2xs">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-semibold text-slate-800 flex items-center gap-1.5">
                       <Sparkles className="w-3.5 h-3.5 text-amber-500" />

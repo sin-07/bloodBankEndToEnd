@@ -84,8 +84,11 @@ export default function LoginPage() {
       {/* Main Authentication Card */}
       <div className="flex-1 flex items-center justify-center p-3 sm:p-4 py-8 sm:py-12">
         <div className="w-full max-w-md">
-          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-card p-5 sm:p-10 relative">
-            {/* Header */}
+          <div className="bg-gradient-to-b from-rose-50/70 via-white to-white rounded-3xl border border-rose-100/90 shadow-2xl p-5 sm:p-10 relative overflow-hidden">
+            {/* Ambient Reddish Glow */}
+            <div className="absolute -top-12 -right-12 w-56 h-56 bg-gradient-to-br from-rose-500/[0.10] via-red-500/[0.04] to-transparent rounded-full blur-3xl pointer-events-none" />
+
+            <div className="relative z-10">
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-rose-50 border border-rose-100 text-rose-600 mb-4">
                 <Droplets className="w-6 h-6 fill-rose-600" />
@@ -144,5 +147,6 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  </div>
   );
 }

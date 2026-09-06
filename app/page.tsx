@@ -547,8 +547,11 @@ export default function HomePage() {
               <div
                 onMouseMove={handleTiltMove}
                 onMouseLeave={handleTiltLeave}
-                className="hero-floating-card rounded-3xl bg-white border border-slate-200 p-6 sm:p-7 shadow-card space-y-6"
+                className="hero-floating-card rounded-3xl bg-gradient-to-b from-rose-50/60 via-white to-white border border-rose-100/90 p-6 sm:p-7 shadow-2xl space-y-6 relative overflow-hidden"
               >
+                {/* Ambient Reddish Glow */}
+                <div className="absolute -top-12 -right-12 w-48 h-48 bg-gradient-to-br from-rose-500/[0.10] via-red-500/[0.04] to-transparent rounded-full blur-2xl pointer-events-none" />
+
                 {/* Header */}
                 <div className="flex items-center justify-between pb-4 border-b border-slate-100">
                   <div className="flex items-center gap-3">
@@ -838,8 +841,11 @@ export default function HomePage() {
             {workflowSteps.map((step, i) => (
               <div
                 key={i}
-                className="rounded-3xl bg-white border border-slate-200 p-6 shadow-sm hover:shadow-card hover:border-rose-300 transition-all flex flex-col justify-between group"
+                className="rounded-3xl bg-gradient-to-b from-rose-50/50 via-white to-white border border-rose-100/90 p-6 shadow-sm hover:shadow-card hover:border-rose-300 transition-all flex flex-col justify-between group relative overflow-hidden"
               >
+                {/* Ambient Reddish Glow */}
+                <div className="absolute -top-8 -right-8 w-28 h-28 bg-rose-500/[0.06] rounded-full blur-xl pointer-events-none" />
+
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-2xl font-black text-rose-600/30 group-hover:text-rose-600 transition-colors">
@@ -1209,9 +1215,12 @@ export default function HomePage() {
             {portalRoles.map((p, i) => (
               <div
                 key={i}
-                className="rounded-3xl bg-white border border-slate-200 p-7 sm:p-8 flex flex-col justify-between hover:border-rose-300 hover:shadow-card transition-all"
+                className="rounded-3xl bg-gradient-to-b from-rose-50/50 via-white to-white border border-rose-100/90 p-7 sm:p-8 flex flex-col justify-between hover:border-rose-300 hover:shadow-card transition-all relative overflow-hidden"
               >
-                <div className="space-y-5">
+                {/* Ambient Reddish Glow */}
+                <div className="absolute -top-10 -right-10 w-36 h-36 bg-rose-500/[0.07] rounded-full blur-2xl pointer-events-none" />
+
+                <div className="space-y-5 relative z-10">
                   <div className="flex items-center justify-between">
                     <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center">
                       {p.icon}

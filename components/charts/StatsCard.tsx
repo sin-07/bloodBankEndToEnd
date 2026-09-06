@@ -100,11 +100,12 @@ export default function StatsCard({
   };
 
   return (
-    <div className="h-full min-h-[176px] flex flex-col justify-between relative group overflow-hidden rounded-2xl bg-white border border-slate-200/80 p-5 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover hover:border-rose-200/80">
+    <div className="h-full min-h-[176px] flex flex-col justify-between relative group overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-b from-rose-50/50 via-white to-white border border-rose-100/90 p-5 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover hover:border-rose-300/80">
       {/* Background ambient accent */}
       <div
         className={`absolute -right-8 -bottom-8 w-28 h-28 rounded-full bg-gradient-to-br ${activeColor.gradient} blur-2xl pointer-events-none opacity-60 group-hover:opacity-90 transition-opacity`}
       />
+      <div className="absolute -top-10 -right-10 w-36 h-36 bg-gradient-to-br from-rose-500/[0.08] via-red-500/[0.03] to-transparent rounded-full blur-2xl pointer-events-none" />
 
       {/* Top Header Row: Title, Value & Icon */}
       <div className="relative z-10 flex items-start justify-between gap-3">
