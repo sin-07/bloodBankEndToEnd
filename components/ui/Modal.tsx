@@ -50,11 +50,15 @@ export default function Modal({
 
         {/* Modal Panel */}
         <div
-          className={`relative inline-block align-bottom bg-white border border-slate-200 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle w-full ${sizes[size]} z-50 animate-in zoom-in-95 duration-200`}
+          className={`relative inline-block align-bottom bg-gradient-to-b from-rose-50/70 via-white to-white border border-rose-100/90 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle w-full ${sizes[size]} z-50 animate-in zoom-in-95 duration-200`}
         >
+          {/* Subtle ambient reddish glows */}
+          <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-br from-rose-500/12 via-red-500/8 to-transparent rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-16 -left-16 w-64 h-64 bg-gradient-to-tr from-rose-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+
           {/* Header */}
           {title && (
-            <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+            <div className="relative z-10 flex items-center justify-between px-4 sm:px-6 py-4 border-b border-slate-100/90 bg-white/70 backdrop-blur-md">
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight font-heading">
                   {title}
@@ -74,7 +78,7 @@ export default function Modal({
           )}
 
           {/* Body */}
-          <div className="px-4 sm:px-6 py-5 max-h-[80vh] overflow-y-auto text-slate-700">{children}</div>
+          <div className="relative z-10 px-4 sm:px-6 py-5 max-h-[80vh] overflow-y-auto text-slate-700">{children}</div>
         </div>
       </div>
     </div>

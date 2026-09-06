@@ -363,11 +363,14 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
             ref={calendarRef}
             role="dialog"
             aria-modal="true"
-            className="absolute left-0 right-0 z-50 mt-2 bg-white/95 backdrop-blur-xl border border-slate-200 rounded-3xl p-4 sm:p-5 shadow-2xl overflow-hidden"
+            className="absolute left-0 right-0 z-50 mt-2 bg-gradient-to-b from-rose-50/70 via-white/95 to-white/95 backdrop-blur-xl border border-rose-100/90 rounded-3xl p-4 sm:p-5 shadow-2xl overflow-hidden"
             style={{ willChange: 'transform, opacity' }}
           >
+            {/* Ambient reddish subtle glow */}
+            <div className="absolute -top-12 -right-12 w-40 h-40 bg-rose-500/[0.08] rounded-full blur-2xl pointer-events-none" />
+
             {/* Calendar Header: Month/Year navigation */}
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div className="relative z-10 flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-lg bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600">
                   <CalendarIcon className="w-3.5 h-3.5" />

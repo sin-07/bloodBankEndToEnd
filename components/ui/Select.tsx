@@ -253,10 +253,13 @@ const Select = forwardRef<HTMLDivElement, SelectProps>(
           <div
             ref={menuRef}
             role="listbox"
-            className="absolute left-0 right-0 z-50 mt-2 bg-white/95 backdrop-blur-xl border border-slate-200 rounded-2xl p-2 shadow-2xl overflow-hidden max-h-72 overflow-y-auto"
+            className="absolute left-0 right-0 z-50 mt-2 bg-gradient-to-b from-rose-50/70 via-white/95 to-white/95 backdrop-blur-xl border border-rose-100/90 rounded-2xl p-2 shadow-2xl overflow-hidden max-h-72 overflow-y-auto"
             style={{ willChange: 'transform, opacity' }}
           >
-            <div className="space-y-1">
+            {/* Ambient reddish subtle glow */}
+            <div className="absolute -top-10 -right-10 w-36 h-36 bg-rose-500/[0.08] rounded-full blur-2xl pointer-events-none" />
+
+            <div className="space-y-1 relative z-10">
               {options.map((opt) => {
                 const isSelected = String(opt.value) === String(selectedVal);
                 return (
