@@ -227,9 +227,30 @@ export default function AppointmentsPage() {
                 value={form.donationType}
                 onChange={e => setForm(f => ({ ...f, donationType: e.target.value as any }))}
                 options={[
-                  { label: 'Whole Blood Donation (Standard - 90 Days recovery)', value: 'whole_blood' },
-                  { label: 'Platelet Apheresis / SDP (Dengue & Chemo - 15 Days recovery)', value: 'platelets' },
-                  { label: 'Plasma Donation / FFP (Burns & Clotting - 28 Days recovery)', value: 'plasma' },
+                  {
+                    value: 'whole_blood',
+                    label: 'Whole Blood Donation',
+                    subtitle: 'Standard cellular transfusion • Red cells, plasma & platelets',
+                    badge: '90 Days Recovery',
+                    badgeColor: 'bg-rose-50 text-rose-700 border-rose-200/80',
+                    icon: <Droplets className="w-4 h-4 text-rose-600 fill-rose-600" />,
+                  },
+                  {
+                    value: 'platelets',
+                    label: 'Platelet Apheresis / SDP',
+                    subtitle: 'Critical support for dengue shock syndrome & oncology chemo',
+                    badge: '15 Days Recovery',
+                    badgeColor: 'bg-amber-50 text-amber-700 border-amber-200/80',
+                    icon: <Sparkles className="w-4 h-4 text-amber-600" />,
+                  },
+                  {
+                    value: 'plasma',
+                    label: 'Plasma Donation / FFP',
+                    subtitle: 'Emergency trauma clotting factor resuscitation & severe burn therapy',
+                    badge: '28 Days Recovery',
+                    badgeColor: 'bg-sky-50 text-sky-700 border-sky-200/80',
+                    icon: <FlaskConical className="w-4 h-4 text-sky-600" />,
+                  },
                 ]}
                 required
               />
@@ -267,7 +288,11 @@ export default function AppointmentsPage() {
                 onChange={e => setForm(f => ({ ...f, bloodGroup: e.target.value }))}
                 options={[
                   { label: 'Auto-detect from donor profile', value: '' },
-                  ...BLOOD_GROUPS.map(bg => ({ label: bg, value: bg })),
+                  ...BLOOD_GROUPS.map(bg => ({
+                    label: `Blood Group ${bg}`,
+                    value: bg,
+                    icon: <Droplets className="w-3.5 h-3.5 text-rose-600 fill-rose-600" />,
+                  })),
                 ]}
               />
             </div>
