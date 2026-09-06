@@ -30,11 +30,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-rose-50/60 via-slate-50/70 to-slate-50 text-slate-900 relative overflow-x-hidden">
-      {/* Background ambient lighting - subtle reddish gradient orbs */}
-      <div className="fixed -top-24 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-gradient-to-b from-rose-400/[0.12] via-rose-300/[0.06] to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
-      <div className="fixed top-20 right-[-100px] w-[500px] h-[500px] bg-rose-500/[0.06] rounded-full blur-[120px] pointer-events-none -z-10" />
-      <div className="fixed bottom-10 left-[-100px] w-[450px] h-[450px] bg-rose-500/[0.04] rounded-full blur-[120px] pointer-events-none -z-10" />
+    <div className="min-h-screen bg-gradient-to-b from-rose-50/80 via-slate-50/80 to-slate-50 text-slate-900 relative overflow-x-hidden">
+      {/* Background ambient lighting - corner & top reddish gradient orbs */}
+      <div className="fixed -top-28 right-[-50px] w-[650px] h-[650px] bg-gradient-to-bl from-rose-500/[0.15] via-rose-400/[0.08] to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="fixed -top-24 left-1/2 -translate-x-1/2 w-[900px] h-[400px] bg-gradient-to-b from-rose-400/[0.14] via-rose-300/[0.06] to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="fixed -top-20 left-[-80px] w-[550px] h-[550px] bg-gradient-to-br from-rose-500/[0.10] via-red-400/[0.05] to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="fixed bottom-0 right-[-100px] w-[500px] h-[500px] bg-rose-500/[0.05] rounded-full blur-[120px] pointer-events-none -z-10" />
 
       <Navbar onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />

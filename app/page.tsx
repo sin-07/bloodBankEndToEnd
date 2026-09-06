@@ -305,8 +305,14 @@ export default function HomePage() {
   return (
     <div
       ref={containerRef}
-      className="min-h-screen bg-slate-50 text-slate-900 selection:bg-rose-500/20 selection:text-rose-700 overflow-x-hidden font-sans"
+      className="min-h-screen bg-gradient-to-b from-rose-50/70 via-slate-50/70 to-slate-50 text-slate-900 selection:bg-rose-500/20 selection:text-rose-700 overflow-x-hidden font-sans relative"
     >
+      {/* ░░░░░░ AMBIENT REDDISH CORNER & TOP GRADIENTS ░░░░░░ */}
+      <div className="absolute top-0 right-0 w-[700px] h-[700px] bg-gradient-to-bl from-rose-500/[0.16] via-rose-400/[0.08] to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[1000px] h-[450px] bg-gradient-to-b from-rose-400/[0.14] via-rose-300/[0.06] to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute top-10 -left-28 w-[600px] h-[600px] bg-gradient-to-br from-rose-500/[0.11] via-red-400/[0.05] to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute bottom-40 -right-20 w-[600px] h-[600px] bg-gradient-to-tl from-rose-400/[0.07] via-rose-300/[0.03] to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
+
       {/* ░░░░░░ TOP EMERGENCY TELEMETRY TICKER ░░░░░░ */}
       <div className="bg-slate-900 border-b border-slate-800 py-2 px-4 relative z-50 text-xs text-slate-300">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">

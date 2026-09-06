@@ -3,8 +3,11 @@ import { Droplets, ArrowLeft, Home } from 'lucide-react';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-900 p-4 relative selection:bg-rose-500 selection:text-white">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-96 bg-gradient-to-b from-rose-100/40 via-transparent to-transparent pointer-events-none blur-3xl" />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-rose-50/80 via-slate-50/80 to-slate-50 text-slate-900 p-4 relative selection:bg-rose-500 selection:text-white overflow-hidden">
+      {/* Background ambient lighting - corner & top reddish gradient orbs */}
+      <div className="absolute -top-28 right-[-50px] w-[600px] h-[600px] bg-gradient-to-bl from-rose-500/[0.15] via-rose-400/[0.08] to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[850px] h-[400px] bg-gradient-to-b from-rose-400/[0.14] via-rose-300/[0.06] to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute top-0 -left-20 w-[500px] h-[500px] bg-gradient-to-br from-rose-500/[0.10] via-rose-400/[0.05] to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
 
       <div className="text-center max-w-md bg-white rounded-3xl border border-slate-200/80 shadow-card p-8 sm:p-10 relative z-10">
         <div className="w-16 h-16 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 mx-auto mb-5 shadow-sm">

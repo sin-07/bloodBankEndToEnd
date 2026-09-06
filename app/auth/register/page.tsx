@@ -94,9 +94,11 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-rose-500 selection:text-white relative">
-      {/* Background subtle ambiance */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gradient-to-b from-rose-100/40 via-transparent to-transparent pointer-events-none blur-3xl -z-10" />
+    <div className="min-h-screen bg-gradient-to-b from-rose-50/80 via-slate-50/80 to-slate-50 text-slate-900 flex flex-col selection:bg-rose-500 selection:text-white relative overflow-x-hidden">
+      {/* Background ambient lighting - corner & top reddish gradient orbs */}
+      <div className="absolute -top-28 right-[-50px] w-[600px] h-[600px] bg-gradient-to-bl from-rose-500/[0.15] via-rose-400/[0.08] to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[850px] h-[400px] bg-gradient-to-b from-rose-400/[0.14] via-rose-300/[0.06] to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute top-0 -left-20 w-[500px] h-[500px] bg-gradient-to-br from-rose-500/[0.10] via-rose-400/[0.05] to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
 
       {/* Modern Clean Navbar */}
       <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-6 py-3.5 sticky top-0 z-40">

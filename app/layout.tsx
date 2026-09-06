@@ -44,7 +44,22 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${plusJakarta.variable} ${outfit.variable} scroll-smooth`}>
-      <body className="font-sans antialiased bg-slate-950 text-slate-100 selection:bg-rose-500/20 selection:text-rose-200">
+      <body className="font-sans antialiased bg-slate-50 text-slate-900 selection:bg-rose-500/20 selection:text-rose-700 min-h-screen relative overflow-x-hidden">
+        {/* Ambient Reddish Corner & Top Gradient Backdrop (Global across whole website) */}
+        <div className="fixed inset-0 pointer-events-none -z-50 overflow-hidden" aria-hidden="true">
+          {/* Top-Right Corner Radiance */}
+          <div className="absolute -top-32 -right-32 w-[650px] h-[650px] bg-gradient-to-bl from-rose-500/[0.14] via-rose-400/[0.07] to-transparent rounded-full blur-3xl" />
+
+          {/* Top Center Ambient Spread */}
+          <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[900px] h-[420px] bg-gradient-to-b from-rose-400/[0.13] via-rose-300/[0.05] to-transparent rounded-full blur-3xl" />
+
+          {/* Top-Left Subtle Corner Aura */}
+          <div className="absolute top-0 -left-28 w-[550px] h-[550px] bg-gradient-to-br from-rose-500/[0.09] via-red-400/[0.04] to-transparent rounded-full blur-3xl" />
+
+          {/* Soft Bottom-Right Glow */}
+          <div className="absolute bottom-0 right-[-80px] w-[500px] h-[500px] bg-gradient-to-tl from-rose-400/[0.05] via-rose-300/[0.02] to-transparent rounded-full blur-3xl" />
+        </div>
+
         <AuthProvider>
           {children}
           <Toaster
