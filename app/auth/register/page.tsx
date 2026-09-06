@@ -8,6 +8,7 @@ import { Droplets, User, Building2, ShieldCheck, ArrowRight } from 'lucide-react
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
+import DatePicker from '@/components/ui/DatePicker';
 import { BLOOD_GROUPS } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
@@ -39,8 +40,12 @@ export default function RegisterPage() {
   const { register } = useAuth();
   const router = useRouter();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | { target: { name?: string; value: string } }
+  ) => {
+    if (e.target.name) {
+      setFormData((prev) => ({ ...prev, [e.target.name!]: e.target.value }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -266,10 +271,10 @@ export default function RegisterPage() {
                       options={BLOOD_GROUPS.map((bg) => ({ value: bg, label: bg }))}
                       required
                     />
-                    <Input
+                    <DatePicker
                       label="Date of Birth"
                       name="dateOfBirth"
-                      type="date"
+                      max={new Date().toISOString().split('T')[0]}
                       value={formData.dateOfBirth}
                       onChange={handleChange}
                       required

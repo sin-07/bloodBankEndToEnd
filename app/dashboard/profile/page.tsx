@@ -7,6 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
+import DatePicker from '@/components/ui/DatePicker';
 import { donorAPI, authAPI } from '@/lib/api';
 import { BLOOD_GROUPS } from '@/lib/utils';
 import { User, Save, Lock, HeartPulse, ShieldCheck, Mail, Phone, MapPin } from 'lucide-react';
@@ -229,10 +230,10 @@ export default function ProfilePage() {
                   value: bg,
                 }))}
               />
-              <Input
+              <DatePicker
                 label="Date of Birth"
-                type="date"
-                value={donorData.dateOfBirth}
+                max={new Date().toISOString().split('T')[0]}
+                value={donorData.dateOfBirth ? donorData.dateOfBirth.split('T')[0] : ''}
                 onChange={(e) =>
                   setDonorData({ ...donorData, dateOfBirth: e.target.value })
                 }

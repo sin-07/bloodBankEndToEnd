@@ -240,6 +240,22 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
       }
     };
 
+    const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      e.stopPropagation();
+      setViewMonth(Number(e.target.value));
+      if (gridRef.current) {
+        gsap.fromTo(gridRef.current, { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.2, ease: 'power2.out' });
+      }
+    };
+
+    const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      e.stopPropagation();
+      setViewYear(Number(e.target.value));
+      if (gridRef.current) {
+        gsap.fromTo(gridRef.current, { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.2, ease: 'power2.out' });
+      }
+    };
+
     const handleSelectDay = (day: number, e: React.MouseEvent) => {
       e.stopPropagation();
       const dateStr = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -272,6 +288,14 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
     const tomorrowObj = new Date();
     tomorrowObj.setDate(tomorrowObj.getDate() + 1);
     const tomorrowStr = tomorrowObj.toISOString().split('T')[0];
+
+    const currentYear = new Date().getFullYear();
+    const yearOptions = Array.from({ length: 115 }, (_, i) => currentYear + 5 - i);
+
+    const isBirthDate = Boolean(name?.toLowerCase().includes('birth') || label?.toLowerCase().includes('birth'));
+    const placeholderText = placeholder || (isBirthDate ? 'Select date of birth' : 'Select preferred date');
+    const subTitleText = isBirthDate ? 'Verified biometric donor record' : 'Clinical collection window: 09:00 AM – 05:00 PM';
+    const helpText = isBirthDate ? 'Click to choose verified birth date' : 'Click to choose an available voluntary donation slot';
 
     return (
       <div className={`w-full relative ${className}`} ref={containerRef} id={id}>
@@ -328,16 +352,16 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-500 mt-0.5 truncate">
-                    Clinical collection window: 09:00 AM – 05:00 PM
+                    {subTitleText}
                   </p>
                 </div>
               ) : (
                 <div>
                   <span className="font-semibold text-xs sm:text-sm text-slate-400">
-                    {placeholder}
+                    {placeholderText}
                   </span>
                   <p className="text-[11px] text-slate-400 mt-0.5">
-                    Click to choose an available voluntary donation slot
+                    {helpText}
                   </p>
                 </div>
               )}
@@ -369,18 +393,40 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
             {/* Ambient reddish subtle glow */}
             <div className="absolute -top-12 -right-12 w-40 h-40 bg-rose-500/[0.08] rounded-full blur-2xl pointer-events-none" />
 
-            {/* Calendar Header: Month/Year navigation */}
-            <div className="relative z-10 flex items-center justify-between pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600">
+            {/* Calendar Header: Month/Year navigation with Quick Selectors */}
+            <div className="relative z-10 flex items-center justify-between pb-3 border-b border-slate-100 gap-2">
+              <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
+                <div className="w-7 h-7 rounded-lg bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 shrink-0">
                   <CalendarIcon className="w-3.5 h-3.5" />
                 </div>
-                <h4 className="font-extrabold text-sm sm:text-base text-slate-900 font-heading tracking-tight">
-                  {MONTH_NAMES[viewMonth]} <span className="text-rose-600">{viewYear}</span>
-                </h4>
+                <div className="flex items-center gap-1.5">
+                  <select
+                    value={viewMonth}
+                    onChange={handleMonthChange}
+                    className="bg-white/90 hover:bg-slate-50 border border-slate-200/90 rounded-xl px-2 py-1 text-xs font-bold text-slate-800 cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-500/20 shadow-2xs"
+                  >
+                    {MONTH_NAMES.map((name, idx) => (
+                      <option key={name} value={idx}>
+                        {name}
+                      </option>
+                    ))}
+                  </select>
+
+                  <select
+                    value={viewYear}
+                    onChange={handleYearChange}
+                    className="bg-rose-50/80 hover:bg-rose-100/80 border border-rose-200/80 rounded-xl px-2 py-1 text-xs font-bold text-rose-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-500/20 shadow-2xs"
+                  >
+                    {yearOptions.map((yr) => (
+                      <option key={yr} value={yr}>
+                        {yr}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 shrink-0">
                 <button
                   type="button"
                   onClick={handlePrevMonth}
@@ -458,25 +504,33 @@ const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
             {/* Quick Action Shortcuts Footer */}
             <div className="mt-3 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
               <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={(e) => handleQuickSelect(todayStr, e)}
-                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] transition-colors"
-                >
-                  Today
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => handleQuickSelect(tomorrowStr, e)}
-                  className="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[11px] border border-rose-200/80 transition-colors"
-                >
-                  Tomorrow
-                </button>
+                {!max || max >= todayStr ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={(e) => handleQuickSelect(todayStr, e)}
+                      className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] transition-colors"
+                    >
+                      Today
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => handleQuickSelect(tomorrowStr, e)}
+                      className="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[11px] border border-rose-200/80 transition-colors"
+                    >
+                      Tomorrow
+                    </button>
+                  </>
+                ) : (
+                  <span className="text-[11px] font-semibold text-slate-500">
+                    Use year and month selectors above to navigate
+                  </span>
+                )}
               </div>
 
               <div className="flex items-center gap-1 text-[10px] text-slate-400 font-medium">
                 <Clock className="w-3 h-3 text-emerald-600" />
-                <span>Operating Hours: 09:00 – 17:00</span>
+                <span>{isBirthDate ? 'Biometric Age Verification' : 'Operating Hours: 09:00 – 17:00'}</span>
               </div>
             </div>
           </div>
