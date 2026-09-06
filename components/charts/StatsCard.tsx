@@ -10,6 +10,8 @@ interface StatsCardProps {
   icon: LucideIcon;
   change?: string;
   changeType?: 'positive' | 'negative' | 'neutral';
+  changePeriod?: string;
+  subtext?: string;
   color?: 'red' | 'blue' | 'green' | 'yellow' | 'purple' | 'orange';
   animateNumber?: boolean;
 }
@@ -20,6 +22,8 @@ export default function StatsCard({
   icon: Icon,
   change,
   changeType = 'neutral',
+  changePeriod,
+  subtext,
   color = 'red',
   animateNumber = true,
 }: StatsCardProps) {
@@ -87,44 +91,73 @@ export default function StatsCard({
 
   const activeColor = colors[color] || colors.red;
 
+  const getValueSizeClass = (val: string | number) => {
+    if (typeof val === 'number') return 'text-3xl';
+    const len = String(val).length;
+    if (len <= 4) return 'text-3xl';
+    if (len <= 9) return 'text-2xl sm:text-[1.6rem]';
+    return 'text-xl sm:text-2xl';
+  };
+
   return (
-    <div className="relative group overflow-hidden rounded-2xl bg-white border border-slate-200/80 p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover hover:border-rose-200/80">
+    <div className="h-full min-h-[176px] flex flex-col justify-between relative group overflow-hidden rounded-2xl bg-white border border-slate-200/80 p-5 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover hover:border-rose-200/80">
       {/* Background ambient accent */}
       <div
         className={`absolute -right-8 -bottom-8 w-28 h-28 rounded-full bg-gradient-to-br ${activeColor.gradient} blur-2xl pointer-events-none opacity-60 group-hover:opacity-90 transition-opacity`}
       />
 
-      <div className="relative z-10 flex items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-semibold tracking-wider uppercase text-slate-500">
+      {/* Top Header Row: Title, Value & Icon */}
+      <div className="relative z-10 flex items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-semibold tracking-wider uppercase text-slate-500 truncate">
             {title}
           </p>
-          <p
-            ref={numberRef}
-            className="text-3xl font-extrabold text-slate-900 mt-1.5 tracking-tight font-heading tabular-nums"
-          >
-            {displayValue}
-          </p>
+          <div className="mt-1.5 h-9 flex items-center overflow-hidden">
+            <p
+              ref={numberRef}
+              className={`font-extrabold text-slate-900 tracking-tight font-heading tabular-nums truncate whitespace-nowrap leading-none ${getValueSizeClass(
+                displayValue
+              )}`}
+              title={String(displayValue)}
+            >
+              {displayValue}
+            </p>
+          </div>
+        </div>
 
+        <div
+          className={`shrink-0 w-12 h-12 rounded-xl flex items-center justify-center border transition-transform duration-300 group-hover:scale-105 ${activeColor.bg} ${activeColor.glow}`}
+        >
+          <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
+        </div>
+      </div>
+
+      {/* Bottom Section: Trend/Status Badge & Explanatory Subtext pinned to baseline */}
+      <div className="relative z-10 mt-4 pt-1 flex flex-col justify-end space-y-1.5">
+        <div className="h-6 flex items-center">
           {change && (
-            <div className="flex items-center gap-1.5 mt-2.5">
+            <div className="flex items-center gap-1.5 flex-wrap overflow-hidden">
               <span
-                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${changeStyles[changeType]}`}
+                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap ${changeStyles[changeType]}`}
               >
-                {changeType === 'positive' && <TrendingUp className="w-3 h-3 text-emerald-600" />}
-                {changeType === 'negative' && <TrendingDown className="w-3 h-3 text-rose-600" />}
-                {changeType === 'neutral' && <Minus className="w-3 h-3 text-slate-500" />}
-                {change}
+                {changeType === 'positive' && <TrendingUp className="w-3 h-3 text-emerald-600 shrink-0" />}
+                {changeType === 'negative' && <TrendingDown className="w-3 h-3 text-rose-600 shrink-0" />}
+                {changeType === 'neutral' && <Minus className="w-3 h-3 text-slate-500 shrink-0" />}
+                <span className="truncate">{change}</span>
               </span>
-              <span className="text-[11px] text-slate-400">vs last month</span>
+              {changePeriod && (
+                <span className="text-[11px] text-slate-400 whitespace-nowrap truncate">{changePeriod}</span>
+              )}
             </div>
           )}
         </div>
 
-        <div
-          className={`shrink-0 w-12 h-12 rounded-xl flex items-center justify-center border transition-transform duration-300 group-hover:scale-110 ${activeColor.bg} ${activeColor.glow}`}
-        >
-          <Icon className="w-6 h-6" />
+        <div className="h-4 flex items-center">
+          {subtext && (
+            <p className="text-[11px] text-slate-500 leading-none truncate whitespace-nowrap" title={subtext}>
+              {subtext}
+            </p>
+          )}
         </div>
       </div>
     </div>
