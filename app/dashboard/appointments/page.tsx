@@ -8,6 +8,7 @@ import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
+import DatePicker from '@/components/ui/DatePicker';
 import Modal from '@/components/ui/Modal';
 import { donorAPI } from '@/lib/api';
 import { formatDate, BLOOD_GROUPS, getStatusVariant, COMPONENT_NAMES, getComponentBadgeClass } from '@/lib/utils';
@@ -260,8 +261,7 @@ export default function AppointmentsPage() {
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
                 Preferred Donation Date *
               </label>
-              <Input
-                type="date"
+              <DatePicker
                 min={today}
                 value={form.preferredDate}
                 onChange={e => setForm(f => ({ ...f, preferredDate: e.target.value }))}
