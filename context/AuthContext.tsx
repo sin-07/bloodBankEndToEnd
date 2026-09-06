@@ -4,6 +4,8 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import Cookies from 'js-cookie';
 import { authAPI } from '@/lib/api';
 import { User } from '@/types';
+import LogoutConfirmModal from '@/components/auth/LogoutConfirmModal';
+import toast from 'react-hot-toast';
 
 interface AuthContextType {
   user: User | null;
@@ -12,6 +14,10 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<any>;
   register: (data: any) => Promise<void>;
   logout: () => void;
+  confirmLogout: () => Promise<void>;
+  cancelLogout: () => void;
+  isLogoutModalOpen: boolean;
+  isLoggingOut: boolean;
   updateUser: (data: Partial<User>) => void;
   isAdmin: boolean;
   isDonor: boolean;
@@ -24,6 +30,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Load user from cookies on mount
   useEffect(() => {
@@ -67,11 +75,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
-    setUser(null);
-    setToken(null);
-    Cookies.remove('token');
-    Cookies.remove('user');
-    window.location.href = '/auth/login';
+    setIsLogoutModalOpen(true);
+  };
+
+  const cancelLogout = () => {
+    if (!isLoggingOut) {
+      setIsLogoutModalOpen(false);
+    }
+  };
+
+  const confirmLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      // Graceful delay to display the circle loader animation
+      await new Promise((resolve) => setTimeout(resolve, 850));
+      setUser(null);
+      setToken(null);
+      Cookies.remove('token');
+      Cookies.remove('user');
+      toast.success('Signed out successfully');
+      setIsLogoutModalOpen(false);
+      setIsLoggingOut(false);
+      window.location.href = '/auth/login';
+    } catch {
+      setIsLoggingOut(false);
+      setIsLogoutModalOpen(false);
+      window.location.href = '/auth/login';
+    }
   };
 
   const updateUser = (data: Partial<User>) => {
@@ -91,6 +121,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         register,
         logout,
+        confirmLogout,
+        cancelLogout,
+        isLogoutModalOpen,
+        isLoggingOut,
         updateUser,
         isAdmin: user?.role === 'admin',
         isDonor: user?.role === 'donor',
@@ -98,6 +132,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }}
     >
       {children}
+      <LogoutConfirmModal
+        isOpen={isLogoutModalOpen}
+        isLoggingOut={isLoggingOut}
+        onConfirm={confirmLogout}
+        onCancel={cancelLogout}
+      />
     </AuthContext.Provider>
   );
 }

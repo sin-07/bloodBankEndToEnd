@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { Droplets, Shield, Building2, User, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Droplets, ArrowRight } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import toast from 'react-hot-toast';
@@ -13,16 +13,8 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [selectedDemo, setSelectedDemo] = useState<string | null>(null);
   const { login } = useAuth();
   const router = useRouter();
-
-  const handleDemoFill = (role: string, demoEmail: string, demoPass: string) => {
-    setEmail(demoEmail);
-    setPassword(demoPass);
-    setSelectedDemo(role);
-    toast.success(`Demo credentials filled for ${role}!`);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -145,60 +137,6 @@ export default function LoginPage() {
               >
                 Create one now
               </Link>
-            </div>
-
-            {/* Interactive Demo Credentials with 1-click Fill */}
-            <div className="mt-8 pt-6 border-t border-slate-100">
-              <div className="flex items-center justify-between mb-3">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-700">
-                  Quick Demo Accounts
-                </p>
-                <span className="text-[11px] text-slate-500 font-medium">Click to auto-fill</span>
-              </div>
-              
-              <div className="grid grid-cols-3 gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleDemoFill('Admin', 'admin@bloodbank.com', 'admin123')}
-                  className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-xs font-semibold transition-all ${
-                    selectedDemo === 'Admin'
-                      ? 'bg-rose-50 border-rose-300 text-rose-700 shadow-sm'
-                      : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100 hover:border-slate-300'
-                  }`}
-                >
-                  <Shield className="w-4 h-4 mb-1 text-rose-600" />
-                  <span>Admin</span>
-                  {selectedDemo === 'Admin' && <CheckCircle2 className="w-3 h-3 text-rose-600 mt-1" />}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleDemoFill('Donor', 'rahul@example.com', 'donor123')}
-                  className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-xs font-semibold transition-all ${
-                    selectedDemo === 'Donor'
-                      ? 'bg-emerald-50 border-emerald-300 text-emerald-700 shadow-sm'
-                      : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100 hover:border-slate-300'
-                  }`}
-                >
-                  <User className="w-4 h-4 mb-1 text-emerald-600" />
-                  <span>Donor</span>
-                  {selectedDemo === 'Donor' && <CheckCircle2 className="w-3 h-3 text-emerald-600 mt-1" />}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleDemoFill('Hospital', 'city@hospital.com', 'hospital123')}
-                  className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-xs font-semibold transition-all ${
-                    selectedDemo === 'Hospital'
-                      ? 'bg-sky-50 border-sky-300 text-sky-700 shadow-sm'
-                      : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100 hover:border-slate-300'
-                  }`}
-                >
-                  <Building2 className="w-4 h-4 mb-1 text-sky-600" />
-                  <span>Hospital</span>
-                  {selectedDemo === 'Hospital' && <CheckCircle2 className="w-3 h-3 text-sky-600 mt-1" />}
-                </button>
-              </div>
             </div>
           </div>
         </div>
