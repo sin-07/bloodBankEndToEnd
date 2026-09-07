@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import {
   Droplets,
@@ -25,7 +25,6 @@ import {
   HelpCircle,
   ChevronDown,
   ExternalLink,
-  ShieldCheck,
   Flame,
   Layers,
   Thermometer,
@@ -298,9 +297,19 @@ export default function HomePage() {
     });
   }, []);
 
-  const selectedCompat =
-    BLOOD_COMPATIBILITY[selectedGroup as keyof typeof BLOOD_COMPATIBILITY] ||
-    BLOOD_COMPATIBILITY['O-'];
+  const selectedCompat = useMemo(
+    () =>
+      BLOOD_COMPATIBILITY[selectedGroup as keyof typeof BLOOD_COMPATIBILITY] ||
+      BLOOD_COMPATIBILITY['O-'],
+    [selectedGroup]
+  );
+
+  const activeComponent = useMemo(
+    () =>
+      COMPONENT_DETAILS[selectedComponentTab] ||
+      COMPONENT_DETAILS['platelets'],
+    [selectedComponentTab]
+  );
 
   return (
     <div
@@ -312,35 +321,6 @@ export default function HomePage() {
       <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[1000px] h-[450px] bg-gradient-to-b from-rose-400/[0.14] via-rose-300/[0.06] to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
       <div className="absolute top-10 -left-28 w-[600px] h-[600px] bg-gradient-to-br from-rose-500/[0.11] via-red-400/[0.05] to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
       <div className="absolute bottom-40 -right-20 w-[600px] h-[600px] bg-gradient-to-tl from-rose-400/[0.07] via-rose-300/[0.03] to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
-
-      {/* ░░░░░░ TOP EMERGENCY TELEMETRY TICKER ░░░░░░ */}
-      <div className="bg-slate-900 border-b border-slate-800 py-2 px-4 relative z-50 text-xs text-slate-300">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 font-semibold overflow-hidden">
-            <span className="relative flex h-2.5 w-2.5 shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500" />
-            </span>
-            <span className="text-rose-400 font-bold uppercase tracking-wider text-[10px] sm:text-[11px] shrink-0">
-              Lifeline:
-            </span>
-            <span className="text-slate-200 text-[11px] sm:text-xs truncate">
-              Trauma units active across Mumbai, Pune & Western Maharashtra
-            </span>
-          </div>
-
-          <div className="hidden sm:flex items-center gap-5 text-[11px] text-slate-400 shrink-0">
-            <span className="flex items-center gap-1.5">
-              <Phone className="w-3 h-3 text-rose-400" /> Emergency Hotline:{' '}
-              <strong className="text-white">1800-BLOOD-LIFE</strong>
-            </span>
-            <span className="text-slate-700">&bull;</span>
-            <span className="text-emerald-400 font-medium flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5" /> 100% NAT Tested
-            </span>
-          </div>
-        </div>
-      </div>
 
       {/* ░░░░░░ STICKY NAVBAR ░░░░░░ */}
       <header
@@ -703,28 +683,28 @@ export default function HomePage() {
           </div>
 
           {/* Active Component Deep Dive Card */}
-          {COMPONENT_DETAILS[selectedComponentTab] && (
+          {activeComponent && (
             <div className="rounded-3xl bg-slate-50 border border-slate-200/90 p-6 sm:p-10 shadow-sm transition-all">
               <div className="grid lg:grid-cols-12 gap-8 items-center">
                 {/* Left Specs */}
                 <div className="lg:col-span-7 space-y-6">
                   <div className="flex items-center gap-3">
-                    <span className={`px-3 py-1 rounded-xl text-xs font-bold border ${COMPONENT_DETAILS[selectedComponentTab].badgeBg} ${COMPONENT_DETAILS[selectedComponentTab].badgeBorder} ${COMPONENT_DETAILS[selectedComponentTab].badgeText}`}>
-                      {COMPONENT_DETAILS[selectedComponentTab].shortName} Specialization
+                    <span className={`px-3 py-1 rounded-xl text-xs font-bold border ${activeComponent.badgeBg} ${activeComponent.badgeBorder} ${activeComponent.badgeText}`}>
+                      {activeComponent.shortName} Specialization
                     </span>
-                    {COMPONENT_DETAILS[selectedComponentTab].universalDonorType && (
+                    {activeComponent.universalDonorType && (
                       <span className="px-3 py-1 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                        {COMPONENT_DETAILS[selectedComponentTab].universalDonorType}
+                        {activeComponent.universalDonorType}
                       </span>
                     )}
                   </div>
 
                   <div>
                     <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                      {COMPONENT_DETAILS[selectedComponentTab].name}
+                      {activeComponent.name}
                     </h3>
                     <p className="text-sm text-slate-600 mt-1 leading-relaxed">
-                      {COMPONENT_DETAILS[selectedComponentTab].subtitle}
+                      {activeComponent.subtitle}
                     </p>
                   </div>
 
@@ -734,7 +714,7 @@ export default function HomePage() {
                       Primary Clinical Indications:
                     </h4>
                     <div className="grid sm:grid-cols-2 gap-2.5">
-                      {COMPONENT_DETAILS[selectedComponentTab].clinicalUses.map((use, idx) => (
+                      {activeComponent.clinicalUses.map((use, idx) => (
                         <div
                           key={idx}
                           className="flex items-start gap-2 p-2.5 rounded-xl bg-white border border-slate-200/80 text-xs text-slate-800"
@@ -746,10 +726,10 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  {COMPONENT_DETAILS[selectedComponentTab].urgentNotice && (
+                  {activeComponent.urgentNotice && (
                     <div className="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200/80 text-amber-950 text-xs flex items-center gap-2.5">
                       <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
-                      <span>{COMPONENT_DETAILS[selectedComponentTab].urgentNotice}</span>
+                      <span>{activeComponent.urgentNotice}</span>
                     </div>
                   )}
                 </div>
@@ -763,7 +743,7 @@ export default function HomePage() {
                         <span>Storage Temp</span>
                       </div>
                       <div className="text-sm font-bold text-slate-900">
-                        {COMPONENT_DETAILS[selectedComponentTab].storageTemp}
+                        {activeComponent.storageTemp}
                       </div>
                     </div>
 
@@ -773,7 +753,7 @@ export default function HomePage() {
                         <span>Shelf Life</span>
                       </div>
                       <div className="text-sm font-bold text-slate-900">
-                        {COMPONENT_DETAILS[selectedComponentTab].shelfLife}
+                        {activeComponent.shelfLife}
                       </div>
                     </div>
 
@@ -783,10 +763,10 @@ export default function HomePage() {
                         <span>Donation Interval</span>
                       </div>
                       <div className="text-sm font-bold text-slate-900">
-                        Every {COMPONENT_DETAILS[selectedComponentTab].donationIntervalDays} Days
+                        Every {activeComponent.donationIntervalDays} Days
                       </div>
                       <div className="text-[10px] text-slate-500 mt-0.5">
-                        Up to {COMPONENT_DETAILS[selectedComponentTab].maxDonationsPerYear}x / year
+                        Up to {activeComponent.maxDonationsPerYear}x / year
                       </div>
                     </div>
 
@@ -796,7 +776,7 @@ export default function HomePage() {
                         <span>Unit Volume</span>
                       </div>
                       <div className="text-sm font-bold text-slate-900">
-                        {COMPONENT_DETAILS[selectedComponentTab].volumePerUnit}
+                        {activeComponent.volumePerUnit}
                       </div>
                     </div>
                   </div>

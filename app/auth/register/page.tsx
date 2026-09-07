@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
@@ -12,7 +12,7 @@ import DatePicker from '@/components/ui/DatePicker';
 import { BLOOD_GROUPS } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
-export default function RegisterPage() {
+function RegisterFormContent() {
   const searchParams = useSearchParams();
   const defaultRole = searchParams.get('role') || 'donor';
 
@@ -377,5 +377,19 @@ export default function RegisterPage() {
       </div>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-slate-50">
+          <div className="w-8 h-8 border-4 border-rose-600 border-t-transparent rounded-full animate-spin" />
+        </div>
+      }
+    >
+      <RegisterFormContent />
+    </Suspense>
   );
 }
