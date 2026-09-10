@@ -1,9 +1,12 @@
 import Link from 'next/link';
 import { Droplets, ArrowLeft, Home } from 'lucide-react';
+import PublicNavbar from '@/components/layout/PublicNavbar';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-rose-50/80 via-slate-50/80 to-slate-50 text-slate-900 p-4 relative selection:bg-rose-500 selection:text-white overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-rose-50/80 via-slate-50/80 to-slate-50 text-slate-900 relative selection:bg-rose-500 selection:text-white overflow-hidden">
+      <PublicNavbar />
+      <div className="flex-1 flex items-center justify-center p-4">
       {/* Background ambient lighting - corner & top reddish gradient orbs */}
       <div className="absolute -top-28 right-[-50px] w-[600px] h-[600px] bg-gradient-to-bl from-rose-500/[0.15] via-rose-400/[0.08] to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
       <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[850px] h-[400px] bg-gradient-to-b from-rose-400/[0.14] via-rose-300/[0.06] to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
@@ -38,6 +41,7 @@ export default function NotFound() {
           </Link>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
